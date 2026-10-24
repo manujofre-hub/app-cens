@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aprendo a escribir con el teclado</title>
+<style>
+/* ===== base ===== */
+*{box-sizing:border-box;margin:0}
+body{font:16px "Segoe UI",Arial,sans-serif;height:100vh;overflow:hidden;user-select:none;background:#073a78}
+button{font:inherit}button,.ico,.card,.ch,.tk,#sl p,#pp div{cursor:pointer}
+button:disabled{opacity:.4;cursor:default}
+/* ===== barra superior ===== */
+#top{position:fixed;top:0;left:0;right:0;height:2.3em;background:#1f2937;color:#fff;display:flex;align-items:center;gap:.4em;padding:0 .5em;z-index:50}
+#top button{background:#374151;color:#fff;border:0;border-radius:.3em;padding:.15em .6em}
+/* ===== escritorio ===== */
+#desk{position:fixed;top:2.3em;bottom:2.5em;left:0;right:0;overflow:hidden;background:radial-gradient(ellipse at 75% 45%,#4fb3ff,#0a5fc0 40%,#06336b)}
+#stage{position:absolute;inset:0;pointer-events:none}#stage>*{pointer-events:auto}
+.ico{position:absolute;width:6em;text-align:center;color:#fff;font-size:.85em;text-shadow:0 1px 3px #000;padding:.3em;border-radius:.3em}
+.ico b{display:block;font-size:2.8em;font-weight:400}.ico:hover{background:#fff3}
+#acts{position:absolute;left:9em;top:.5em;display:flex;gap:1.2em}.ab{display:flex;flex-direction:column;width:10em}.ab small{color:#fff;font-weight:700;text-shadow:0 1px 3px #000;margin-bottom:.2em}.ico.act{position:static;width:100%}
+/* ===== barra de tareas e Inicio ===== */
+#tb{position:fixed;bottom:0;left:0;right:0;height:2.5em;background:#101820;display:flex;align-items:center;z-index:60;color:#fff}
+#st{width:3em;height:100%;border:0;background:none}#st:hover,.tk:hover{background:#fff3}
+.tk{padding:0 .9em;height:100%;background:none;border:0;color:#fff;font-size:1.2em}
+#cr{font-size:.7em;color:#fffc;padding-right:.8em;margin-left:auto}#ck{padding:0 1em;font-size:.85em}
+#sm{position:fixed;left:0;bottom:2.5em;width:19em;height:20em;background:#222;color:#fff;z-index:70;display:none;animation:up .25s}
+@keyframes up{from{transform:translateY(2em);opacity:0}}
+#sw{display:flex;height:100%}#ss{width:3em;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:.5em 0;font-size:1.3em}
+#pw{padding:0 .3em}#pw:hover{background:#fff3}#sl{padding:.7em;flex:1}#sl p{padding:.4em;border-radius:.2em}#sl p:hover{background:#fff3}
+#pp{position:absolute;left:3.2em;bottom:.6em;background:#2b2b2b;display:none;min-width:9em;box-shadow:0 0 8px #000}#pp div{padding:.5em 1em}#pp div:hover{background:#fff3}
+/* ===== columna lateral: ManuBot ===== */
+#side{position:fixed;right:.5em;bottom:2.9em;width:16em;z-index:80;display:flex;flex-direction:column-reverse;gap:.5em;pointer-events:none}#side>*{pointer-events:auto}
+#bit{display:flex;flex-direction:column;align-items:flex-end;gap:.2em}
+#bot{font-size:3.2em;animation:fl 2s infinite}@keyframes fl{50%{transform:translateY(-.15em)}}
+#bub{background:#fff;border-radius:1em;padding:.6em .9em;box-shadow:0 2px 8px #0006;font-size:.9em;color:#222;line-height:1.35}
+#bw{display:flex;flex-direction:column;align-items:center}#bn{font-size:.75em;font-weight:700;color:#fff;background:#2b79c2;border-radius:.6em;padding:0 .7em}
+#hb{display:flex;gap:.3em;flex-wrap:wrap}#hb button{border:0;border-radius:1em;padding:.3em .7em;font-weight:700;background:#f59e0b}
+.ew{display:flex;align-items:center;gap:.4em;margin-top:.4em}.ent{background:#2b79c2;color:#fff;border:0;border-radius:.4em;padding:.3em .8em}
+.arw{color:#16a34a;font-size:1.8em;font-weight:900;animation:ar .6s infinite}@keyframes ar{50%{opacity:.15;transform:translateX(6px)}}
+/* ===== guía visual: círculo rojo y X roja ===== */
+#ring{position:fixed;display:none;border:4px solid rgba(255,0,0,.85);background:rgba(255,0,0,.25);border-radius:50%;pointer-events:none;z-index:9999;animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.2)}}
+.xm{position:fixed;color:#dc2626;font:900 2.4em Arial,sans-serif;z-index:10000;pointer-events:none;text-shadow:0 0 3px #fff;animation:xf .9s forwards}@keyframes xf{to{opacity:0;transform:scale(1.4)}}
+/* ===== ventana Bloc de notas ===== */
+.win{position:absolute;background:#fff;border:1px solid #2b79c2;box-shadow:0 8px 30px #0008;display:flex;flex-direction:column;color:#222;z-index:30}
+.tt{background:#2b79c2;color:#fff;padding:.3em .6em;display:flex;align-items:center;gap:.8em}.tt b{margin-left:auto;display:flex}
+.lb{background:#fff3;color:#fff;border:0;border-radius:.3em;padding:.1em .6em;font-size:.8em}.lb:hover{background:#fff5}
+.wb{border:0;background:none;color:#fff;width:2.6em;height:1.8em}.wb.x:hover{background:#e81123}
+#al{display:none;background:#f97316;color:#fff;font-weight:700;padding:.3em .8em}
+#pad{flex:1;overflow:auto;padding:.8em 1em;position:relative;font:1.25em/1.5 Consolas,"Courier New",monospace;white-space:pre-wrap;word-break:break-word}
+.ok{color:#111}.gh{color:#b5b5b5}.er{color:#dc2626;background:#fee2e2}.gn{background:#bfdbfe;color:#555;border-radius:.15em}
+#txt h3{font:700 1em "Segoe UI",Arial;white-space:normal}
+.ch{display:block;width:100%;text-align:left;background:#f3f4f6;border:2px solid #ccc;border-radius:.6em;padding:.6em 1em;margin:.5em 0;font:.8em "Segoe UI",Arial;color:#222}
+.ch:hover{background:#e5f3ff}.ch.sel{border-color:#22c55e;background:#dcfce7}
+/* ===== teclado virtual (módulo) ===== */
+#kbd{position:absolute;left:.6em;right:20.6em;bottom:.4em;font-size:.85em}
+.kw{--kb:#eee;--kt:#222;--kd:#666;--tr:#d1d5db}.kw.dk{--kb:#26282b;--kt:#fff;--kd:#0b0c0d;--tr:#101113}
+.kv{position:relative;width:100%;padding-top:3.6em}.kv svg{position:absolute;left:0;top:0;width:0;height:0}
+.kbd{display:grid;grid-template-columns:repeat(120,minmax(0,1fr));grid-template-rows:1.9em repeat(5,2.9em);gap:0;background:var(--tr);padding:.3em;border-radius:.6em;width:100%}
+.k{background:var(--kb);color:var(--kt);border:.14em solid var(--kd);border-bottom-width:.25em;border-radius:.35em;margin:.14em;display:flex;align-items:center;justify-content:center;position:relative;font-weight:700;font-size:1.05em;white-space:nowrap;overflow:hidden;min-width:0}
+.k.t b{transform:translateY(.28em)}.k.tx b{font-size:.8em}.k.en{grid-row:span 2}
+.k i{position:absolute;left:.3em;top:.05em;font-size:.7em;font-style:normal;font-weight:600;opacity:.85}
+.k s{position:absolute;right:.2em;bottom:0;font-size:.5em;text-decoration:none;color:#2b79c2}.k em{font-style:normal}
+.kbd .hl{background:#3b82f6!important;color:#fff!important;border-color:#1d4ed8!important;transform:translateY(2px)}
+.kbd .nx{background:#22c55e!important;color:#fff!important;border-color:#15803d!important}
+.kbd .gd{background:#facc15!important;color:#222!important;border-color:#b45309!important;animation:kb .6s infinite}
+.kbd .bad{background:#ef4444!important;color:#fff!important;border-color:#991b1b!important}
+.kbd .dn{background:#86efac!important;color:#14532d!important;transform:translateY(2px)}
+@keyframes kb{50%{background:#f97316;transform:translateY(3px)}}
+.bd{position:absolute;display:flex;flex-direction:column;align-items:center;background:#fff;color:#1f2937;border:2px solid #2b79c2;border-radius:.6em;padding:.1em .45em;font-weight:800;font-size:.8em;line-height:1.1;box-shadow:0 2px 6px #0005;opacity:0;transform:translate(-50%,-85%);transition:opacity .35s,transform .35s;z-index:3;white-space:nowrap;pointer-events:none}
+.bd.show{opacity:1;transform:translate(-50%,-100%)}.bd span{font-size:1.7em}.bd.tap{border-color:#d97706}.bd.tap.show span{animation:tp .7s infinite}
+@keyframes tp{50%{transform:translateY(.25em)}}
+.bd.plus{background:none;border:0;box-shadow:none;font-size:1.6em;color:#2b79c2;padding:0 .1em}
+/* ===== pantallas completas ===== */
+.ov{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:1em;z-index:200;color:#fff;text-align:center;background:linear-gradient(135deg,#0a5fc0,#06336b)}
+.ov input{font-size:1.4em;padding:.4em;border-radius:.4em;border:0;text-align:center;user-select:text}
+.big{font-size:1.3em;padding:.5em 1.4em;border:0;border-radius:.5em;background:#22c55e;color:#fff}
+#cards{display:flex;gap:1.5em}.card{background:#fff;color:#222;border-radius:1em;padding:1em 1.2em;width:17em}.card:hover{outline:4px solid #22c55e}.card p{font-size:.9em;margin:.2em 0 .8em}
+.mk{display:inline-block;min-width:2.6em;height:2.6em;padding:0 .3em;border:2px solid #666;border-radius:.4em;background:#eee;margin:.15em;position:relative;font-weight:700;line-height:2.4em}
+.mk em{position:absolute;right:.15em;bottom:-.1em;font-size:.8em;color:#2563eb;font-style:normal;line-height:1}.mk.hl{background:#4ade80;border-color:#16a34a;animation:kb .8s infinite}
+#mod{background:#000a}#card{background:#fff;color:#222;border-radius:1em;padding:1.5em 2.5em}.stars{font-size:5em;letter-spacing:.1em;color:#d1d5db}.stars .on{color:#facc15}
+#blk{position:fixed;inset:0;background:#000;z-index:300;display:none}
+</style></head><body>
+<div id=top><button onclick=menu()>📋 Menú Principal</button><button id=cn onclick=menu() style="display:none;background:#dc2626">✖ Cancelar actividad</button><span style="flex:1"></span><button id=nu onclick=nsy() style="display:none;background:#b45309">👤 Este no soy yo</button><button id=sb onclick=ts()>🔔</button><button onclick=fz(-2)>A−</button><button onclick=fz(2)>A+</button></div>
+<div id=desk><div class=ico id=ipn style="left:1em;top:1em"><b>📝</b>Bloc de notas</div><div id=acts></div><div id=stage></div></div>
+<div id=tb><button id=st><svg width=16 height=16 viewBox="0 0 16 16"><path fill="#fff" d="M0 2l6-1v6H0zM7 .8L16 0v7H7zM0 8h6v6l-6-1zM7 8h9v8l-9-1z"/></svg></button><button id=tbf class=tk title="Explorador de archivos">📁</button><span style="flex:1"></span><div id=cr>Profe Mario Jofré</div><div id=ck></div></div>
+<div id=sm><div id=sw><div id=ss><div id=pw title=Energía><svg viewBox="0 0 24 24" style="width:1em;height:1em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v9M6.3 6.5a8 8 0 1 0 11.4 0"/></svg></div></div><div id=sl><h4 style="margin-bottom:.5em">Programas</h4><p id=sn>📝 Bloc de notas</p><p>🧮 Calculadora</p><p>🎨 Paint</p></div></div><div id=pp><div>🌙 Suspender</div><div id=off>Apagar</div></div></div>
+<div id=side><div id=hb><button onclick=hp()>? Ayuda / Repetir</button><button id=vb onclick=tv()>🔊</button><button onclick=rs()>🔄 Reiniciar Todo</button></div><div id=bit><div id=bub><span id=bt></span></div><div id=bw><div id=bot>🤖</div><div id=bn>ManuBot</div></div></div></div>
+<div id=blkr style="position:fixed;inset:2.3em 0 0 0;z-index:75;display:none"></div><div id=ring></div>
+<div id=wel class=ov style="display:flex"><h1>⌨️ Aprendo a escribir con el teclado</h1><p style="opacity:.85">Práctica de mecanografía paso a paso</p><h2 style="font-weight:400;font-size:1.6em">Diseñado por el Profesor: Mario Jofré</h2><p style="font-size:1.3em">Por favor, escribe tu nombre y apellido para comenzar:</p><input id=nm maxlength=30><button class=big onclick=start()>Ingresar al Escritorio</button><small style="opacity:.9">También puedes presionar la tecla Enter.</small></div>
+<div id=kbs class=ov><h1>¿Cuál es tu teclado?</h1><p>Los dos tienen la tecla <b>Ñ</b>. Compara y elige el que se parezca al tuyo 👇</p><div id=cards></div></div>
+<div id=blk></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const S={name:'',voice:true,snd:true,fs:16,lay:'lap',steps:[],step:0,nx:false,typ:0,nb:0,intro:0,dk:0,done:new Set},F={};let es,AC,K,MP;
+const U={get(){try{return JSON.parse(localStorage.getItem('usuario')||'null')}catch(e){return null}},set(u){try{localStorage.setItem('usuario',JSON.stringify(u))}catch(e){}},del(){try{localStorage.removeItem('usuario')}catch(e){}}};
+const goHome=()=>{location.href='../../index.html'};
+/* ---------- sonido (suave, sin fanfarria) y voz ---------- */
+function beep(f,d=.12){if(!S.snd)return;try{AC=AC||new AudioContext;const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.value=.05;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
+const ok=()=>beep(660,.08),bad=()=>beep(200,.25);
+function vinit(){const f=()=>{es=(window.speechSynthesis?speechSynthesis.getVoices():[]).find(v=>v.lang.toLowerCase().startsWith('es'))};f();if(window.speechSynthesis)speechSynthesis.onvoiceschanged=f;
+ setTimeout(()=>{f();if(!es){S.voice=false;const b=$('#vb');b.disabled=true;b.textContent='🔇';b.title='No hay voz en español en esta PC'}},2000)}
+function tv(){S.voice=!S.voice;$('#vb').textContent=S.voice?'🔊':'🔇';if(!S.voice&&window.speechSynthesis)speechSynthesis.cancel()}
+function ts(){S.snd=!S.snd;$('#sb').textContent=S.snd?'🔔':'🔕'}
+function fz(d){S.fs=Math.min(26,Math.max(12,S.fs+d));document.body.style.fontSize=S.fs+'px'}
+function say(t,n){t=t.replace(/\{n\}/g,S.name);$('#bt').innerHTML=t+(n?'<div class=ew><span class=arw>➜</span><button class=ent onclick="S.nx=true">Entendido ▶</button></div>':'');
+ if(S.voice&&es){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,'').replace(/\bCtrl\b/g,'Control').replace(/\bX\b/g,'equis').replace(/[←⬅]/g,' flecha izquierda ').replace(/[→➡]/g,' flecha derecha ').replace(/[\u{1F000}-\u{1FFFF}\u2190-\u27BF\uFE0F\u2300-\u23FF]/gu,'')+(n?' Presiona el botón Entendido para continuar.':''));u.voice=es;u.lang=es.lang;speechSynthesis.speak(u)}}
+/* ---------- motor de pasos guiados ---------- */
+const st=(t,r,d,o={})=>({t,r,d,...o});
+function run(s,end){S.steps=s;S.step=0;S.onEnd=end;S.wait=0;show()}
+function show(){const s=S.steps[S.step];if(!s)return;S.nx=false;s.o&&s.o();say(s.t,s.n);$('#blkr').style.display=s.n?'block':'none'}
+setInterval(()=>{const s=S.steps[S.step],r=$('#ring');if(!s||S.wait){r.style.display='none';return}
+ let dn=0;try{dn=s.d()}catch(x){}
+ if(dn){ok();S.wait=1;r.style.display='none';$('#blkr').style.display='none';const q=S.steps;setTimeout(()=>{if(S.steps!==q)return;S.wait=0;if(++S.step>=q.length){S.steps=[];S.onEnd&&S.onEnd()}else show()},s.n?500:1500);return}
+ let e;try{e=s.n?$('.ent'):s.r&&s.r()}catch(x){}const b=e&&e.getBoundingClientRect();if(!b||!b.width){r.style.display='none';return}
+ const w=b.width>b.height*2.5,d=w?b.height+26:Math.min(Math.max(b.width,b.height)+20,120),x=w?b.left+Math.min(b.width/2,60):b.left+b.width/2;
+ Object.assign(r.style,{display:'block',width:d+'px',height:d+'px',left:x-d/2+'px',top:b.top+b.height/2-d/2+'px'})},150);
+function xm(x,y){if(x==null){const c=$('#cur'),b=c&&c.getBoundingClientRect();x=b?b.left:300;y=b?b.top:200}const d=document.createElement('div');d.className='xm';d.textContent='✖';d.style.left=x+8+'px';d.style.top=y+8+'px';document.body.append(d);setTimeout(()=>d.remove(),900)}
+addEventListener('click',e=>{if(!e.target.closest('#sm,#st'))$('#sm').style.display=$('#pp').style.display='none';
+ const s=S.wait?null:S.steps[S.step];let r;try{r=s&&(s.n?$('.ent'):s.r&&s.r())}catch(x){}
+ if(r&&!r.contains(e.target)&&!(s.ok&&e.target.closest(s.ok))&&!e.target.closest('#top,#side')){bad();xm(e.clientX,e.clientY);say('¡Casi! Intenta hacer clic dentro del <b>círculo rojo</b> 🔴');const k=S.step;setTimeout(()=>S.step==k&&show(),2500)}},true);
+/* ---------- estructura general ---------- */
+const stage=h=>$('#stage').innerHTML=h;
+function clean(){S.steps=[];S.wait=0;S.typ=0;F.np=null;$('#blkr').style.display='none';stage('');$$('#mod').forEach(x=>x.remove());$('#sm').style.display=$('#pp').style.display=$('#ring').style.display='none'}
+function dk(){$('#acts').innerHTML=BL.map(([h,a,b])=>`<div class=ab><small>${h}</small>${Array.from({length:b-a+1},(_,i)=>a+i).map(n=>`<div class="ico act" onclick="go(${n})"><b>${A[n].i}</b>${n}. ${A[n].t}${S.done.has(n)?' ✅':''}</div>`).join('')}</div>`).join('')}
+function menu(){clean();$('#cn').style.display='none';dk();$('#acts').style.display='';say('¡Hola {n}! Soy ManuBot, tu asistente. Haz clic en un nivel del escritorio. Te sugerimos seguir el orden 1 a 5.')}
+function go(n){clean();$('#cn').style.display='';$('#acts').style.display='none';A[n].f()}
+function start(){S.name=$('#nm').value.replace(/[<>&"]/g,'').trim()||'Estudiante';U.set({n:S.name});$('#nu').style.display='';$('#wel').style.display='none';$('#kbs').style.display='flex'}
+function nsy(){U.del();reset()}
+$('#nm').onkeydown=e=>{if(e.key=='Enter')start()};
+function reset(){clean();$('#cn').style.display='none';$('#acts').style.display='none';Object.assign(S,{name:'',nb:0,intro:0,lay:'lap',done:new Set});$('#nu').style.display='none';$('#nm').value='';$('#kbs').style.display='none';$('#wel').style.display='flex';$('#nm').focus();if(window.speechSynthesis)speechSynthesis.cancel()}
+function rs(){if(S.rc){S.rc=0;reset()}else{S.rc=1;say('Para reiniciar todo, presiona <b>otra vez</b> el botón Reiniciar Todo.');setTimeout(()=>S.rc=0,4000)}}
+function hp(){const s=S.steps[S.step];if(s)show();else say(S.typ?'Mira la tecla <b>verde</b> del teclado: esa es la que sigue. Si hay un error, usa <b>⌫ Borrar</b>.':'Elige un nivel en el escritorio 📋')}
+/* ---------- Inicio, energía y apagado ---------- */
+$('#st').onclick=()=>{const s=$('#sm');s.style.display=s.style.display=='block'?'none':'block';$('#pp').style.display='none'};
+$('#pw').onclick=()=>$('#pp').style.display=$('#pp').style.display=='block'?'none':'block';
+$('#sm').onclick=e=>{if(e.target.closest('#sn')){$('#sm').style.display='none';F.np?F.np():say('Para practicar cómo se abre, elige la actividad 6 del escritorio 📝');return}if(e.target.closest('#sl p,#pp div:not(#off)'))say('Esa opción no está disponible en este tutorial 😊')};
+$('#off').onclick=()=>{S.steps=[];S.typ=0;$('#sm').style.display='none';$('#blk').style.display='block';setTimeout(()=>{$('#blk').style.display='none';reset()},3000)};
+$('#ipn').onclick=()=>F.np?F.np():say('Para practicar cómo se abre, elige la actividad 6 del escritorio 📝');
+$('#tbf').onclick=()=>say('Esa carpeta abre el Explorador de archivos. En este tutorial usamos el Bloc de notas 📝');
+setInterval(()=>$('#ck').textContent=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),1000);
+/* ---------- teclado virtual (módulo): 3 distribuciones ---------- */
+const LN={lap:'Latinoamericano · laptop con Fn',lat:'Latinoamericano · sin Fn',es:'Español (España)'},DEF='Elige una combinación',AC1='áéíóúÁÉÍÓÚ';
+function layout(){const a=[],K=(c,m,t='',w=8,x='',s='')=>a.push({c,m,t,w,x,s});
+ K('Escape','Esc','',8,'tx');for(let i=1;i<=12;i++)K('F'+i,'F'+i,'',7,'tx');
+ [['Pause','Pausa'],['PrintScreen','ImpPnt'],['Insert','Ins'],['Delete','Supr']].forEach(([c,m])=>K(c,m,'',7,'tx'));
+ [['Backquote','|','°'],['Digit1','1','!'],['Digit2','2','"'],['Digit3','3','#'],['Digit4','4','$'],['Digit5','5','%'],['Digit6','6','&'],['Digit7','7','/'],['Digit8','8','('],['Digit9','9',')'],['Digit0','0','='],['Minus',"'",'?'],['Equal','¿','¡']].forEach(([c,m,t])=>K(c,m,t));
+ K('Backspace','⌫<em class=lg> Borrar</em>','',16,'tx');
+ K('Tab','⇥','',14);'QWERTYUIOP'.split('').forEach(l=>K('Key'+l,l));K('BracketLeft','´','¨');K('BracketRight','+','*');K('Enter','↵<em class=lg> Enter</em>','',10,'tx en');
+ K('CapsLock','Bloq Mayús','',14,'tx');'ASDFGHJKL'.split('').forEach(l=>K('Key'+l,l));K('Semicolon','Ñ');K('Quote','{','[');K('Backslash','}',']');
+ K('ShiftLeft','⇧<em class=lg> Shift</em>','',10,'tx');K('IntlBackslash','<','>');'ZXCVBNM'.split('').forEach(l=>K('Key'+l,l));K('Comma',',',';');K('Period','.',':');K('Slash','-','_');K('ShiftRight','⇧<em class=lg> Shift</em>','',22,'tx');
+ K('ControlLeft','Ctrl','',10,'tx');K('Fn','Fn','',8,'tx');K('MetaLeft','⊞','',8);K('AltLeft','Alt','',10,'tx');K('Space','<em class=lg>Espacio</em>','',36,'tx');K('AltRight','Alt Gr','',10,'tx');K('ContextMenu','☰','',8);K('ControlRight','Ctrl','',10,'tx');
+ [['ArrowLeft','◀','Inicio'],['ArrowUp','▲','RePág'],['ArrowDown','▼','AvPág'],['ArrowRight','▶','Fin']].forEach(([c,m,s])=>K(c,m,'',5,'',s));
+ return a}
+function lay(t){let a=layout();const P=(c,o)=>Object.assign(a.find(k=>k.c==c),o);
+ if(t=='es'){P('Backquote',{m:'º',t:'ª'});P('Digit3',{t:'·'});P('Equal',{m:'¡',t:'¿'});P('BracketLeft',{m:'`',t:'^'});P('Quote',{m:'´',t:'¨'});P('Backslash',{m:'Ç',t:''})}
+ if(t!='lap'){a=a.filter(k=>k.c!='Fn');a.find(k=>k.c=='Space').w=44}
+ return a}
+function mapa(t,a){const M={' ':[['Space']]},es=t=='es';
+ a.forEach(k=>{if(/^Key/.test(k.c)){M[k.m.toLowerCase()]=[[k.c]];M[k.m]=[['Shift',k.c]]}else if(k.m.length==1&&k.c!='MetaLeft'){M[k.m]=[[k.c]];if(k.t)M[k.t]=[['Shift',k.c]]}});
+ M['ñ']=[['Semicolon']];M['Ñ']=[['Shift','Semicolon']];if(es){M['ç']=[['Backslash']];M['Ç']=[['Shift','Backslash']]}
+ Object.entries(es?{'\\':'Backquote','|':'Digit1','@':'Digit2','#':'Digit3','~':'Digit4','€':'Digit5','¬':'Digit6','[':'BracketLeft',']':'BracketRight','{':'Quote','}':'Backslash'}:{'@':'KeyQ','\\':'Minus','~':'BracketRight','^':'Quote','`':'Backslash','¬':'Backquote'}).forEach(([c,k])=>M[c]=[['AltRight',k]]);
+ const d=es?'Quote':'BracketLeft';
+ 'aeiou'.split('').forEach((v,i)=>{M['áéíóú'[i]]=[[d],['Key'+v.toUpperCase()]];M['ÁÉÍÓÚ'[i]]=[[d],['Shift','Key'+v.toUpperCase()]]});
+ return M}
+const need=c=>{const st=MP[c];return st?st[S.dead&&st.length>1?1:0].map(x=>x=='Shift'?'ShiftLeft':x):[]};
+const cell=k=>`<div class="k ${k.x} ${k.t?'t':''}" data-c="${k.c}" style="grid-column:span ${k.w}">${k.t?`<i>${esc(k.t)}</i>`:''}<b>${k.m.includes('class=lg')?k.m:esc(k.m)}</b>${k.s?`<s>${k.s}</s>`:''}</div>`;
+const MOD=new Set('ShiftLeft ShiftRight ControlLeft ControlRight AltLeft AltRight MetaLeft'.split(' '));
+const NM={ControlLeft:'Ctrl',ShiftLeft:'Shift',ShiftRight:'Shift',Fn:'Fn',Backspace:'⌫ Borrar',CapsLock:'Bloq Mayús'},nm=c=>NM[c]||c.replace('Key','');
+const HELD=new Set,KBS=[],MSG={set innerHTML(h){if(!h.startsWith(DEF))say(h)}};
+/* motor de animaciones (MANTÉN / TOCA) del módulo de teclado */
+function KB(el,a,msg){el.innerHTML=`<div class=kv><div class=kbd>${a.map(cell).join('')}</div><svg></svg></div>`;
+ const kv=el.firstChild,svg=kv.querySelector('svg'),m={};kv.querySelectorAll('.k').forEach(k=>m[k.dataset.c]=k);
+ let C=null,T=[],st=0,B=[];
+ const at=(ms,f)=>T.push(setTimeout(f,ms)),setM=h=>msg.innerHTML=h,stop=()=>{T.forEach(clearTimeout);T=[]};
+ const held=c=>HELD.has(c)||(/Left$/.test(c)&&HELD.has(c.replace('Left','Right')));
+ const clr=()=>{stop();Object.values(m).forEach(k=>k.classList.remove('hl','gd','nx'));kv.querySelectorAll('.bd').forEach(b=>b.remove());svg.innerHTML='';kv.classList.remove('okh');B=[]};
+ const txt=()=>C.h.length?`Mantén presionada <b>${C.h.map(nm).join(' + ')}</b> y toca <b>${nm(C.t)}</b>`:`Toca la tecla <b>${nm(C.t)}</b>`;
+ const holds=()=>B.filter(x=>x.b.classList.contains('hold'));
+ function build(){const vr=kv.getBoundingClientRect(),top=kv.querySelector('.kbd').getBoundingClientRect().top-vr.top-4,W=vr.width;
+  const px=cs=>cs.reduce((n,c)=>{const r=m[c].getBoundingClientRect();return n+r.left-vr.left+r.width/2},0)/cs.length;
+  const mk=(cls,html,x)=>{const b=document.createElement('div');b.className='bd '+cls;b.innerHTML=html;kv.append(b);b.style.top=top+'px';return{b,x,w:b.offsetWidth}};
+  const hd=C.h.length?mk('hold','<span>🤚</span><b>MANTÉN</b>',px(C.h)):null,tp=mk('tap','<span>☝️</span><b>TOCA</b>',px([C.t])),pl=hd?mk('plus','<b>+</b>',0):null;
+  if(hd){const [L,R]=hd.x<=tp.x?[hd,tp]:[tp,hd],min=(L.w+R.w)/2+pl.w+8;if(R.x-L.x<min){const c=(L.x+R.x)/2;L.x=c-min/2;R.x=c+min/2}
+   const o=Math.max(0,L.w/2-L.x)||-Math.max(0,R.x+R.w/2-W);L.x+=o;R.x+=o;pl.x=(L.x+R.x)/2+(L.w-R.w)/4}
+  else tp.x=Math.min(Math.max(tp.x,tp.w/2),W-tp.w/2);
+  B=[hd,pl,tp].filter(Boolean);B.forEach(x=>x.b.style.left=x.x+'px')}
+ const rv={hold(){C.h.forEach(c=>m[c]&&m[c].classList.add('hl'));holds().forEach(x=>x.b.classList.add('show'))},
+  tap(){m[C.t].classList.add('gd');B.filter(x=>!x.b.classList.contains('hold')).forEach(x=>x.b.classList.add('show'))}};
+ function play(){clr();st=0;build();const d=C.h.length?1:0,f=d?3600:2800;at(50,rv.hold);at(d?1400:50,rv.tap);
+  at(f,()=>{kv.querySelectorAll('.bd').forEach(b=>b.classList.remove('show'));Object.values(m).forEach(k=>k.classList.remove('hl','gd'))});at(f+900,play)}
+ function toHeld(){st=1;stop();rv.hold();rv.tap();kv.classList.add('okh');holds().forEach(x=>{x.b.firstChild.textContent='✅';x.b.lastChild.textContent='BIEN'});setM('¡Bien! Sin soltar, ahora toca <b>'+nm(C.t)+'</b>.')}
+ function good(){st=2;stop();[...C.h,C.t].forEach(c=>m[c]&&(m[c].classList.remove('hl','gd'),m[c].classList.add('nx')));setM('🎉 ¡Muy bien!');at(2200,()=>{setM(txt());play()})}
+ const flash=c=>{const k=m[c];if(k){k.classList.add('bad');setTimeout(()=>k.classList.remove('bad'),500)}};
+ const o={set(c){C=c;setM(txt());play()},clear(){C=null;clr()},redo(){C&&play()},flash,
+  hi(ids){C=null;clr();ids.forEach(c=>m[c]&&m[c].classList.add('nx'))},
+  down(c,on){m[c]&&m[c].classList.toggle('dn',on)},
+  key(c,down){if(!C||st==2)return;const hs=C.h.filter(x=>x!='Fn'),all=hs.length&&hs.every(held);
+   if(down){if(all&&st==0)toHeld();
+    if(c==C.t){if(st==1||!hs.length)good();else flash(c)}else if(!MOD.has(c)&&!C.h.includes(c))flash(c)}
+   else if(st==1&&!all)play()}};
+ KBS.push(o);return o}
+addEventListener('keydown',e=>{if(/INPUT|TEXTAREA/.test(e.target.tagName))return;if(S.typ&&/^(Space|Tab|Backspace|Arrow|Delete|Enter)/.test(e.code))e.preventDefault();if(e.repeat)return;HELD.add(e.code);KBS.forEach(k=>{k.down(e.code,1);k.key(e.code,1)})});
+addEventListener('keyup',e=>{HELD.delete(e.code);KBS.forEach(k=>{k.down(e.code,0);k.key(e.code,0)})});
+addEventListener('blur',()=>HELD.clear());addEventListener('resize',()=>KBS.forEach(k=>k.redo()));
+function kbd(){KBS.length=0;const a=lay(S.lay),el=$('#kbd');MP=mapa(S.lay,a);K=KB(el,a,MSG);el.classList.toggle('dk',!!S.dk)}
+const lb=()=>$('#lay').textContent='⌨ '+LN[S.lay]+' · Cambiar';
+function sw(){const o=['lap','lat','es'];S.lay=o[(o.indexOf(S.lay)+1)%3];kbd();lb();S.ms='?';S.typ&&rd()}
+/* ---------- Bloc de notas: texto fantasma y control de errores ---------- */
+const NP=`<div class=win id=np style="left:.5em;top:.5em;right:17.5em;bottom:18.4em"><div class=tt>📝 <span id=nt></span><button class=lb id=lay></button><button class=lb id=kc>🌓 Teclado negro/blanco</button><button class=lb id=hm>🏠 Volver al inicio</button><b><button class="wb x" id=bx>✕</button></b></div><div id=al></div><div id=pad><div id=txt></div></div></div><div id=kbd class=kw></div>`;
+function cargar(n,cb){const T0=T[n],b=()=>T0[Math.floor(Math.random()*T0.length)].x;
+ if(S.idx===undefined){fetch('../../textos/indice.json').then(r=>r.ok?r.json():null).catch(()=>null).then(j=>{S.idx=j;cargar(n,cb)});return}
+ const l=S.idx&&S.idx[n];if(!l||!l.length)return cb(b());
+ fetch('../../textos/'+l[Math.floor(Math.random()*l.length)]).then(r=>r.ok?r.text():Promise.reject()).then(x=>cb(x.replace(/\r/g,'').replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/[—–]/g,'-').replace(/…/g,'...').trim())).catch(()=>cb(b()))}
+function pick(n){S.lv=n;stage(NP);kbd();lb();F.np=()=>say('¡Ya tienes abierto el Bloc de notas!');$('#nt').textContent='Nivel '+n+': '+A[n].t+' - Bloc de notas';
+ $('#bx').onclick=()=>menu();$('#lay').onclick=sw;$('#hm').onclick=goHome;$('#kc').onclick=()=>$('#kbd').classList.toggle('dk',S.dk=!S.dk);
+ cargar(n,x=>{if(!$('#np')||S.lv!=n)return;Object.assign(S,{t:x,i:0,bad:'',err:0,ex:null,dead:0,typ:0,ms:'',caps:0});rd();
+  const go1=()=>{S.intro=1;S.typ=1;S.ms='';S.t0=Date.now();rd();say('¡Listo {n}! Escribe el texto. Yo te marco la tecla en verde.')};
+  S.intro?go1():run([{t:'Verás el texto en gris. Escríbelo letra por letra: la tecla <b>verde</b> te muestra cuál sigue. Si te equivocas, aparece en <b>rojo</b> y debes borrar con <b>⌫ Borrar</b>. Cuando haya que mantener una tecla (Shift, Ctrl), verás los carteles <b>MANTÉN</b> y <b>TOCA</b>.',n:1,d:()=>S.nx}],go1)})}
+function rt(){const t=S.t,i=S.i,r=t.slice(i);
+ $('#txt').innerHTML=`<span class=ok>${esc(t.slice(0,i))}</span>`+(S.bad!==''?`<span class=er>${esc(S.bad==' '?'·':S.bad)}</span>`:'')+'<span id=cur></span>'+(r[0]=='\n'?'<span class=gn>↵</span>\n':r?`<span class=gn>${esc(r[0])}</span>`:'')+`<span class=gh>${esc(r.slice(1)).replace(/\n/g,'↵\n')}</span>`;
+ const c=$('#pad'),b=$('#cur').offsetTop;if(b>c.scrollTop+c.clientHeight-70||b<c.scrollTop)c.scrollTop=Math.max(0,b-c.clientHeight/2)}
+function rd(){if(!$('#kbd')||!K)return;if(S.typ||S.t)rt();
+ const m=S.caps?'c':S.bad!==''?'b':S.ex!=null&&S.ex-S.i>=2?'z':'';
+ const a=$('#al');a.style.display=m?'block':'none';a.textContent=m=='c'?'⚠ Tienes activadas las MAYÚSCULAS. Presiona la tecla Bloq Mayús para desactivarlas.':m=='b'?'✖ Te equivocaste. Presiona la tecla ⌫ Borrar para corregir.':'↩ Borraste de más. Presiona Ctrl + Z para recuperar lo escrito.';
+ if(m!=S.ms){S.ms=m;if(m=='c')K.set({h:[],t:'CapsLock',a:[]});if(m=='b')K.set({h:[],t:'Backspace',a:[]});if(m=='z')K.set({h:['ControlLeft'],t:'KeyZ',a:[]});
+  if(m=='c')say('¡Atención, {n}! Tienes activadas las <b>mayúsculas</b>. Presiona la tecla <b>Bloq Mayús</b> para desactivarlas.');
+  if(m=='b')say('¡Casi, {n}! Esa no era. Presiona <b>⌫ Borrar</b> (la flecha de arriba a la derecha) para corregir.');
+  if(m=='z')say('Borraste de más, {n}. No pasa nada: presiona <b>Ctrl + Z</b> para deshacer.')}
+ if(!m)K.hi(S.typ&&S.i<S.t.length?need(S.t[S.i]):[])}
+function wrong(k,c){S.err++;S.bad=k=='Dead'?'´':k;S.dead=0;bad();xm();K.flash(c);rd()}
+addEventListener('keydown',e=>{if(!S.typ)return;const k=e.key;if(k=='CapsLock')return;{const cp=e.getModifierState('CapsLock')?1:0;if(cp!=S.caps){S.caps=cp;rd()}}
+ if(/^(Shift|Control|Alt|AltGraph|CapsLock|Meta|Tab|Escape|F\d+)$/.test(k))return;
+ if(S.caps){e.preventDefault();bad();xm();return}
+ e.preventDefault();document.activeElement.blur&&document.activeElement.blur();
+ if(e.ctrlKey&&!e.altKey&&!e.getModifierState('AltGraph')){if(k.toLowerCase()=='z'&&S.ex!=null){S.i=S.ex;S.ex=null;ok();rd()}return}
+ if(k=='Backspace'){if(S.dead)S.dead=0;else if(S.bad!=='')S.bad='';else if(S.i>0){if(S.ex==null)S.ex=S.i;S.i--}rd();return}
+ const kk=k=='Enter'?'\n':k;if(kk.length>1&&kk!='Dead')return;
+ if(S.bad!==''){bad();xm();K.flash(e.code);return}
+ const t=S.t[S.i];
+ if(kk=='Dead'){if(AC1.includes(t)&&!S.dead){S.dead=1;ok();rd()}else wrong(kk,e.code);return}
+ if(kk==t){S.i++;S.ex=null;S.dead=0;ok();rd();if(S.i>=S.t.length)fin()}else wrong(kk,e.code)});
+addEventListener('keyup',e=>{if(!S.typ)return;const cp=e.getModifierState('CapsLock')?1:0;if(cp!=S.caps){S.caps=cp;rd()}});
+/* ---------- final: estrellas ---------- */
+function fin(){S.typ=0;S.done.add(S.lv);const q=S.t;rd();
+ setTimeout(()=>{if(!$('#np')||S.t!==q)return;const n=S.err==0?3:S.err<10?2:S.err<25?1:0,m=document.createElement('div');try{window.Tracker&&Tracker.registrar({app:'mecanografia',actividad:'nivel'+S.lv,estrellas:n,errores:S.err,segundos:Math.round((Date.now()-S.t0)/1000)})}catch(e){}m.id='mod';m.className='ov';m.style.display='flex';
+  m.innerHTML=`<div id=card><h1>🎉 ¡Felicitaciones ${S.name}, terminaste la tarea!</h1><div class=stars>${[0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join('')}</div><br><button class=big id=mc>▶ Continuar ejercitando</button> <button class=big id=mh style="background:#2b79c2">🏠 Volver al inicio</button></div>`;
+  document.body.append(m);$('#mc').onclick=menu;$('#mh').onclick=goHome;say('¡Felicitaciones {n}, terminaste la tarea!')},1200)}
+/* ---------- textos de práctica ---------- */
+const T={
+1:[{t:'TIC',x:`Las TIC son tecnologías para procesar y compartir información fácilmente.`},{t:'Informática',x:`La informática estudia el tratamiento automático de toda la información.`},{t:'Hardware y software',x:`El equipo físico es hardware y los programas son software.`}],
+2:[{t:'Periféricos',x:`Los periféricos son dispositivos conectados a la computadora para ingresar o extraer datos.
+El teclado y el mouse permiten enviar órdenes directas al sistema.
+Por otro lado, la pantalla y la impresora nos muestran los resultados procesados de forma clara y rápida.`},
+{t:'Tipos de periféricos',x:`Existen tres categorías principales de periféricos en una computadora:
+1. Periféricos de entrada: capturan datos externos.
+2. Periféricos de salida: muestran la información al usuario.
+3. Periféricos mixtos: realizan ambas funciones, como una pantalla táctil o un disco USB.`},
+{t:'Hardware vs. software',x:`Para que una computadora funcione necesita dos partes esenciales:
+El hardware abarca los componentes físicos como el procesador y la memoria RAM.
+El software incluye el sistema operativo y las aplicaciones que utilizas diariamente para escribir, estudiar y jugar.`}],
+3:[{t:'Informática y TIC',x:`La informática es la ciencia encargada de estudiar el tratamiento automático y racional de la información mediante sistemas computarizados. Por su parte, las Tecnologías de la Información y la Comunicación (TIC) agrupan el conjunto de herramientas, redes, programas y dispositivos que permiten compilar, procesar, almacenar y transmitir datos en diversos formatos (como texto, voz, imagen o video).
+En las últimas décadas, el impacto de las TIC ha transformado radicalmente la educación, el trabajo y la vida cotidiana. Gracias a la convergencia entre la computación y la conectividad a Internet, hoy es posible acceder a bibliotecas digitales globales, colaborar a distancia en tiempo real y automatizar procesos complejos. Comprender el funcionamiento de la informática no solo implica saber usar una computadora, sino también desarrollar un pensamiento crítico sobre el uso responsable y seguro de la tecnología en la sociedad actual.`},
+{t:'Hardware, software y sistema operativo',x:`En cualquier sistema informático se distingue una arquitectura fundamental dividida en dos pilares: el hardware y el software. El hardware representa la infraestructura tangible de la máquina; incluye componentes internos esenciales como la placa madre, el procesador (CPU), la memoria RAM y los discos de almacenamiento, así como los dispositivos externos conectables.
+Sin embargo, el hardware por sí solo no puede realizar ninguna tarea útil sin el software. El software se compone de la lógica, las instrucciones y los programas informáticos. Dentro del software, el Sistema Operativo (como Windows, Linux o macOS) actúa como el intermediario principal entre el usuario y los componentes físicos del equipo. Administra los recursos del sistema, gestiona la memoria y permite la ejecución de aplicaciones cotidianas como procesadores de texto, navegadores web y simuladores educativos.`},
+{t:'Periféricos de entrada, salida y almacenamiento',x:`Los periféricos son unidades auxiliares que se conectan a la unidad central de procesamiento de una computadora para permitir la interacción con el mundo exterior. Se clasifican según la dirección en la que fluye la información:
+En primer lugar, los periféricos de entrada introducen datos desde el exterior hacia el sistema. Ejemplos fundamentales son el teclado, el mouse, el micrófono y el escáner. En segundo lugar, los periféricos de salida reciben los datos procesados por la computadora y los presentan de forma comprensible para el ser humano; entre ellos destacan el monitor, la impresora y los altavoces.
+Por último, encontramos los periféricos de entrada y salida o mixtos, capaces de realizar ambas funciones de manera interactiva. En esta categoría se incluyen las pantallas táctiles, las tarjetas de red y las unidades de almacenamiento externo como los discos portátiles y las memorias USB.`}],
+4:[{t:'TIC e informática en la sociedad digital',x:`La Informática y las Tecnologías de la Información y la Comunicación (TIC) representan la columna vertebral del mundo moderno. La palabra "informática" proviene de la conjunción de las palabras "información" y "automática", haciendo referencia al conjunto de conocimientos científicos y técnicas que hacen posible el tratamiento automatizado de los datos.
+Por otro lado, el concepto de TIC es más amplio e integra tanto la informática como las telecomunicaciones y los medios audiovisuales. Las TIC abarcan desde la radio y la televisión analógica hasta los sistemas informáticos más avanzados, las redes de fibra óptica, la telefonía móvil de quinta generación (5G) y los servicios de computación en la nube.
+El propósito fundamental de las TIC en la educación y en el ámbito profesional es facilitar la gestión del conocimiento. A través de la digitalización, la información deja de estar confinada en soportes físicos de papel para convertirse en datos binarios almacenados en servidores a los que se puede acceder instantáneamente desde cualquier parte del planeta.
+Sin embargo, el crecimiento acelerado de estas tecnologías exige competencias digitales sólidas por parte de los usuarios. Desarrollar destrezas técnicas, como la mecanografía fluida, el dominio de sistemas operativos y la capacidad para interactuar de forma segura en entornos virtuales, resulta imprescindible para acortar la brecha digital y fomentar una alfabetización tecnológica integral en las aulas de estudio.`},
+{t:'Hardware y software: arquitectura y funcionamiento',x:`Para comprender a fondo cómo funciona una computadora personal, es indispensable analizar sus dos componentes estructurales: el Hardware y el Software. Ambos coexisten en un equilibrio constante donde ninguno puede operar eficazmente sin la presencia del otro.
+El Hardware abarca la totalidad de las piezas físicas, mecánicas y electrónicas que componen el equipo. Dentro de la caja o torre principal se encuentran los elementos más críticos:
+1. El Procesador o CPU (Unidad Central de Procesamiento): considerado el "cerebro" del equipo, encargado de ejecutar las instrucciones y realizar cálculos matemáticos.
+2. La Memoria RAM: la memoria de acceso aleatorio de alta velocidad que almacena temporalmente los datos de los programas que se están ejecutando en el momento.
+3. Las Unidades de Almacenamiento (HDD o SSD): encargadas de guardar de forma permanente el sistema operativo, los archivos del usuario y las aplicaciones instaladas.
+El Software, por su parte, es el conjunto intangible de código, programas, reglas y rutinas que le indican al hardware exactamente qué tareas debe llevar a cabo. El software se divide comúnmente en tres clases principales:
+* Software de Sistema: incluye los sistemas operativos que controlan la máquina a bajo nivel.
+* Software de Aplicación: herramientas diseñadas para realizar tareas específicas del usuario, como el "Bloc de Notas", hojas de cálculo o reproductores multimedia.
+* Software de Programación: entornos que permiten a los desarrolladores escribir y crear nuevos programas mediante lenguajes de programación.`},
+{t:'Periféricos (versión corta)',x:`Los periféricos son los dispositivos de hardware a través de los cuales la Unidad Central de Procesamiento (CPU) de la computadora se comunica con los usuarios o con otros sistemas externos. Se clasifican en cuatro grandes grupos:
+1. Periféricos de Entrada:
+Capturan y envían datos, órdenes o señales hacia la memoria interna de la computadora.
+* El Teclado: el dispositivo primario de entrada alfanumérica y de comandos.
+* El Mouse o Ratón: dispositivo apuntador para interactuar con la interfaz gráfica.
+2. Periféricos de Salida:
+Transforman la información procesada en un formato legible, visual o sonoro para el usuario.
+* El Monitor o Pantalla: la interfaz visual primaria.
+* La Impresora: plasma la información digital en un soporte físico.`}],
+5:[{t:'Símbolos y precios',x:`"Código #101": {precio: $2,500, descuento: 15%}. ¿Operación? (80 + 20) / 2 = 50. Contacto: admin@red.org; [estado: "OK"] & <sistema activo>.`},
+{t:'Fórmulas y correo',x:`¿Pregunta número 3? "Total: $99.90". Fórmula: {[100 * 5%] + (45 / 9)} = $10. ¡Éxito! Correo: info@tech.com #TIC2026. Lista: 1, 2, 3... & ¿datos guardados?`},
+{t:'Alerta de red',x:`¡Alerta de red! Servidor {IP: 192.168.1.1} -> "Usuario@Web". Cálculo: (150 - 50) * 2 = 200. ¿Aprobar [Sí/No]? $500 <= 100% #Datos & /archivos/conf.sys`}]};
+/* ---------- registro de actividades (agregar una = añadir su entrada en A y BL) ---------- */
+const A={1:{t:'Muy fácil',i:'🌱',f(){pick(1)}},2:{t:'Normal',i:'✏️',f(){pick(2)}},3:{t:'Avanzado',i:'📄',f(){pick(3)}},4:{t:'Difícil',i:'🏆',f(){pick(4)}},5:{t:'Símbolos y números',i:'🔣',f(){pick(5)}},
+6:{t:'Aprende a abrir el Bloc de notas',i:'📝',f(){let o=0,c=0;
+ F.np=()=>{o=1;$('#sm').style.display='none';stage(`<div class=win style="left:8em;top:3em;width:32em;height:16em"><div class=tt>📝 Sin título - Bloc de notas<b><button class="wb x" id=bx>✕</button></b></div><div style="flex:1;padding:.6em;color:#888">Aquí podrás escribir...</div></div>`);$('#bx').onclick=()=>{c=1;stage('')}};
+ run([st('Para escribir usamos el <b>Bloc de notas</b>. Lo encuentras en el menú Inicio o en el ícono 📝 del escritorio. Haz clic en el botón <b>Inicio</b>.',()=>$('#st'),()=>$('#sm').style.display=='block'||o,{ok:'#ipn'}),
+  st('Busca <b>Bloc de notas</b> en la lista y haz clic.',()=>$('#sn'),()=>o),
+  {t:'¡Se abrió el Bloc de notas! Aquí vamos a practicar la escritura.',n:1,d:()=>S.nx},
+  st('Para cerrarlo, haz clic en la <b>X</b> de arriba a la derecha de la ventana.',()=>$('#bx'),()=>c)],
+  ()=>{S.done.add(6);$('#cn').style.display='none';setTimeout(()=>{clean();say('¡Excelente {n}! Ya sabes abrir y cerrar el Bloc de notas.');S.tm=setTimeout(menu,1500)},1000)})}}
+};
+const BL=[['⌨️ Niveles de práctica',1,5],['📝 Bloc de notas',6,6]];
+/* ---------- pantalla de elección de teclado ---------- */
+const mini=a=>`<div>${a.map(([l,s,h])=>`<span class="mk${h?' hl':''}">${l}${s?`<em>${s}</em>`:''}</span>`).join('')}</div>`;
+$('#cards').innerHTML=`<div class=card data-l=lap><h2>Laptop (con tecla Fn)</h2>${mini([['Ctrl'],['Fn',0,1],['⊞']])}<p>Tiene la tecla <b>Fn</b> junto a Ctrl</p>${mini([['Q','@',1],['W'],['E']])}<p>La @ está <b>en la Q</b></p></div><div class=card data-l=lat><h2>Latinoamericano</h2>${mini([['Q','@',1],['W'],['E'],['R']])}<p>La @ está <b>en la Q</b> (con Alt Gr)</p>${mini([['O'],['P'],['´',0,1]])}<p>La tilde ´ está <b>al lado de la P</b></p></div><div class=card data-l=es><h2>Español (España)</h2>${mini([['1'],['2','@',1],['3'],['4']])}<p>La @ está <b>en el número 2</b></p>${mini([['K'],['L'],['Ñ'],['´',0,1]])}<p>La tilde ´ está <b>a la derecha de la Ñ</b></p></div>`;
+$$('.card').forEach(c=>c.onclick=()=>{S.lay=c.dataset.l;$('#kbs').style.display='none';menu()});
+vinit();$('#nm').focus();
+{const u=U.get();if(u&&u.n){S.name=String(u.n).replace(/[<>&"]/g,'');$('#nu').style.display='';$('#wel').style.display='none';$('#kbs').style.display='flex'}}
+</script></body></html>
