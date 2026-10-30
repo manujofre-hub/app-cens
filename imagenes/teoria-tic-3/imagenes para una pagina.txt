@@ -1,0 +1,93 @@
+# Lista de imágenes de la Clase 3: Software, internet y seguridad
+Carpeta destino: imagenes/teoria-tic-3/
+Formato: WebP o JPG (máximo 800 px para capturas, 1200 px para fotos, peso menor a 200 KB).
+
+========================================================================
+TEMA 1: ¿Qué es el software? (a01)
+========================================================================
+1. c3-soft-01.webp
+   - Qué debe mostrar: Ilustración o foto conceptual mostrando una laptop moderna de la cual flotan iconos luminosos de programas y código digital (representando la parte lógica intangible).
+   - Prompt IA: "A modern laptop open on a clean desk, with glowing holographic application icons and code floating out of the screen, conceptual technology, bright clean background, 4k resolution, high quality, editorial tech photography."
+
+========================================================================
+TEMA 2: Sistemas operativos (a02)
+========================================================================
+2. c3-so-windows.webp
+   - Qué debe mostrar: Captura de pantalla de Windows 10 u 11 con el menú Inicio desplegado y el escritorio limpio.
+   - Consejo: Captura de pantalla real de una compu del aula (recortada a 800x600 o similar).
+
+3. c3-so-macos.webp
+   - Qué debe mostrar: Escritorio de Apple macOS con el Dock de aplicaciones visible abajo.
+   - Prompt IA: "Clean desktop screenshot of macOS interface with bottom dock and minimalist desktop wallpaper, high quality."
+
+4. c3-so-linux.webp
+   - Qué debe mostrar: Escritorio de Linux (Huayra de Conectar Igualdad, o Ubuntu/Mint).
+   - Consejo: Captura de pantalla de una netbook de la escuela con Huayra.
+
+5. c3-so-android.webp
+   - Qué debe mostrar: Pantalla de inicio de un teléfono móvil Android con iconos de apps ordenados y reloj.
+   - Consejo: Captura directa de celular sin datos privados.
+
+6. c3-so-ios.webp
+   - Qué debe mostrar: Pantalla de inicio de un iPhone con su cuadrícula de apps característica.
+   - Prompt IA: "Front view of modern iPhone screen interface displaying colorful app grid on a clean abstract wallpaper, high resolution."
+
+========================================================================
+TEMA 3: Programas y aplicaciones (a03)
+========================================================================
+7. c3-apps-01.webp
+   - Qué debe mostrar: Monitor mostrando múltiples ventanas abiertas organizadas (un procesador de texto, un navegador y un reproductor).
+   - Prompt IA: "A modern computer screen showing organized multitasking windows: word document, web browser, and media player side by side, clean interface, daylight lighting, tech workplace."
+
+========================================================================
+TEMA 4: Archivos y extensiones (a04) - Capturas de programas
+========================================================================
+8.  c3-app-word.webp       -> Captura de Microsoft Word con un informe escolar simple.
+9.  c3-app-excel.webp      -> Captura de Excel con una tabla con números y bordes.
+10. c3-app-powerpoint.webp -> Captura de PowerPoint con una diapositiva colorida.
+11. c3-app-pdf.webp        -> Captura de un documento PDF abierto en el navegador.
+12. c3-app-fotos.webp      -> Captura de la aplicación Fotos o Paint mostrando un dibujo.
+13. c3-app-musica.webp     -> Captura de un reproductor de audio con lista de canciones.
+14. c3-app-video.webp      -> Captura de VLC o reproductor con un video en pausa.
+15. c3-app-blocnotas.webp  -> Captura del Bloc de notas con 3 líneas de texto.
+16. c3-app-compresor.webp  -> Captura de una carpeta comprimida .zip abierta en el explorador.
+17. c3-app-instalador.webp -> Captura de una ventana de instalación ("Siguiente / Instalar").
+
+========================================================================
+TEMA 5: Licencias del software (a05)
+========================================================================
+18. c3-lic-01.webp
+   - Qué debe mostrar: Comparación visual entre dos pantallas: una con candado cerrado y aviso comercial (privativo), y otra con código abierto y símbolo de compartir libre (software libre).
+   - Prompt IA: "Conceptual comparison of digital software licensing, one side with a golden security padlock and the other with an open green code symbol, high tech modern aesthetic, white background."
+
+========================================================================
+TEMA 6: Internet y la web (a06)
+========================================================================
+19. c3-web-01.webp
+   - Qué debe mostrar: Pantalla de navegador con la barra de direcciones URL destacada arriba (mostrando 'https://...').
+   - Prompt IA: "Close-up of a clean modern web browser top navigation bar with search bar and secure lock icon, crisp digital interface, clear lighting."
+
+========================================================================
+TEMA 7: Cómo viaja una página y la nube (a07)
+========================================================================
+20. c3-nube-01.webp
+   - Qué debe mostrar: Pasillo de un centro de datos real (datacenter) con filas de racks de servidores con luces LED verdes y azules parpadeando.
+   - Prompt IA: "Modern datacenter corridor with sleek server racks and subtle glowing blue and green LED lights, clean perspective, commercial technology photography."
+
+========================================================================
+TEMA 8: Cómo nos conectamos (a08)
+========================================================================
+21. c3-cables-mar.webp
+   - Qué debe mostrar: Mapa o render 3D del planeta Tierra mostrando las líneas brillantes de cables submarinos de fibra óptica conectando continentes por el océano.
+   - Prompt IA: "Planet Earth viewed from space with glowing fiber optic cables crossing oceans connecting continents, network visualization, dark space background, 4k cinematic render."
+
+22. c3-router-01.webp
+   - Qué debe mostrar: Router Wi-Fi hogareño moderno con sus antenas levantadas y luces de señal encendidas sobre una mesa blanca.
+   - Prompt IA: "Modern black Wi-Fi router with dual antennas and subtle green status lights on a wooden desk, clean interior background, realistic photo."
+
+========================================================================
+TEMA 9: Seguridad y convivencia digital (a09)
+========================================================================
+23. c3-seg-01.webp
+   - Qué debe mostrar: Pantalla de celular mostrando un mensaje sospechoso falso de banco o premio (ejemplo educativo de estafa tipo phishing) con un escudo de advertencia.
+   - Prompt IA: "Smartphone screen showing an incoming suspicious scam notification with a warning shield emblem, cyber security concept, realistic studio photo."
