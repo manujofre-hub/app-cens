@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ofimática 3 · Excel por dentro</title>
+<style>
+*{box-sizing:border-box;margin:0}
+body{font:13px "Segoe UI",Arial,sans-serif;height:100vh;overflow:hidden;background:linear-gradient(135deg,#0a5fc0,#06336b);color:#222}
+button,select{font:inherit;cursor:pointer}
+#w{position:fixed;inset:0 18em 0 0;display:flex;flex-direction:column;background:#fff}
+#ti{height:2.5em;background:#217346;color:#fff;display:flex;align-items:center;gap:.2em;padding-left:.6em}
+#ti svg{width:1.4em;height:1.4em}#qa{display:flex;gap:.1em}#qa button,#wc button{background:none;border:0;color:#fff;padding:.2em .3em;border-radius:2px}#qa button:hover,#wc button:hover{background:#ffffff33}
+#nm{flex:1;text-align:center}#sr{background:#fff;color:#777;border-radius:2px;padding:.2em .6em;width:14em;margin-right:.8em}#wc button{width:3.2em;height:2.5em}
+#tabs{background:#217346;display:flex;padding-left:.3em;overflow:hidden}#tabs span{padding:.45em .8em;color:#fff;cursor:pointer;white-space:nowrap}#tabs span:hover{background:#ffffff26}
+#tabs .on{background:#f3f3f3;color:#217346;font-weight:600}#tabs .ar{background:#185a34;font-weight:600;margin-right:.3em}
+#rib{background:#f3f3f3;border-bottom:1px solid #d1d1d1;display:flex;height:8.7em;padding:.2em .3em 0;overflow:hidden}
+.gr{display:flex;flex-direction:column;border-right:1px solid #d9d9d9;padding:0 .35em}.gi{flex:1;display:flex;gap:.15em;align-items:flex-start;padding-top:.15em}.gn{text-align:center;font-size:.85em;color:#555;padding:.2em 0;white-space:nowrap}
+.col{display:flex;flex-direction:column}.rw{display:flex;gap:.05em;align-items:center;margin-bottom:.25em}
+.b{display:flex;flex-direction:column;align-items:center;gap:.1em;border:1px solid transparent;border-radius:2px;background:none;padding:.2em .35em;color:#333;font-size:.92em;max-width:6em;text-align:center}
+.b svg{width:2.7em;height:2.7em}.b:hover{background:#e1e1e1;border-color:#c5c5c5}.b.s{flex-direction:row;padding:.2em .3em;max-width:none}.b.s svg{width:1.45em;height:1.45em}.b.lb{gap:.4em}
+#fb{display:flex;align-items:center;gap:.3em;padding:.25em .4em;border-bottom:1px solid #d1d1d1;background:#fff}
+#nbx{width:8em;border:1px solid #ccc;padding:.2em .4em;text-align:center}.fxi{color:#555;font-style:italic;font-weight:700;padding:0 .4em}#fx{flex:1;border:1px solid #ccc;padding:.2em .5em;font:inherit}
+#gw{flex:1;overflow:auto;position:relative}#gt{border-collapse:collapse;table-layout:fixed;user-select:none}
+#gt th{background:#e6e6e6;border:1px solid #c0c0c0;font-weight:400;color:#444;position:sticky;top:0;height:1.7em;z-index:2}#gt tbody th{position:sticky;left:0;width:3em;z-index:1}#gt th.hl{background:#cfe3d7;color:#185a34;font-weight:700}
+#gt td{border:1px solid #d4d4d4;height:1.7em;width:7.5em;padding:0 .3em;overflow:hidden;white-space:nowrap;cursor:cell}#gt td.sel{background:#e1efe7!important}#gt td.ac{outline:2px solid #217346;outline-offset:-2px;background:#fff!important}
+.chart{position:absolute;right:1.5em;top:2.5em;width:19em;height:13em;background:#fff;border:1px solid #aaa;box-shadow:0 2px 8px #0005;padding:.5em;z-index:5;display:flex;flex-direction:column}
+.chart .bars{flex:1;display:flex;align-items:flex-end;gap:.5em;border-bottom:1px solid #888;padding:0 .4em}.chart .bars div{flex:1;background:#4472c4;min-height:2px}.chart .lbl{display:flex;gap:.5em;padding:0 .4em;font-size:.8em}.chart .lbl span{flex:1;text-align:center}
+#shs{display:flex;background:#f0f0f0;border-top:1px solid #ccc;align-items:center;padding-left:.5em;height:2em}#shs span{background:#fff;color:#217346;font-weight:700;padding:.25em 1.2em;border-bottom:3px solid #217346}#shs i{margin-left:.7em;color:#217346;font-style:normal;font-size:1.3em}
+#sb{height:1.9em;background:#217346;color:#fff;display:flex;align-items:center;gap:1.4em;padding:0 .8em}#sb .r{margin-left:auto;display:flex;gap:.4em;align-items:center}#sb input{width:8em}
+.mini{background:#374151;color:#fff;border:0;border-radius:.3em;padding:.1em .5em}
+#qzw{position:absolute;inset:0;background:#fffffff2;z-index:20;display:none;padding:2em 4em;overflow:auto;font-size:1.15em}#qzw h2{color:#1e3a8a;margin-bottom:.6em}
+.opt{display:block;width:100%;margin:.4em 0;padding:.6em;border:2px solid #cbd5e1;background:#fff;border-radius:.6em;text-align:left;font-size:1.05em}.opt:hover{background:#eff6ff;border-color:#2b79c2}
+#toast{position:fixed;left:50%;top:40%;transform:translateX(-50%);background:#fff;border-left:6px solid #22c55e;box-shadow:0 4px 14px #0006;padding:.8em 1.2em;z-index:150;display:none}
+#panel{position:fixed;right:.5em;bottom:.5em;width:17em;display:flex;flex-direction:column;gap:.45em;align-items:flex-end;z-index:30}
+#bub{background:#fff;border-radius:1em;padding:.7em .9em;box-shadow:0 2px 8px #0006;line-height:1.4;font-size:.95em}
+.ent{display:block;margin-top:.5em;background:#2b79c2;color:#fff;border:0;border-radius:.4em;padding:.35em .9em}
+#bot{font-size:3em;animation:fl 2s infinite}@keyframes fl{50%{transform:translateY(-.15em)}}#bn{font-size:.75em;font-weight:700;color:#fff;background:#2b79c2;border-radius:.6em;padding:0 .7em;align-self:center}
+#skip{background:none;border:0;color:#ffffffaa;font-size:.8em;text-decoration:underline}.ver{color:#fff9;font-size:.75em}
+#ring{position:fixed;display:none;border:3px solid #e11;background:#ff000022;border-radius:8px;pointer-events:none;z-index:99;animation:pl 1s infinite}@keyframes pl{50%{box-shadow:0 0 0 6px #ff000040}}
+#tip{position:fixed;display:none;background:#fff;border:1px solid #aaa;box-shadow:2px 2px 6px #0004;padding:.4em .7em;z-index:98;max-width:17em;font-size:.92em;pointer-events:none}
+.xm{position:fixed;color:#dc2626;font:900 2.4em Arial;z-index:100;pointer-events:none;animation:xf .9s forwards}@keyframes xf{to{opacity:0;transform:scale(1.4)}}
+.ov{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:1em;z-index:200;color:#fff;text-align:center;background:linear-gradient(135deg,#0a5fc0,#06336b)}
+.ov input{font-size:1.4em;padding:.4em;border-radius:.4em;border:0;text-align:center}.big2{font-size:1.3em;padding:.5em 1.4em;border:0;border-radius:.5em;background:#22c55e;color:#fff}
+#cert{background:#fff;color:#222;border:6px double #b8860b;padding:1.5em 3em;border-radius:.5em}
+@media print{body>*:not(#fin){display:none!important}#fin{position:static;background:#fff;color:#000}#fin button,#fin h1{display:none}}
+</style></head><body><script src="../../js/guard.js?v=2"></script><button onclick="location.href='../../index.html'" style="position:fixed;top:.4em;right:.4em;z-index:9999;background:#1e3a8a;color:#fff;border:1px solid #93c5fd;border-radius:.4em;padding:.25em .6em;font-size:.85em;cursor:pointer;box-shadow:0 2px 6px #0004" title="Volver al inicio">🏠 Inicio</button>
+<div id=w>
+<div id=ti><div id=qa></div><div id=nm>Libro1 - Excel</div><div id=sr>🔍 ¿Qué desea hacer?</div><div id=wc><button>—</button><button>☐</button><button>✕</button></div></div>
+<div id=tabs></div><div id=rib></div>
+<div id=fb><input id=nbx readonly><span class=fxi>fx</span><input id=fx></div>
+<div id=gw><table id=gt></table></div><div id=shs><span>Hoja1</span><i>⊕</i></div>
+<div id=sb><span>Listo</span><span id=st></span><span class=r><button class=mini id=zmn>−</button><input type=range id=zr min=60 max=200 value=100><button class=mini id=zpl>+</button><span id=zv>100 %</span></span></div>
+<div id=qzw></div></div>
+<div id=panel><div id=bub><span id=bt></span></div><div id=bot>🤖</div><div id=bn>ManuBot</div><button id=skip>Saltar tarea</button>
+<div><button class=mini id=am>A−</button> <button class=mini id=ap>A+</button> <button class=mini id=vb>🔊</button> <span class=ver id=vr></span></div></div>
+<div id=ring></div><div id=tip></div><div id=toast></div>
+<div id=wel class=ov style="display:flex"><h1>📗 Excel por dentro</h1><p style="opacity:.85">Ofimática 3 · Conozco la planilla de cálculo y armo mi planilla de gastos</p><h2 style="font-weight:400">Diseñado por el Profesor: Mario Jofré</h2><p style="font-size:1.3em">Por favor, escribe tu nombre para comenzar:</p><input id=nm2 maxlength=30><small style="max-width:30em;opacity:.9">Para escribir una MAYÚSCULA mantén presionada la tecla Shift y toca la letra. Para un acento, toca primero la tecla ´ y después la vocal.</small><button class=big2 id=go>Ingresar</button></div>
+<div id=fin class=ov></div>
+<script>
+const VERSION='v1.0';const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];$('#vr').textContent=VERSION;
+let name='Estudiante',F={},si=0,wait=0,AC,cur='Inicio';
+function beep(f,d=.12,t=0){try{AC=AC||new AudioContext;const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.value=.07;o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+d)}catch(e){}}
+const good=()=>beep(660),bad=()=>beep(200,.25);
+const T=(x,y,s,c,w='400')=>`<text x=${x} y=${y} font-size=${s} font-weight=${w} fill=${c} stroke=none font-family=Arial>`,TX=(t,s=12,c='#217346',x=3,y=16)=>T(x,y,s,c,700)+t+'</text>';
+const I={paste:'<rect x=5 y=4 width=14 height=17 rx=1 fill=#f4d9a8 /><rect x=9 y=2 width=6 height=4 rx=1 fill=#fff /><rect x=11 y=9 width=9 height=12 fill=#fff />',copy:'<rect x=8 y=8 width=12 height=13 fill=#fff /><path d="M4 16V4h12"/>',cut:'<circle cx=7 cy=18 r=2.5/><circle cx=17 cy=18 r=2.5/><path d="M8.5 16L17 3M15.5 16L7 3"/>',
+bold:TX('B',17,'#333',6,18),ital:T(8,18,17,'#333')+'<tspan font-style=italic>I</tspan></text>',und:TX('U',16,'#333',6,16)+'<path d="M5 21h14"/>',bord:'<rect x=4 y=4 width=16 height=16 /><path d="M4 12h16M12 4v16"/>',fill:'<path d="M5 12l7-7 7 7-7 7z" fill=#fff /><path d="M3 22h18" stroke=#ff0 stroke-width=4 />',fcol:TX('A',16,'#333',6,16)+'<path d="M4 21h16" stroke=#e11 stroke-width=3 />',
+alL:'<path d="M4 6h16M4 10h10M4 14h16M4 18h10"/>',alC:'<path d="M4 6h16M7 10h10M4 14h16M7 18h10"/>',alR:'<path d="M4 6h16M10 10h10M4 14h16M10 18h10"/>',money:TX('$',17,'#217346',8,18),pct:TX('%',17,'#217346',4,18),comma:TX('000',9,'#217346',2,15),sum:TX('Σ',20,'#217346',4,19),fx:TX('fx',14,'#217346',2,17),
+sort:'<path d="M7 4v16M4 17l3 3 3-3M16 20V4M13 7l3-3 3 3"/>',sortaz:TX('A↓Z',9,'#217346',1,15),sortza:TX('Z↓A',9,'#217346',1,15),filter:'<path d="M4 5h16l-6 7v7l-4-2v-5z" fill=#fff />',find:'<circle cx=10 cy=10 r=6 fill=#fff /><path d="M15 15l6 6"/>',
+table:'<rect x=3 y=4 width=18 height=16 fill=#fff /><path d="M3 10h18M3 15h18M9 4v16M15 4v16"/><path d="M3 4h18v6H3z" fill=#a9d3b9 />',pvt:'<rect x=3 y=4 width=18 height=16 fill=#fff /><path d="M3 9h18M9 4v16" /><path d="M9 9h12v11H9z" fill=#a9d3b9 />',img:'<rect x=3 y=4 width=18 height=16 fill=#fff /><circle cx=8 cy=9 r=1.5 fill=#e6a700 /><path d="M3 18l6-6 4 4 3-3 5 5" />',shapes:'<circle cx=8 cy=9 r=5 fill=#f4b183 /><rect x=11 y=11 width=9 height=9 fill=#9db7e5 />',
+col:'<path d="M3 20h18"/><rect x=5 y=11 width=3 height=9 fill=#4472c4 /><rect x=10 y=6 width=3 height=14 fill=#ed7d31 /><rect x=15 y=9 width=3 height=11 fill=#a5a5a5 />',line:'<path d="M3 20h18M4 16l5-6 4 3 7-8"/>',pie:'<circle cx=12 cy=12 r=8 fill=#fff /><path d="M12 12V4a8 8 0 0 1 8 8z" fill=#ed7d31 />',
+spell:TX('ABC',9,'#2b579a',1,13)+'<path d="M5 19l4 3 10-9" stroke=#2b8a3e stroke-width=2.4 />',cmt:'<path d="M4 4h16v12H11l-5 4v-4H4z" fill=#ffe08a />',grid:'<rect x=3 y=3 width=18 height=18 fill=#fff /><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>',zoom:'<circle cx=10 cy=10 r=6 fill=#fff /><path d="M15 15l6 6M7 10h6M10 7v6"/>',
+z100:TX('100%',10,'#217346',1,16),save:'<path d="M4 4h13l3 3v13H4z"/><rect x=7 y=4 width=8 height=5 /><rect x=7 y=14 width=10 height=6 />',undo:'<path d="M8 5L3 10l5 5M3 10h11a6 6 0 0 1 0 12h-3"/>',redo:'<path d="M16 5l5 5-5 5M21 10H10a6 6 0 0 0 0 12h3"/>',st:'<rect x=4 y=4 width=16 height=16 fill=#fff />',marg:'<rect x=4 y=3 width=16 height=18 fill=#fff /><rect x=7 y=6 width=10 height=12 stroke-dasharray="2 2"/>',ori:'<rect x=3 y=7 width=10 height=14 fill=#fff /><rect x=11 y=3 width=11 height=8 fill=#fff />'};
+const COL={paste:'#b8742a',img:'#2b8a3e',find:'#217346',save:'#fff',undo:'#fff',redo:'#fff'};
+const ic=n=>`<svg viewBox="0 0 24 24" fill=none stroke="${COL[n]||'#3a3a3a'}" stroke-width=1.6 stroke-linecap=round stroke-linejoin=round>${I[n]||I.st}</svg>`;
+$('#qa').innerHTML=[['save','Guardar','Guarda el libro (Ctrl+G)'],['undo','Deshacer','Deshace la última acción (Ctrl+Z)'],['redo','Rehacer','Repite lo que deshiciste (Ctrl+Y)']].map(([i,l,t])=>`<button data-i=${i} data-l="${l}" data-t="${t}">${ic(i)}</button>`).join('');
+const TABS={Inicio:[['Portapapeles',['paste|Pegar|Inserta lo copiado o cortado|Ctrl+V',['cut|Cortar|Quita el contenido de la celda para pegarlo en otra|Ctrl+X','copy|Copiar|Duplica el contenido de la celda|Ctrl+C']]],
+ ['Fuente',[[['bold|Negrita|Letra más gruesa|Ctrl+N','ital|Cursiva|Letra inclinada|Ctrl+K','und|Subrayado|Subraya el contenido|Ctrl+S'],['bord|Bordes|Dibuja líneas alrededor de las celdas','fill|Color de relleno|Pinta el fondo de la celda (aquí, amarillo)','fcol|Color de fuente|Cambia el color de la letra (aquí, rojo)']]]],
+ ['Alineación',[[['alL|Alinear a la izquierda|Contenido pegado al borde izquierdo','alC|Centrar|Contenido en el medio de la celda','alR|Alinear a la derecha|Contenido pegado al borde derecho']]]],
+ ['Número',[[['money|Formato de moneda|Muestra el valor como dinero ($)','pct|Estilo porcentual|Muestra el número como porcentaje','comma|Estilo millares|Separa los miles con punto']]]],
+ ['Modificar',['sum|Autosuma|Suma los números de arriba. Elegí la celda debajo de ellos|Alt+=',['sort|Ordenar y filtrar|Ordena los datos','find|Buscar|Encuentra datos en la hoja|Ctrl+B']]]],
+Insertar:[['Tablas',['pvt|Tabla dinámica|Resume muchos datos en pocos clics','table|Tabla|Convierte los datos en una tabla']],['Gráficos',['col|Gráfico de columnas|Dibuja barras con los números seleccionados','line|Gráfico de líneas|Muestra cambios en el tiempo','pie|Gráfico circular|Muestra las partes de un total']],['Ilustraciones',['img|Imágenes|Inserta una imagen','shapes|Formas|Dibuja formas']]],
+'Disposición de página':[['Configurar página',['marg|Márgenes|Espacio en blanco al imprimir','ori|Orientación|Hoja vertical u horizontal']]],
+Fórmulas:[['Biblioteca de funciones',['fx|Insertar función|Ayuda a elegir una fórmula','sum|Autosuma|Suma los números de arriba','st|Financieras|Funciones de dinero e intereses','st|Lógicas|SI, Y, O','st|Texto|Funciones para letras','st|Fecha y hora|Funciones de calendario']]],
+Datos:[['Ordenar y filtrar',['sortaz|Ordenar de A a Z|Ordena de menor a mayor','sortza|Ordenar de Z a A|Ordena de mayor a menor','filter|Filtro|Muestra solo lo que te interesa']]],
+Revisar:[['Revisión',['spell|Ortografía|Busca errores de escritura|F7']],['Comentarios',['cmt|Nuevo comentario|Agrega una nota a la celda']]],
+Vista:[['Mostrar',['grid|Líneas de cuadrícula|Muestra u oculta las líneas de la hoja']],['Zoom',['zoom|Zoom|Acerca o aleja la hoja','z100|100%|Vuelve al tamaño normal']]],Ayuda:[['Ayuda',['st|Ayuda|Abre la ayuda de Excel|F1']]]};
+const one=s=>{const[i,l,t,k]=s.split('|');return`<button class=b data-i=${i} data-l="${l}" data-t="${t}" data-k="${k||''}">${ic(i)}<span>${l.split(' ').slice(0,2).join(' ')}</span></button>`},
+ sm=(s,lb)=>{const[i,l,t,k]=s.split('|');return`<button class="b s${lb?' lb':''}" data-i=${i} data-l="${l}" data-t="${t}" data-k="${k||''}">${ic(i)}${lb?'<span>'+l.split(' ')[0]+'</span>':''}</button>`};
+const item=e=>typeof e=='string'?one(e):Array.isArray(e[0])?`<div class=col>${e.map(r=>`<div class=rw>${r.map(x=>sm(x)).join('')}</div>`).join('')}</div>`:`<div class=col>${e.map(x=>sm(x,1)).join('')}</div>`;
+function tabs(){$('#tabs').innerHTML='<span class=ar>Archivo</span>'+Object.keys(TABS).map(k=>`<span data-n="${k}" class="${k==cur?'on':''}">${k}</span>`).join('');$('#rib').innerHTML=TABS[cur].map(([n,it])=>`<div class=gr><div class=gi>${it.map(item).join('')}</div><div class=gn>${n}</div></div>`).join('')}
+/* ---- hoja de cálculo ---- */
+const COLS='ABCDEFGHIJ'.split(''),NR=22;let D={A1:'Gasto',B1:'Importe',A2:'Alquiler',B2:'80000',A3:'Comida',B3:'120000',A4:'Servicios',B4:'35000',A5:'Transporte',B5:'25000',A6:'Total'},S={},sl={a:'A1',b:'A1'},drag=0,clip=null,dp=0;
+const rf=(c,r)=>COLS[c]+(r+1),pr=s=>{const m=/^([A-J])(\d+)$/.exec(s);return[COLS.indexOf(m[1]),+m[2]-1]};
+const rg=(a,b)=>{const[x1,y1]=pr(a),[x2,y2]=pr(b),o=[];for(let y=Math.min(y1,y2);y<=Math.max(y1,y2);y++)for(let x=Math.min(x1,x2);x<=Math.max(x1,x2);x++)o.push(rf(x,y));return o};
+const nums=a=>a.flat().filter(x=>typeof x=='number');
+function val(r){const w=D[r];if(w==null||w==='')return'';if(w[0]!='='){const n=+String(w).replace(',','.');return w.trim()!==''&&!isNaN(n)?n:w}
+ if(dp>20)return'#¡REF!';dp++;try{const f=w.slice(1).toUpperCase().replace(/;/g,',');if(!/^[A-Z0-9:+\-*\/().,% ]*$/.test(f))throw 0;
+ const g=f.replace(/([A-J]\d+)(?::([A-J]\d+))?/g,(m,a,b)=>b?`R("${a}","${b}")`:`V("${a}")`),V=x=>{const v=val(x);return typeof v=='number'?v:v===''?0:NaN},R=(a,b)=>rg(a,b).map(val),
+ r2=new Function('V','R','SUMA','PROMEDIO','MAX','MIN','CONTAR','return '+g)(V,R,(...a)=>nums(a).reduce((s,x)=>s+x,0),(...a)=>{const n=nums(a);return n.reduce((s,x)=>s+x,0)/n.length},(...a)=>Math.max(...nums(a)),(...a)=>Math.min(...nums(a)),(...a)=>nums(a).length);
+ return isFinite(r2)?r2:isNaN(r2)?'#¡VALOR!':'#¡DIV/0!'}catch(e){return'#¡NOMBRE?'}finally{dp--}}
+const fmt=(v,s)=>typeof v!='number'?v:s&&s.nf=='%'?(v*100).toLocaleString('es-AR',{maximumFractionDigits:2})+' %':s&&s.nf=='$'?'$ '+v.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}):s&&s.nf=='M'?v.toLocaleString('es-AR'):v.toLocaleString('es-AR',{maximumFractionDigits:6});
+$('#gt').innerHTML='<thead><tr><th></th>'+COLS.map(c=>`<th>${c}</th>`).join('')+'</tr></thead><tbody>'+Array.from({length:NR},(_,y)=>`<tr><th>${y+1}</th>`+COLS.map(c=>`<td data-r=${c}${y+1}></td>`).join('')+'</tr>').join('')+'</tbody>';
+const TD={};$$('#gt td').forEach(t=>TD[t.dataset.r]=t);
+function paint(){const sr=rg(sl.a,sl.b),hc=new Set(sr.map(r=>pr(r)[0])),hr=new Set(sr.map(r=>pr(r)[1]));
+ for(const r in TD){const t=TD[r],s=S[r]||{},v=val(r),st=t.style;t.textContent=fmt(v,s);st.fontWeight=s.b?700:'';st.fontStyle=s.i?'italic':'';st.textDecoration=s.u?'underline':'';st.color=s.c||'';st.background=s.bg||'';
+  st.textAlign=s.al=='l'?'left':s.al=='c'?'center':s.al=='r'?'right':typeof v=='number'?'right':'left';st.border=s.bd?'1px solid #000':'';t.classList.toggle('sel',sr.length>1&&sr.includes(r));t.classList.toggle('ac',r==sl.a)}
+ $$('#gt thead th:not(:first-child)').forEach((h,i)=>h.classList.toggle('hl',hc.has(i)));$$('#gt tbody th').forEach((h,i)=>h.classList.toggle('hl',hr.has(i)));
+ $('#nbx').value=sl.a==sl.b?sl.a:sl.a+':'+sl.b;if(document.activeElement!=$('#fx'))$('#fx').value=D[sl.a]||'';
+ const n=nums(sr.map(val));$('#st').textContent=n.length>1?`Promedio: ${(n.reduce((s,x)=>s+x,0)/n.length).toLocaleString('es-AR')}   Recuento: ${n.length}   Suma: ${n.reduce((s,x)=>s+x,0).toLocaleString('es-AR')}`:''}
+const each=f=>{rg(sl.a,sl.b).forEach(r=>f(S[r]=S[r]||{}));paint()},fx=$('#fx'),pick=(a,b)=>{sl={a,b:b||a};paint()};
+$('#gt').onmousedown=e=>{const t=e.target.closest('td');if(!t)return;if(document.activeElement==fx)commit(0);drag=1;e.shiftKey?pick(sl.a,t.dataset.r):pick(t.dataset.r);e.preventDefault()};
+$('#gt').onmouseover=e=>{const t=e.target.closest('td');if(drag&&t)pick(sl.a,t.dataset.r)};addEventListener('mouseup',()=>drag=0);$('#gt').ondblclick=e=>{if(e.target.closest('td'))fx.focus()};
+function commit(mv){D[sl.a]=fx.value;if(fx.value==='')delete D[sl.a];fx.blur();if(mv==1)mov(0,1);else if(mv==2)mov(1,0);else paint()}
+function mov(dx,dy){const[x,y]=pr(sl.a);pick(rf(Math.min(9,Math.max(0,x+dx)),Math.min(NR-1,Math.max(0,y+dy))))}
+fx.oninput=()=>{TD[sl.a].textContent=fx.value};
+fx.onkeydown=e=>{if(e.key=='Enter'){commit(1);e.preventDefault()}else if(e.key=='Tab'){commit(2);e.preventDefault()}else if(e.key=='Escape'){fx.value=D[sl.a]||'';fx.blur();paint()}};
+document.addEventListener('keydown',e=>{if(/INPUT|SELECT/.test(e.target.tagName))return;const k=e.key;
+ if(k.startsWith('Arrow')){mov(k=='ArrowRight'?1:k=='ArrowLeft'?-1:0,k=='ArrowDown'?1:k=='ArrowUp'?-1:0);e.preventDefault()}else if(k=='Delete'){rg(sl.a,sl.b).forEach(r=>delete D[r]);paint()}
+ else if(k=='Enter')mov(0,1);else if(k.length==1&&!e.ctrlKey&&!e.altKey){fx.value=k;fx.focus();fx.oninput();e.preventDefault()}});
+const tg=k=>()=>{const f=!(S[sl.a]||{})[k];each(s=>s[k]=f)};
+const A={bold:tg('b'),ital:tg('i'),und:tg('u'),fill:()=>each(s=>s.bg='#ffff00'),fcol:()=>each(s=>s.c='#e11111'),bord:()=>each(s=>s.bd=1),alL:()=>each(s=>s.al='l'),alC:()=>each(s=>s.al='c'),alR:()=>each(s=>s.al='r'),
+ money:()=>each(s=>s.nf='$'),pct:()=>each(s=>s.nf='%'),comma:()=>each(s=>s.nf='M'),copy:()=>{clip={raw:D[sl.a],s:{...(S[sl.a]||{})}};say('Copiaste la celda <b>'+sl.a+'</b>. Elegí otra y presioná <b>Pegar</b>.')},cut:()=>{A.copy();delete D[sl.a];paint()},
+ paste:()=>{if(!clip)return say('Primero copiá una celda.');D[sl.a]=clip.raw;S[sl.a]={...clip.s};paint()},
+ sum:()=>{const[x,y]=pr(sl.a);let t=y;while(t>0&&typeof val(rf(x,t-1))=='number')t--;if(t==y)return say('Para usar <b>Autosuma</b>, hacé clic en la celda <b>debajo</b> de los números y volvé a tocar el botón.');D[sl.a]=`=SUMA(${rf(x,t)}:${rf(x,y-1)})`;paint()},
+ col:()=>{const c=rg(sl.a,sl.b).filter(r=>typeof val(r)=='number');if(c.length<2)return say('Seleccioná primero varios números arrastrando el mouse, por ejemplo <b>B2 a B5</b>.');const mx=Math.max(...c.map(val));
+  $('#gw').insertAdjacentHTML('beforeend',`<div class=chart><b style="font-size:.9em">Título del gráfico <span style="float:right;cursor:pointer" onclick="this.closest('.chart').remove()">✕</span></b><div class=bars>${c.map(r=>`<div style="height:${val(r)/mx*100}%"></div>`).join('')}</div><div class=lbl>${c.map(r=>`<span>${D[rf(pr(r)[0]-1,pr(r)[1])]||r}</span>`).join('')}</div></div>`)},
+ grid:()=>$('#gt').classList.toggle('ng'),z100:()=>zset(100),
+ save:()=>{F.sv=1;$('#nm').textContent='Gastos del hogar - Excel';const t=$('#toast');t.innerHTML='✅ Guardado como <b>Gastos del hogar.xlsx</b>';t.style.display='block';setTimeout(()=>t.style.display='none',2500)}};
+$('#tabs').onclick=e=>{const t=e.target;if(t.classList.contains('ar'))return say('<b>Archivo</b> abre Guardar, Abrir e Imprimir.');if(t.dataset.n){cur=t.dataset.n;tabs()}};
+$('#rib').onmousedown=e=>e.preventDefault();
+document.addEventListener('click',e=>{const b=e.target.closest('#rib .b,#qa button');if(b){const k=b.dataset.i;A[k]?A[k]():say(`<b>${b.dataset.l}</b>: ${b.dataset.t}.`)}});
+const tip=$('#tip');document.addEventListener('mouseover',e=>{const b=e.target.closest('[data-l]');if(!b||!b.dataset.t){tip.style.display='none';return}tip.innerHTML=`<b>${b.dataset.l}${b.dataset.k?' ('+b.dataset.k+')':''}</b><br>${b.dataset.t}`;tip.style.display='block';const r=b.getBoundingClientRect();tip.style.left=Math.min(r.left,innerWidth-tip.offsetWidth-8)+'px';tip.style.top=r.bottom+6+'px'});
+document.addEventListener('mousedown',()=>tip.style.display='none');
+function zset(v){v=Math.min(200,Math.max(60,v));$('#zr').value=v;$('#zv').textContent=v+' %';$('#gt').style.zoom=v/100}
+$('#zr').oninput=e=>zset(+e.target.value);$('#zmn').onclick=()=>zset(+$('#zr').value-10);$('#zpl').onclick=()=>zset(+$('#zr').value+10);
+/* ---- ManuBot ---- */
+let es,voice=true;const fv=()=>{es=(speechSynthesis.getVoices()||[]).find(v=>v.lang.toLowerCase().startsWith('es'))};try{fv();speechSynthesis.onvoiceschanged=fv}catch(e){}
+function say(t,n){t=t.replace('{n}',name);$('#bt').innerHTML=t+(n?'<button class=ent onclick="F.nx=1">Entendido ▶</button>':'');if(voice&&es){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance((t+(n?' Presiona el botón Entendido para continuar.':'')).replace(/<[^>]+>/g,'').replace(/Ctrl/g,'Control').replace(/\.xlsx/g,' punto ex el es equis').replace(/=SUMA/g,'igual suma'));u.voice=es;u.lang=es.lang;speechSynthesis.speak(u)}}
+$('#vb').onclick=()=>{voice=!voice;$('#vb').textContent=voice?'🔊':'🔇';if(!voice)speechSynthesis.cancel()};
+let fz=13;$('#am').onclick=()=>document.body.style.fontSize=(fz=Math.max(11,fz-2))+'px';$('#ap').onclick=()=>document.body.style.fontSize=(fz=Math.min(22,fz+2))+'px';
+function xm(){const d=document.createElement('div');d.className='xm';d.textContent='✖';d.style.left=(innerWidth*.35)+'px';d.style.top=(innerHeight*.4)+'px';document.body.append(d);setTimeout(()=>d.remove(),900)}
+/* ---- guion ---- */
+const G=k=>`#rib .gr:nth-child(${k})`,cell=r=>`td[data-r="${r}"]`,rg2=(a,b)=>(sl.a==a&&sl.b==b)||(sl.a==b&&sl.b==a);
+const E=(t,z,o)=>({t,n:1,z,o}),C=(t,r,ok,o)=>({t,r,ok,o}),TB=n=>C('Hacé clic en la pestaña <b>'+n+'</b>.',`#tabs [data-n="${n}"]`,()=>cur==n),Z=a=>a.map(([z,t])=>E(t,z));
+const QZ=[['¿Cómo se llama la celda que está en la columna C y la fila 4?',['4C','C4','CD'],1],['¿Con qué símbolo empieza toda fórmula?',['@','+','='],2],['¿Qué hace el botón Autosuma?',['Suma los números de arriba','Pinta las celdas','Borra la columna'],0],['¿Dónde se ve la fórmula de una celda?',['En la barra de fórmulas','En la regla','En la barra de estado'],0],['¿Con qué terminación se guarda un archivo de Excel?',['.docx','.pptx','.xlsx'],2]];
+const ST=[E('Hola {n}. Hoy conocemos <b>Excel por dentro</b>. Excel es la planilla de cálculo: sirve para ordenar datos y hacer cuentas. Un archivo de Excel se llama <b>libro</b> y tiene una o más <b>hojas</b>.',null,()=>pick('A1')),
+ ...Z([['#ti','La <b>barra de título</b> muestra el nombre del libro: <b>Libro1</b>, porque todavía no lo guardaste.'],['#qa','En la <b>barra de acceso rápido</b> están <b>Guardar</b>, <b>Deshacer</b> y <b>Rehacer</b>.'],['#tabs','Las <b>pestañas</b> agrupan las herramientas por tema. <b>Archivo</b> sirve para guardar, abrir e imprimir.'],['#rib','La <b>cinta de opciones</b> muestra los botones de la pestaña elegida, agrupados. El nombre del grupo está abajo.'],['#nbx','El <b>cuadro de nombres</b> dice en qué celda estás parado, por ejemplo <b>A1</b>.'],['#fx','La <b>barra de fórmulas</b> muestra lo que hay dentro de la celda activa. Si hay un cálculo, acá ves la fórmula y en la celda ves el resultado.'],['#gt thead','Estas letras son las <b>columnas</b>: A, B, C…'],['#gt tbody th','Estos números son las <b>filas</b>: 1, 2, 3…'],['td.ac','El recuadro verde es la <b>celda activa</b>. Cada celda se llama por su columna y su fila: esta es <b>A1</b>. Es donde se escribe.'],['#shs','Abajo están las <b>hojas</b> del libro. Con el botón ⊕ agregás más.'],['#sb','La <b>barra de estado</b> muestra la suma, el promedio y el recuento de las celdas que seleccionás. A la derecha está el zoom.']]),
+ E('Ahora recorremos las pestañas. Empezamos por <b>Inicio</b>.'),
+ ...Z([[G(1),'<b>Portapapeles</b>: copiar, cortar y pegar celdas.'],[G(2),'<b>Fuente</b>: negrita, cursiva, subrayado, bordes, color de relleno y de letra.'],[G(3),'<b>Alineación</b>: izquierda, centro o derecha dentro de la celda.'],[G(4),'<b>Número</b>: muestra los valores como dinero, porcentaje o con separador de miles.'],[G(5),'<b>Modificar</b>: tiene la <b>Autosuma</b>, el botón de las sumas rápidas, y ordenar y buscar.']]),
+ TB('Insertar'),...Z([[G(1),'<b>Tablas</b>: ordena los datos con estilo y resume mucha información.'],[G(2),'<b>Gráficos</b>: dibujan los números en barras, líneas o círculos.']]),
+ TB('Fórmulas'),E('<b>Biblioteca de funciones</b>: las funciones son cálculos ya armados, como SUMA, PROMEDIO, MAX y MIN.',G(1)),
+ TB('Datos'),E('<b>Ordenar y filtrar</b>: acomoda los datos de menor a mayor o muestra solo los que te interesan.',G(1)),
+ TB('Vista'),E('<b>Mostrar y Zoom</b>: oculta las líneas de la hoja y acerca o aleja la vista.',G(1)),
+ E('Hay más pestañas: <b>Disposición de página</b> (para imprimir), <b>Revisar</b> (ortografía y comentarios) y <b>Ayuda</b>.','#tabs'),
+ E('¡A practicar! Vamos a completar una <b>planilla de gastos del hogar</b>. Si te equivocás, probá con Ctrl+Z o volvé a escribir el dato.'),
+ TB('Inicio'),
+ C('Hacé clic en la celda <b>B2</b> (el importe del alquiler).',cell('B2'),()=>sl.a=='B2'),
+ E('Mirá la barra de fórmulas: muestra el contenido de B2, el número <b>80000</b>.','#fx'),
+ C('Ahora seleccioná varias celdas: mantené el clic en <b>B2</b> y arrastrá hasta <b>B5</b>.',cell('B2'),()=>rg2('B2','B5')),
+ E('Mirá la barra de estado: Excel calculó la <b>suma</b> de lo seleccionado, sin que tengas que hacer nada.','#st'),
+ C('Hacé clic en la celda <b>B6</b>, donde va el total.',cell('B6'),()=>sl.a=='B6'),
+ C('Presioná <b>Autosuma</b>: Excel arma solo la fórmula.','[data-i=sum]',()=>/^=SUMA\(B2:B5\)$/.test(D.B6||'')),
+ E('Ahora la celda B6 muestra el total, y en la barra de fórmulas ves <b>=SUMA(B2:B5)</b>. Toda fórmula empieza con el signo <b>=</b>.','#fx'),
+ C('Probá que calcula sola: hacé clic en <b>B2</b>, escribí <b>90000</b> y presioná <b>Enter</b>.',cell('B2'),()=>D.B2=='90000'),
+ E('¡Mirá! El total se actualizó solo. Esa es la gran ventaja de las fórmulas.',cell('B6')),
+ C('Escribamos una fórmula propia: hacé clic en la celda <b>C2</b>.',cell('C2'),()=>sl.a=='C2'),
+ C('Escribí <b>=B2/10</b> (la décima parte del alquiler) y presioná <b>Enter</b>.',cell('C2'),()=>(D.C2||'').replace(/ /g,'').toUpperCase()=='=B2/10'),
+ C('Ahora el formato. Seleccioná de <b>B2</b> a <b>B6</b> arrastrando el mouse.',cell('B2'),()=>rg2('B2','B6')),
+ C('Presioná <b>Formato de moneda</b> ($).','[data-i=money]',()=>S.B2&&S.B2.nf=='$'),
+ C('Seleccioná los títulos: arrastrá de <b>A1</b> a <b>B1</b>.',cell('A1'),()=>rg2('A1','B1')),
+ C('Presioná <b>Negrita</b>.','[data-i=bold]',()=>S.A1&&S.A1.b&&S.B1&&S.B1.b),
+ C('Presioná <b>Color de relleno</b> para pintar los títulos.','[data-i=fill]',()=>S.A1&&S.A1.bg),
+ C('Ahora un gráfico. Seleccioná los importes: arrastrá de <b>B2</b> a <b>B5</b>.',cell('B2'),()=>rg2('B2','B5')),
+ TB('Insertar'),C('Presioná <b>Gráfico de columnas</b>.','[data-i=col]',()=>$('.chart')),
+ E('¡Ahí está! Cada barra es un gasto. Se ve de un vistazo cuál es el más grande.','.chart'),
+ C('Para terminar, presioná <b>Guardar</b>. Excel guarda el archivo con la terminación <b>.xlsx</b>.','[data-i=save]',()=>F.sv),
+ {t:'Última prueba: 5 preguntas sobre lo que aprendiste.',ok:()=>F.k>=5,o:()=>{F.k=0;const q=()=>{const z=$('#qzw');z.style.display='block';if(F.k>=5){z.style.display='none';return}const Q=QZ[F.k];z.innerHTML=`<h2>Pregunta ${F.k+1} de 5</h2><p style="margin-bottom:.6em">${Q[0]}</p>`+Q[1].map((o,i)=>`<button class=opt data-i=${i}>${o}</button>`).join('');$$('#qzw .opt').forEach(b=>b.onclick=()=>{if(+b.dataset.i==Q[2]){good();F.k++;q()}else{bad();xm();say('Casi. Pensá de nuevo y probá otra opción.')}})};q()}},
+ {t:'¡Excelente, {n}! Ya armaste tu primera planilla con fórmulas y gráfico. En la próxima clase conocemos PowerPoint.',n:1,end:1}];
+/* ---- motor ---- */
+function show(){const s=ST[si];F={};wait=0;s.o&&s.o();say(s.t,s.n)}
+function next(){if(ST[si].end)return finish();si++;show()}
+setInterval(()=>{const s=ST[si],r=$('#ring');if(!s||wait){r.style.display='none';return}
+ let dn=0;try{dn=F.nx||(s.ok&&s.ok())}catch(x){}if(dn){good();wait=1;r.style.display='none';setTimeout(next,F.nx?400:1500);return}
+ let e=null;try{e=$(s.z||s.r||(s.n?'.ent':'#none'))}catch(x){}const b=e&&e.getBoundingClientRect();if(!b||!b.width||(s.ok&&!s.r)){r.style.display='none';return}
+ Object.assign(r.style,{display:'block',left:b.left-5+'px',top:b.top-5+'px',width:b.width+10+'px',height:b.height+10+'px'})},200);
+$('#skip').onclick=()=>{if(wait)return;if(ST[si].ok&&!ST[si].r&&F.k!=null)F.k=5;else F.nx=1};
+function finish(){$('#ring').style.display='none';$('#fin').innerHTML=`<h1>🎉 ¡Felicitaciones ${name}!</h1><div id=cert><small>CERTIFICADO DE FINALIZACIÓN</small><h2>${name}</h2><p>completó la clase «Ofimática 3 · Excel por dentro»</p><p>${new Date().toLocaleDateString('es-AR')}</p></div><button class=big2 onclick=print()>🖨️ Imprimir certificado</button><button class=big2 style="background:#2b79c2" onclick=location.reload()>🔄 Volver a empezar</button>`;$('#fin').style.display='flex';[523,659,784,1046].forEach((f,i)=>beep(f,.2,i*.15))}
+function start(){name=$('#nm2').value.replace(/[<>&"]/g,'').trim()||'Estudiante';$('#wel').style.display='none';si=0;show()}
+(function(){var a=JSON.parse(localStorage.getItem('mj:alumno')||'null');if(!a||!a.nombre){try{var m=location.search.match(/[?&]alumno=([^&]+)/);if(m){a={nombre:decodeURIComponent(m[1].replace(/\+/g,' ')),curso:'',id:m[1].toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''),creado:new Date().toISOString()};localStorage.setItem('mj:alumno',JSON.stringify(a))}}catch(e){}}if(a&&a.nombre){const nm=document.getElementById('nm2');if(nm){nm.value=a.nombre;setTimeout(()=>{const go=document.getElementById('go');if(go)go.click()},50)}}})();$('#go').onclick=start;$('#nm2').onkeydown=e=>{if(e.key=='Enter')start()};$('#nm2').focus();tabs();paint();
+</script>
+</body></html>
+<!-- Versión: v1.0 · Ofimática 3 · Excel por dentro -->

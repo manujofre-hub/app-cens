@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Instalar la voz en español en Windows 10</title>
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font:16px "Segoe UI",Arial,sans-serif;overflow:hidden;user-select:none;background:#073a78;color:#222}
+button{font:inherit;cursor:pointer}
+#top{position:fixed;top:0;left:0;right:0;height:2.3em;background:#1f2937;color:#fff;display:flex;align-items:center;gap:.4em;padding:0 .5em;z-index:50}
+#top button{background:#374151;color:#fff;border:0;border-radius:.3em;padding:.15em .6em}
+#pb{flex:1;height:1.2em;background:#4b5563;border-radius:1em;overflow:hidden;position:relative}
+#pf{height:100%;width:0;background:#22c55e;transition:.4s}
+#pt{position:absolute;inset:0;text-align:center;font-size:.75em;line-height:1.6;color:#fff}
+#desk{position:fixed;top:2.3em;bottom:2.5em;left:0;right:0;overflow:hidden;background:radial-gradient(ellipse at 75% 45%,#4fb3ff,#0a5fc0 40%,#06336b)}
+#stage{position:absolute;inset:0}
+#tb{position:fixed;bottom:0;left:0;right:0;height:2.5em;background:#101820;display:flex;align-items:center;z-index:60;color:#fff}
+#st{width:3em;height:100%;border:0;background:none}#st:hover{background:#fff3}
+#tasks{flex:1}#cr{font-size:.7em;color:#fffc;padding-right:.8em}#ck{padding:0 1em;font-size:.85em}
+#sm{position:fixed;left:0;bottom:2.5em;width:19em;height:22em;background:#222;color:#fff;z-index:70;display:none}
+#sw{display:flex;height:100%}#ss{width:3em;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.5em;padding:.5em 0;font-size:1.3em}
+#ss div{padding:.1em .25em;cursor:pointer}#ss div:hover{background:#fff3}#sl{padding:.7em;flex:1}#sl p{padding:.4em}
+#side{position:fixed;right:.5em;bottom:2.9em;width:16em;z-index:80;display:flex;flex-direction:column-reverse;gap:.5em;pointer-events:none}#side>*{pointer-events:auto}
+#bit{display:flex;flex-direction:column;align-items:flex-end;gap:.2em}
+#bot{font-size:3.2em;animation:fl 2s infinite}@keyframes fl{50%{transform:translateY(-.15em)}}
+#bw{display:flex;flex-direction:column;align-items:center}#bn{font-size:.75em;font-weight:700;color:#fff;background:#2b79c2;border-radius:.6em;padding:0 .7em}
+#bub{background:#fff;border-radius:1em;padding:.6em .9em;box-shadow:0 2px 8px #0006;font-size:.9em;line-height:1.35}
+.nov{margin-top:.5em;font-size:.8em;color:#b45309;font-weight:600}
+.ew{display:flex;align-items:center;gap:.4em;margin-top:.4em}
+.ent{background:#2b79c2;color:#fff;border:0;border-radius:.4em;padding:.3em .8em}
+.arw{color:#16a34a;font-size:1.8em;font-weight:900;animation:ar .6s infinite}@keyframes ar{50%{opacity:.15;transform:translateX(6px)}}
+#hb{display:flex;gap:.3em;flex-wrap:wrap}#hb button{border:0;border-radius:1em;padding:.3em .7em;font-weight:700;background:#f59e0b}
+#ring{position:fixed;display:none;border:4px solid rgba(255,0,0,.85);background:rgba(255,0,0,.25);border-radius:50%;pointer-events:none;z-index:9999;animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.2)}}
+.xm{position:fixed;color:#dc2626;font:900 2.4em Arial,sans-serif;z-index:10000;pointer-events:none;text-shadow:0 0 3px #fff;animation:xf .9s forwards}@keyframes xf{to{opacity:0;transform:scale(1.4)}}
+#blkr{position:fixed;inset:2.3em 0 0 0;z-index:75;display:none}
+.win{position:absolute;inset:0 17em 0 0;background:#fff;border:1px solid #2b79c2;box-shadow:0 8px 30px #0008;display:flex;flex-direction:column}
+.tt{background:#2b79c2;color:#fff;padding:.3em .6em;display:flex;align-items:center}.tt b{margin-left:auto}
+.wb{border:0;background:none;color:#fff;width:2.6em;height:1.8em}.wb:hover{background:#e81123}
+#wb{flex:1;display:flex;min-height:0}
+.hm{flex:1;padding:1em 1.5em;overflow:auto;background:#f3f3f3}.hm h2{margin-bottom:.8em;font-weight:400}
+.gr{display:grid;grid-template-columns:repeat(auto-fill,minmax(11em,1fr));gap:.6em}
+.tl{background:#fff;border:1px solid #ddd;padding:.8em;cursor:pointer;display:flex;align-items:center;gap:.6em}.tl:hover{background:#e5f3ff}.tl b{font-size:1.8em;font-weight:400}
+.nv{width:13em;background:#f3f3f3;border-right:1px solid #ddd;padding:.5em 0}
+.ni{padding:.6em 1em;cursor:pointer;border-left:4px solid transparent}.ni:hover{background:#e5f3ff}.ni.on{border-color:#2b79c2;background:#e5f3ff;font-weight:600}
+.pg{flex:1;padding:1em 1.5em;overflow:auto}.pg h2{font-weight:400;margin-bottom:.6em}.pg p{margin:.8em 0 .4em;color:#555}
+.li{padding:.6em .8em;border:1px solid #ddd;margin:.3em 0;background:#fafafa;cursor:pointer}.li.sl{background:#cce8ff;border-color:#3b8de0}
+.bt{background:#e1e1e1;border:1px solid #adadad;padding:.4em 1.2em;margin-top:.5em}.bt:hover{background:#cce8ff}
+.sel{border:1px solid #888;padding:.4em .8em;max-width:26em;background:#fff}
+.ov2{position:absolute;inset:0;background:#0005;display:flex;align-items:center;justify-content:center}
+.dg{background:#fff;border:1px solid #888;padding:1em 1.2em;width:min(28em,92%);box-shadow:0 6px 24px #0007}.dg h3{font-weight:400;margin-bottom:.5em}
+.pbar{height:.9em;background:#ddd;margin:1em 0}.pbar i{display:block;height:100%;background:#2b79c2}
+.ov{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1em;z-index:200;color:#fff;text-align:center;background:linear-gradient(135deg,#0a5fc0,#06336b);padding:1em}
+.big{font-size:1.3em;padding:.5em 1.4em;border:0;border-radius:.5em;background:#22c55e;color:#fff}
+#fin{display:none;z-index:260}#fin ol{text-align:left;max-width:32em;line-height:1.6}
+.dg{max-height:96%;overflow:auto}
+.hd2{display:flex;align-items:center;gap:1em;margin-bottom:1em;flex-wrap:wrap}
+.us{display:flex;align-items:center;gap:.6em}.us small{display:block;color:#666}.av{width:2.8em;height:2.8em;border-radius:50%;background:#7a8fa6;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.2em}
+.sb{flex:1;min-width:12em;max-width:30em;border:1px solid #999;background:#fff;padding:.45em .8em;color:#666}
+.tl small{display:block;color:#666;font-size:.75em;line-height:1.25}
+.sc{margin:1em 0 .3em;font-weight:600;font-size:1.05em}
+.cart{margin-top:.5em;padding:.4em .6em;background:#fff7d6;border:2px solid #f59e0b;border-radius:.4em;font-size:.82em;line-height:1.3}
+.sk{margin-top:.4em;background:#16a34a;color:#fff;border:0;border-radius:.4em;padding:.3em .7em}
+</style></head><body>
+<div id=top><div id=pb><div id=pf></div><div id=pt>Paso 0</div></div><button onclick=fz(-2)>A−</button><button onclick=fz(2)>A+</button></div>
+<div id=desk><div id=stage></div></div>
+<div id=tb><button id=st onclick="tm()"><svg width=16 height=16 viewBox="0 0 16 16"><path fill=#fff d="M0 2l6-1v6H0zM7 .8L16 0v7H7zM0 8h6v6l-6-1zM7 8h9v8l-9-1z"/></svg></button><div id=tasks></div><div id=cr>Profe Mario Jofré</div><div id=ck></div></div>
+<div id=sm><div id=sw><div id=ss><div>☰</div><div>👤</div><div>🖼️</div><div id=gear title=Configuración>⚙️</div><div title=Apagar><svg viewBox="0 0 24 24" style="width:1em;height:1em;vertical-align:-.12em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v9M6.3 6.5a8 8 0 1 0 11.4 0"/></svg></div></div><div id=sl><h4 style="margin-bottom:.5em">Programas</h4><p>📁 Explorador de archivos</p><p>📝 Bloc de notas</p><p>🧮 Calculadora</p><p>🎨 Paint</p></div></div></div>
+<div id=side><div id=hb><button onclick=hp()>? Repetir</button><button id=vb onclick=tv()>🔊</button><button onclick=reset()>🔄 Empezar de nuevo</button></div><div id=bit><div id=bub><span id=bt></span></div><div id=bw><div id=bot>🤖</div><div id=bn>ManuBot</div></div></div></div>
+<div id=blkr></div><div id=ring></div>
+<div id=wel class=ov><h1>🔊 Instalar la voz en español en Windows 10</h1><p style="max-width:34em">Tutorial paso a paso. Al final, tu computadora podrá hablar en español y ManuBot podrá leerte las instrucciones.</p><p>Necesitarás internet en la computadora real.</p><button class=big onclick=start()>Comenzar</button></div>
+<div id=fin class=ov></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const S={voice:true,snd:true,fs:16,steps:[],step:0,nx:false,wait:0,vc:0};let G,es,AC;
+function beep(f,d=.12,t=0){if(!S.snd)return;try{AC=AC||new AudioContext;const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.value=.08;o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+d)}catch(e){}}
+const ok=()=>beep(660),bad=()=>beep(200,.25);
+/* voz: acepta es, es-AR, es_ES, spa; espera hasta 6 s y no se apaga para siempre */
+function vf(){es=(window.speechSynthesis?speechSynthesis.getVoices():[]).find(v=>/^(es|spa)([-_]|$)/i.test(v.lang))}
+vf();if(window.speechSynthesis)speechSynthesis.onvoiceschanged=vf;setTimeout(()=>{vf();S.vc=1},6000);
+function tv(){S.voice=!S.voice;$('#vb').textContent=S.voice?'🔊':'🔇';if(!S.voice&&window.speechSynthesis)speechSynthesis.cancel()}
+function fz(d){S.fs=Math.min(26,Math.max(12,S.fs+d));document.body.style.fontSize=S.fs+'px'}
+function say(t,n,x){$('#bt').innerHTML=t+(n?'<div class=ew><span class=arw>➜</span><button class=ent onclick="S.nx=true">Entendido ▶</button></div>':'')+(n&&x?x:'')+(S.vc&&!es?'<div class=nov>🔇 Esta PC todavía no tiene voz en español: ¡para eso es este tutorial!</div>':'');
+ if(S.voice&&es){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance((t+(n?' Presiona el botón Entendido para continuar.':'')).replace(/<[^>]+>/g,'').replace(/\bX\b/g,'equis').replace(/[\u{1F000}-\u{1FFFF}\u2600-\u27BF\uFE0F]/gu,''));u.voice=es;u.lang=es.lang;speechSynthesis.speak(u)}}
+/* motor de pasos con círculo rojo */
+function run(st,end){S.steps=st;S.step=0;S.onEnd=end;S.wait=0;show()}
+function show(){const s=S.steps[S.step];if(!s)return;S.nx=false;S.sc=0;say(s.t,s.n,s.x);$('#blkr').style.display=s.n?'block':'none';$('#pt').textContent='Paso '+(S.step+1)+' de '+S.steps.length;$('#pf').style.width=S.step/S.steps.length*100+'%'}
+setInterval(()=>{const s=S.steps[S.step],r=$('#ring');if(!s||S.wait){r.style.display='none';return}
+ let dn=0;try{dn=s.d()}catch(x){}
+ if(dn){ok();S.wait=1;r.style.display='none';$('#blkr').style.display='none';const q=S.steps;setTimeout(()=>{if(S.steps!==q)return;S.wait=0;if(++S.step>=q.length){S.steps=[];$('#pf').style.width='100%';S.onEnd&&S.onEnd()}else show()},s.n?500:1500);return}
+ let e;try{e=s.n?$('.ent'):s.r&&s.r()}catch(x){}if(e&&!S.sc&&!s.n){S.sc=1;e.scrollIntoView({block:'nearest'})}const b=e&&e.getBoundingClientRect();if(!b||!b.width){r.style.display='none';return}
+ const w=b.width>b.height*2.5,d=w?b.height+26:Math.min(Math.max(b.width,b.height)+20,120),x=w?b.left+Math.min(b.width/2,60):b.left+b.width/2;
+ Object.assign(r.style,{display:'block',width:d+'px',height:d+'px',left:x-d/2+'px',top:b.top+b.height/2-d/2+'px'})},150);
+function hp(){S.steps[S.step]?show():say('Presiona <b>Empezar de nuevo</b> para repetir el tutorial.')}
+function xm(x,y){const d=document.createElement('div');d.className='xm';d.textContent='✖';d.style.left=x+8+'px';d.style.top=y+8+'px';document.body.append(d);setTimeout(()=>d.remove(),900)}
+addEventListener('click',e=>{const s=S.wait?null:S.steps[S.step];let r;try{r=s&&(s.n?$('.ent'):s.r&&s.r())}catch(x){}
+ if(r&&!r.contains(e.target)&&!e.target.closest('#top,#side')){e.stopPropagation();e.preventDefault();bad();xm(e.clientX,e.clientY);say('¡Casi! Intenta hacer clic dentro del <b>círculo rojo</b> 🔴');const k=S.step;setTimeout(()=>S.step==k&&show(),2500)}
+ else if(!e.target.closest('#sm,#st'))$('#sm').style.display='none'},true);
+setInterval(()=>$('#ck').textContent=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),1000);
+function tm(){const m=$('#sm');m.style.display=m.style.display=='block'?'none':'block'}
+/* simulación de Configuración de Windows 10 */
+const T=[['💻','Sistema','Pantalla, sonido, notificaciones, energía'],['🖱️','Dispositivos','Bluetooth, impresoras, mouse'],['📱','Teléfono','Vincula tu Android o iPhone'],['🌐','Red e Internet','Wi-Fi, modo avión, VPN'],['🎨','Personalización','Fondo, pantalla de bloqueo, colores'],['📦','Aplicaciones','Desinstalar, valores predeterminados'],['👤','Cuentas','Tus cuentas, correo, sincronización'],['🕒','Hora e idioma','Voz, región, fecha',1],['🎮','Juegos','Barra de juegos, capturas'],['♿','Accesibilidad','Narrador, lupa, alto contraste'],['🔒','Privacidad','Ubicación, cámara, micrófono'],['🔄','Actualización y seguridad','Windows Update, recuperación']];const TX=[['💻','Sistema'],['🖱️','Dispositivos'],['📱','Teléfono'],['🌐','Red e Internet'],['🎨','Personalización'],['📦','Aplicaciones'],['👤','Cuentas'],['🕒','Hora e idioma','t-time'],['♿','Accesibilidad'],['🔒','Privacidad'],['🔄','Actualización y seguridad']];
+const LN=[['ar','Español (Argentina)'],['cl','Español (Chile)'],['co','Español (Colombia)'],['es','Español (España)'],['us','Español (Estados Unidos)'],['mx','Español (México)'],['uy','Español (Uruguay)'],['ve','Español (Venezuela)']];
+const nav=(v,id,l)=>`<div class="ni ${G.v==v?'on':''}" id=${id} data-v=${v}>${l}</div>`;
+function page(){if(G.v=='time')return'<h2>Fecha y hora</h2><p>Aquí se cambia la hora. Para la voz, busca <b>Idioma</b> y <b>Voz</b> en el menú de la izquierda.</p>';
+ if(G.v=='lang')return`<h2>Idioma</h2><p>Idiomas preferidos</p><div class=li>🌐 English (Estados Unidos)</div>${G.inst?'<div class=li>🌐 Español (México) &nbsp;<small>✔ Texto a voz instalado</small></div>':''}<button class=bt id=addl data-a=add>＋ Agregar un idioma preferido</button>`;
+ return`<h2>Voz</h2><div class=sc>Idioma de voz</div><p>Elige el idioma que hablas con tu dispositivo.</p><div class=sel>${G.inst?'Español (México)':'Inglés (Estados Unidos)'} ▾</div><div class=sc>Micrófono</div><p>Configura tu micrófono para que Windows te escuche.</p><button class=bt style="cursor:default">Comenzar</button><div class=sc>Voces</div><p>Elegir una voz</p><div class=sel>${G.inst?'Microsoft Sabina - Español (México)':'Microsoft David - Inglés (Estados Unidos)'} ▾</div><p>Vista previa de voz</p><button class=bt id=hear data-a=hear>🔊 Escuchar voz</button>`}
+function dlg(){if(!G.dlg)return'';let b;
+ if(G.dlg==1)b=`<h3>Elige un idioma para instalar</h3><div class=li style="cursor:default">🔍 español</div>${LN.map(([k,n])=>`<div class="li ${G.lang==k?'sl':''}" data-l=${k} ${k=='mx'?'id=l-mx':''}>${n}</div>`).join('')}<button class=bt id=nx1 data-a=nx1>Siguiente</button>`;
+ else if(G.dlg==2)b=`<h3>Características de idioma opcionales</h3><div class=li style="cursor:default">☑ Instalar paquete de idioma</div><div class=li id=ck-tts data-a=tts>${G.tts?'☑':'☐'} Texto a voz</div><div class=li style="cursor:default">☐ Reconocimiento de voz</div><div class=li style="cursor:default">☐ Escritura a mano</div><button class=bt id=inst data-a=inst>Instalar</button>`;
+ else b=`<h3>Descargando e instalando…</h3><div class=pbar><i style="width:${G.prog}%"></i></div><small>${G.prog}%</small>`;
+ return`<div class=ov2><div class=dg>${b}</div></div>`}
+function R(){$('#stage').innerHTML=G&&G.open?`<div class=win><div class=tt>⚙️ Configuración<b><button class=wb id=cl data-a=close>✕</button></b></div><div id=wb>${G.v=='home'?`<div class=hm><div class=hd2><div class=us><div class=av>👤</div><div><b>Estudiante</b><small>Cuenta local</small></div></div><div class=sb>🔍 Buscar una configuración</div></div><div class=gr>${T.map(x=>`<div class=tl ${x[3]?'id=t-time data-v=time':''}><b>${x[0]}</b><div>${x[1]}<small>${x[2]}</small></div></div>`).join('')}</div></div>`:`<div class=nv><div class=sb style="margin:.4em .6em;min-width:0;overflow:hidden;white-space:nowrap;font-size:.85em">🔍 Buscar una configuración</div><div class=ni data-v=home>🏠 Inicio</div><div class=sc style="padding:0 1em">Hora e idioma</div>${nav('time','n-time','Fecha y hora')}<div class=ni>Región</div>${nav('lang','n-lang','Idioma')}${nav('voice','n-voice','Voz')}</div><div class=pg>${page()}</div>`}</div>${dlg()}</div>`:''}
+$('#stage').onclick=e=>{const x=e.target.closest('[data-a],[data-v],[data-l]');if(!x)return;const d=x.dataset;
+ if(d.v)G.v=d.v;else if(d.l)G.lang=d.l;
+ else if(d.a=='add'){G.dlg=1;G.lang=null}
+ else if(d.a=='nx1'){if(G.lang)G.dlg=2}
+ else if(d.a=='tts')G.tts=!G.tts;
+ else if(d.a=='inst'){if(G.tts){G.dlg=3;G.prog=0;clearInterval(S.pi);S.pi=setInterval(()=>{G.prog+=4;if(G.prog>=100){clearInterval(S.pi);G.dlg=0;G.inst=1;G.v='lang'}R()},150)}}
+ else if(d.a=='hear'){G.played=1;if(window.speechSynthesis&&es){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance('Hola, esta es la voz en español de tu computadora.');u.voice=es;u.lang=es.lang;speechSynthesis.speak(u)}else beep(523,.3)}
+ else if(d.a=='close')G.open=0;
+ R()};
+$('#gear').onclick=()=>{if(G){G.open=1;$('#sm').style.display='none';R()}};
+/* pasos */
+const st=(t,r,d)=>({t,r,d}),nn=t=>({t,n:1,d:()=>S.nx});
+const ST=[
+ nn('Hoy vas a <b>instalar la voz en español</b> de Windows 10. Así tu computadora podrá hablar y ManuBot podrá leerte las instrucciones. Necesitas internet.'),
+ st('Haz clic en el botón de <b>Inicio</b> de Windows (abajo a la izquierda).',()=>$('#st'),()=>$('#sm').style.display=='block'),
+ st('Haz clic en la rueda dentada <b>⚙️ Configuración</b>.',()=>$('#gear'),()=>G.open),
+ st('Elige el mosaico <b>Hora e idioma</b>.',()=>$('#t-time'),()=>G.v=='time'),
+ st('En el menú de la izquierda haz clic en <b>Idioma</b>.',()=>$('#n-lang'),()=>G.v=='lang'),
+ {t:'Mira la lista de <b>Idiomas preferidos</b>. ¿Aparece <b>Español (México)</b> o <b>Español (España)</b>? En esta PC solo aparece inglés, así que falta instalar el español.',n:1,d:()=>S.nx,x:'<div class=cart>📌 <b>Si en tu PC ya aparece Español instalado</b> con "Texto a voz", no hace falta instalar nada: <button class=sk onclick=sk()>ve directo a Voz ▶</button></div>'},
+ st('Como falta, haz clic en <b>＋ Agregar un idioma preferido</b>.',()=>$('#addl'),()=>G.dlg==1),
+ st('Estos son los idiomas en español que puedes instalar. Elige <b>Español (México)</b>; también sirve España. Argentina puede no incluir voz.',()=>$('#l-mx'),()=>G.lang=='mx'),
+ st('Presiona <b>Siguiente</b>.',()=>$('#nx1'),()=>G.dlg==2),
+ st('¡Muy importante! Marca la casilla <b>Texto a voz</b>. Es la que hace que la computadora hable.',()=>$('#ck-tts'),()=>G.tts),
+ st('Ahora presiona <b>Instalar</b>.',()=>$('#inst'),()=>G.dlg==3),
+ st('Windows está descargando la voz. Espera sin tocar nada. En una PC real puede tardar unos minutos.',null,()=>G.inst),
+ nn('¡Listo! Ahora el idioma aparece en la lista con <b>Texto a voz instalado</b>.'),
+ {id:'voz',t:'Ahora haz clic en <b>Voz</b> en el menú de la izquierda.',r:()=>$('#n-voice'),d:()=>G.v=='voice'},
+ nn('Esta pantalla tiene tres partes: <b>Idioma de voz</b> (cómo le hablas a Windows), <b>Micrófono</b> y, abajo, <b>Voces</b> (cómo te habla Windows). La prueba está en Voces.'),
+ st('Presiona <b>🔊 Escuchar voz</b> para probarla.',()=>$('#hear'),()=>G.played),
+ nn('Si escuchaste la voz, ¡funcionó! Para que el navegador la detecte, <b>cierra el navegador de internet por completo y ábrelo otra vez</b>. Si todavía no suena, reinicia la computadora.'),
+ st('Para terminar, cierra Configuración con la <b>X</b> de arriba a la derecha.',()=>$('#cl'),()=>!G.open)];
+function start(){clearInterval(S.pi);$('#wel').style.display=$('#fin').style.display='none';$('#sm').style.display='none';G={open:0,v:'home',dlg:0,lang:null,tts:0,prog:0,inst:0,played:0};R();
+ run(ST,()=>{[523,659,784,1046].forEach((f,i)=>beep(f,.2,i*.15));$('#fin').innerHTML='<h1>🎉 ¡Felicitaciones!</h1><p>Ya sabes instalar la voz en español en Windows 10.</p><ol><li>Configuración → Hora e idioma → Idioma.</li><li>Agregar un idioma → Español.</li><li>Marcar <b>Texto a voz</b> e Instalar.</li><li>Reiniciar el navegador (o la PC) y probar.</li></ol><button class=big onclick=start()>🔄 Repetir tutorial</button><button class=big style="background:#2b79c2" onclick=goHome()>🏠 Volver al inicio</button>';$('#fin').style.display='flex'})}
+function reset(){S.steps=[];speechSynthesis&&speechSynthesis.cancel();start()}
+function goHome(){location.href='index.html'}
+function sk(){const i=S.steps.findIndex(s=>s.id=='voz');if(i>=0){G.inst=1;G.v='lang';R();S.step=i;S.wait=0;show()}}
+addEventListener('keydown',e=>{if(e.key=='Enter'&&$('#wel').style.display!='none')start()});
+</script></body></html>

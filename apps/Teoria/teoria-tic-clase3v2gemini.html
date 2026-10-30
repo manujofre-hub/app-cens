@@ -1,0 +1,633 @@
+<!-- app: teoria-tic-3 | contrato: v1 | módulos: alumno v1.1, progreso v1, motor v2 | fecha: 2026-10-26 -->
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Clase 3 · Software, internet y seguridad</title>
+<style>
+*{box-sizing:border-box;margin:0}
+body{font:16px "Segoe UI",Arial,sans-serif;height:100vh;overflow:hidden;color:#e8f1ff;background:#031510}
+button{font:inherit;cursor:pointer}
+#bg{position:fixed;inset:0;transition:filter .8s;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22240%22%20height%3D%22240%22%20fill%3D%22none%22%20stroke%3D%22%234ade80%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20opacity%3D%22.28%22%3E%3Cpath%20d%3D%22M0%2040H70L90%2060H150L170%2040H240M0%20130H50L70%20150H130L150%20130H240M0%20200H100L120%20220H140L160%20200H240M200%2060V110M30%2060V120M110%20150V190%22%2F%3E%3Crect%20x%3D%22130%22%20y%3D%2270%22%20width%3D%2250%22%20height%3D%2240%22%20rx%3D%223%22%2F%3E%3Cpath%20d%3D%22M126%2078V104M184%2078V104%22%20stroke-width%3D%224%22%20stroke-dasharray%3D%223%205%22%2F%3E%3Cg%20fill%3D%22%23031510%22%3E%3Ccircle%20cx%3D%22200%22%20cy%3D%2260%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%22200%22%20cy%3D%22110%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2260%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%22120%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%22110%22%20cy%3D%22150%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%22110%22%20cy%3D%22190%22%20r%3D%225%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") 0 0/240px 240px,radial-gradient(ellipse at 65% 35%,#0b3a2e,#031510 75%);animation:gm 60s linear infinite}
+@keyframes gm{to{background-position:240px 240px,0 0}}
+#bg{filter:hue-rotate(-100deg);transition:filter .8s}body.calm #bg{animation:none}@media(prefers-reduced-motion:reduce){#bg{animation:none}}
+#top{position:fixed;top:0;left:0;right:0;height:2.5em;background:#0a1426;border-bottom:1px solid #4ade8055;display:flex;align-items:center;gap:.35em;padding:0 .6em;z-index:20}
+#top b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}#top button{background:#16263f;color:#fff;border:1px solid #4ade8055;border-radius:.3em;padding:.15em .6em;white-space:nowrap;flex:0 0 auto}
+#top .btn-home{background:#1e40af!important;border-color:#38bdf8!important;font-weight:700}
+#pt{flex:1 1 0;min-width:0;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#4ade80;font-weight:700}
+#main{position:fixed;top:2.5em;bottom:0;left:0;right:0;display:flex}
+#alt{flex:1;overflow:auto;padding:1em;display:flex;flex-direction:column;align-items:center}
+#pn{width:19em;background:#0a1426f2;border-left:1px solid #4ade8066;padding:1em;display:flex;flex-direction:column;gap:.7em;overflow:auto}
+#bot{display:flex;align-items:center;gap:.4em;font-weight:700;color:#4ade80}#bot i{font-style:normal;font-size:2.4em}
+#bub{background:#fff;border-radius:.7em;padding:.45em .7em;box-shadow:0 2px 8px #0006;font-size:.82em;color:#222;line-height:1.35;max-height:32vh;display:flex;flex-direction:column}
+#bt-text{overflow-y:auto;max-height:24vh;padding-right:.2em}
+#bt-action{flex-shrink:0;margin-top:.35em;padding-top:.25em;border-top:1px dashed #e5e7eb;display:flex;align-items:center;gap:.3em}
+.ent{display:block;background:#2b79c2;color:#fff;border:0;border-radius:.4em;padding:.25em .7em;font-size:.9em}
+.arw{color:#16a34a;font-size:1.4em;font-weight:900;animation:ar .6s infinite}@keyframes ar{50%{opacity:.15;transform:translateX(5px)}}
+#sk{display:none;margin-top:auto;background:none;border:2px dashed #facc15;color:#facc15;border-radius:.5em;padding:.4em;font-weight:700}
+.btn{background:#16263f;color:#fff;border:2px solid #4ade80;border-radius:.6em;padding:.6em 1.1em;font-weight:700}.btn:hover{background:#1f3b5c}.btn:disabled{opacity:.4;cursor:default}
+.btn.go{background:#22c55e;color:#fff;border-color:#16a34a}
+.row{display:flex;gap:.8em;flex-wrap:wrap;justify-content:center;align-items:center}
+.tc{margin-top:.6em;background:#0d2236;border-left:3px solid #38bdf8;padding:.5em .6em;border-radius:.3em;font-size:.9em;line-height:1.4}
+#ring{position:fixed;display:none;border:4px solid #ff3b3bd9;background:#ff3b3b33;border-radius:50%;pointer-events:none;z-index:99;animation:pl 1s infinite}@keyframes pl{50%{transform:scale(1.15)}}
+
+/* Flecha animada independiente */
+#ptr-arrow{position:fixed;display:none;z-index:10002;pointer-events:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.8));transition:top .18s ease,left .18s ease}
+#ptr-arrow svg{display:block;animation:bounce-arr .5s infinite alternate ease-in-out}
+@keyframes bounce-arr{from{transform:translate(0,0)}to{transform:translate(0,-10px)}}
+
+.sarr{position:fixed;z-index:60;width:2.2em;height:2.2em;border-radius:50%;background:#22c55e;color:#fff;display:none;align-items:center;justify-content:center;font-weight:900;border:2px solid #fff;box-shadow:0 2px 8px #000a;animation:bnc 1s infinite;cursor:pointer}@keyframes bnc{50%{transform:translateY(5px)}}
+.mo-pr{width:100%;max-width:46em;text-align:center}.mo-pr h2{margin:.2em 0 .5em}.mo-pr p{margin:.4em 0}.bd2{position:relative;height:min(22em,48vh);width:100%;border:2px dashed #4ade8066;border-radius:.8em;background:#0d2236;margin:.6em 0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pad2{width:min(24em,90%);min-height:7em;border:3px dashed #4ade80;border-radius:.8em;display:flex;align-items:center;justify-content:center;flex-direction:column;background:#0d2236;padding:.5em}
+.dia{position:absolute;width:4.5em;height:4.5em;border-radius:50%;border:2px solid #900;cursor:pointer;background:radial-gradient(#e11 0 15%,#fff 16% 32%,#e11 33% 50%,#fff 51%)}
+.fol{width:6em;height:5em;cursor:pointer}.fol svg{width:100%;height:100%}
+.sc{width:min(26em,92%);height:80%;overflow:auto;background:#fff;color:#222;border-radius:.5em;padding:.6em;text-align:left}.sc p{margin:.5em 0}
+</style></head><body><script src="../../js/guard.js?v=2"></script>
+<div id=bg></div>
+<div id=top>
+  <button onclick="Alumno.irInicio()" class="btn-nav btn-home">🏠 Volver al inicio</button>
+  <b>🌐 Clase 3 · Software, internet y seguridad <small style="opacity:.7">v1.2</small></b>
+  <span id=pt></span>
+  <button id=lst>📋 Temas</button>
+  <button id=bgb onclick="fondo()">🌌 Fondo estático</button>
+  <button id=vb onclick="tv()">🔊</button>
+  <button onclick="fz(-2)">A−</button>
+  <button onclick="fz(2)">A+</button>
+</div>
+<div id=main><div id=alt></div><div id=pn><div id=bot><i>🤖</i>ManuBot</div><div id=bub><div id=bt-text></div><div id=bt-action style="display:none"><span class=arw>➜</span><button class=ent onclick="S.nx=true">Entendido ▶</button></div></div><button id=sk>⏭ Saltar actividad</button></div></div>
+<div id=ring></div>
+<div id="ptr-arrow">
+  <svg width="40" height="40" viewBox="0 0 32 32">
+    <path fill="#facc15" stroke="#111" stroke-width="2.5" stroke-linejoin="round" d="M16 30 L4 14 L11 14 L11 2 L21 2 L21 14 L28 14 Z"/>
+  </svg>
+</div>
+<div class=sarr id=sa2 title="Hay más para ver: tocá para bajar">⬇</div>
+<script>
+/* 🔒 COMPATIBILIDAD GITHUB PAGES — NO MODIFICAR: navegación al index y guardado local del alumno/progreso dependen de esta sección. */
+/* ===== INICIO MÓDULO ALUMNO v1.1 (CON TÍTULO Y AUTOR PROFESOR MARIO JOFRÉ) ===== */
+const MJ_INDEX='../../index.html';
+const Alumno=(()=>{
+ const mem={},ls=(()=>{try{localStorage.setItem('mj:t',1);localStorage.removeItem('mj:t');return localStorage}catch(e){return null}})();
+ const leer=k=>{try{const v=ls?ls.getItem('mj:'+k):mem[k];return v==null?null:JSON.parse(v)}catch(e){return null}};
+ const guardar=(k,v)=>{try{const s=JSON.stringify(v);if(ls)ls.setItem('mj:'+k,s);else mem[k]=s;return true}catch(e){return false}};
+ const borrar=k=>{try{if(ls)ls.removeItem('mj:'+k);else delete mem[k]}catch(e){}};
+ const limpio=s=>String(s==null?'':s).replace(/[<>&"'`\\\/]/g,'').replace(/\s+/g,' ').trim().slice(0,40);
+ const slug=s=>limpio(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+ const get=()=>{const a=leer('alumno');return a&&a.id?a:null};
+ const set=d=>{d=d||{};const nombre=limpio(d.nombre),curso=limpio(d.curso);if(nombre.length<2)return null;
+  const a={nombre,curso,id:slug(nombre)+(curso?'_'+slug(curso):''),creado:new Date().toISOString()};guardar('alumno',a);return a};
+ const DEF={fs:16,voz:true,snd:true,kbDark:false};
+ const prefs=()=>{const p=leer('prefs')||{},o={};for(const k in DEF)o[k]=k in p?p[k]:DEF[k];return o};
+ const setPref=(k,v)=>{if(!(k in DEF))return;const p=prefs();p[k]=v;guardar('prefs',p)};
+ const irInicio=()=>{location.href=MJ_INDEX};
+ const botonInicio=el=>{const b=document.createElement('button');b.textContent='🏠 Inicio';b.title='Volver al inicio';b.onclick=irInicio;
+  b.style.cssText=el?'background:#374151;color:#fff;border:0;border-radius:.3em;padding:.15em .6em;cursor:pointer;font:inherit'
+   :'position:fixed;top:.4em;right:.4em;z-index:9998;background:#374151;color:#fff;border:0;border-radius:.4em;padding:.3em .7em;cursor:pointer;font:inherit';
+  if(el)el.insertBefore(b,el.firstChild);else document.body.appendChild(b);return b};
+ function pedir(cb){const a=get();if(a){cb(a);return}
+  const d=document.createElement('div'),ci='font:inherit;font-size:1.2em;padding:.4em;border-radius:.4em;border:0;text-align:center;width:min(20em,90%);color:#222';
+  d.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5em;text-align:center;color:#fff;font:18px "Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,#0a5fc0,#06336b)';
+  d.innerHTML='<h1 style="font-size:1.7em;margin:0 0 .2em">🖥️ Clase 3 · Software, internet y seguridad</h1>'+
+   '<h2 style="font-size:1.15em;font-weight:400;color:#93c5fd;margin:0 0 1em">Diseñado por el Profesor: Mario Jofré</h2>'+
+   '<p style="margin:.3em">Por favor, escribe tu nombre y apellido para comenzar:</p>'+
+   '<input id=mjn maxlength=40 autocomplete=off style="'+ci+'"><p id=mje style="min-height:1.6em;margin:.5em;color:#fde68a;font-weight:700"></p>'+
+   '<button id=mjb style="font:inherit;font-size:1.2em;padding:.5em 1.4em;border:0;border-radius:.5em;background:#22c55e;color:#fff;cursor:pointer">Ingresar al curso</button>';
+  document.body.appendChild(d);
+  const n=d.querySelector('#mjn'),e=d.querySelector('#mje');
+  const go=()=>{const x=set({nombre:n.value});if(!x){e.textContent='Escribe tu nombre y apellido.';n.focus();return}d.remove();cb(x)};
+  ['keydown','keyup'].forEach(t=>d.addEventListener(t,ev=>{ev.stopPropagation();if(t=='keydown'&&ev.key=='Enter')go()}));
+  d.querySelector('#mjb').onclick=go;n.focus()}
+ return{get,set,nombre:()=>{const a=get();return a?a.nombre:''},limpiar:()=>borrar('alumno'),pedir,prefs,setPref,irInicio,botonInicio,
+  almacen:{leer,guardar,borrar},limpio,slug}})();
+/* ===== FIN MÓDULO ALUMNO v1.1 ===== */
+
+/* ===== INICIO MÓDULO PROGRESO v1 ===== */
+const Progreso=(()=>{
+ const AL=Alumno.almacen,uid=()=>{const a=Alumno.get();return a?a.id:'anonimo'},K=()=>'progreso:'+uid(),KE=()=>'enviado:'+uid();
+ const todo=()=>{const d=AL.leer(K());return d&&d.v==1&&d.act&&typeof d.act=='object'?d:{v:1,act:{}}};
+ const reg=(app,act,d)=>{d=d||{};const p=todo(),key=app+'/'+act,o=p.act[key]||{},fin=d.estado=='hecha';
+  p.act[key]={estado:fin||o.estado=='hecha'?'hecha':'en-curso',
+   estrellas:Math.max(o.estrellas||0,Math.min(3,Math.max(0,Math.round(+d.estrellas||0)))),
+   errores:d.errores!=null?Math.max(0,Math.round(+d.errores||0)):(o.errores||0),
+   seg:d.seg!=null?Math.max(0,Math.round(+d.seg||0)):(o.seg||0),
+   veces:(o.veces||0)+(fin?1:0),fecha:new Date().toISOString(),mod:Date.now()};
+  AL.guardar(K(),p);return p.act[key]};
+ const get=app=>{const p=todo().act,r={};for(const key in p)if(!app||key.indexOf(app+'/')==0)r[app?key.slice(app.length+1):key]=p[key];return r};
+ const hecha=(app,act)=>{const o=todo().act[app+'/'+act];return !!o&&o.estado=='hecha'};
+ const resumen=(app,total)=>{const g=get(app),ids=Object.keys(g).filter(x=>g[x].estado=='hecha'),hechas=ids.length;
+  return{hechas,total:total||hechas,pct:total?Math.min(100,Math.round(hechas/total*100)):0,estrellas:ids.reduce((n,x)=>n+(g[x].estrellas||0),0)}};
+ const pendientes=()=>{const env=AL.leer(KE())||0,p=todo().act,l=[];
+  for(const key in p)if((p[key].mod||0)>env){const i=key.indexOf('/');l.push(Object.assign({app:key.slice(0,i),act:key.slice(i+1)},p[key]))}return l};
+ const marcarEnviado=l=>{if(!l||!l.length)return;AL.guardar(KE(),Math.max.apply(null,l.map(x=>x.mod||0)))};
+ const exportar=()=>JSON.stringify({v:1,alumno:Alumno.get(),act:todo().act,fecha:new Date().toISOString()});
+ const importar=t=>{let d;try{d=JSON.parse(t)}catch(e){return -1}
+  if(!d||d.v!=1||!d.act||typeof d.act!='object')return -1;
+  if(!Alumno.get()&&d.alumno&&d.alumno.nombre)Alumno.set({nombre:d.alumno.nombre,curso:d.alumno.curso});
+  const a=Alumno.get();if(d.alumno&&a&&d.alumno.id&&d.alumno.id!=a.id)return -2;
+  const p=todo();let n=0;for(const key in d.act){const x=d.act[key],o=p.act[key];if(x&&x.estado&&(!o||(x.mod||0)>(o.mod||0))){p.act[key]=x;n++}}
+  AL.guardar(K(),p);return n};
+ const borrar=app=>{if(!app){AL.borrar(K());AL.borrar(KE());return}const p=todo();for(const key in p.act)if(key.indexOf(app+'/')==0)delete p.act[key];AL.guardar(K(),p)};
+ return{registrar:reg,get,hecha,resumen,pendientes,marcarEnviado,exportar,importar,borrar}})();
+/* ===== FIN MÓDULO PROGRESO v1 ===== */
+
+/* ===== INICIO MÓDULO MOTOR v2 (SIN DURACIÓN Y CON BOTÓN SIGUIENTE TEMA) ===== */
+const Motor=(()=>{
+ const CSS=`.mo-menu,.mo-sl,.mo-fn,.mo-q{width:100%;max-width:68em;margin:auto;background:rgba(8,18,34,.93);border:1px solid #4ade8044;border-radius:1em;padding:1em 1.2em}.mo-menu h2{font-size:1.5em}.mo-menu p{opacity:.85;margin:.2em 0 .6em}
+.mo-bar{height:.7em;background:#1e293b;border-radius:1em;overflow:hidden;margin:.4em 0 .8em}.mo-bar i{display:block;height:100%;background:#22c55e;transition:.4s}
+.mo-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(17em,1fr));gap:.7em}
+.mo-it{display:flex;align-items:center;gap:.7em;text-align:left;background:#13233b;color:#fff;border:2px solid #4ade8077;border-radius:.8em;padding:.6em .8em;font:inherit;cursor:pointer}.mo-it:hover{background:#1c3556}
+.mo-it.soon{opacity:.45;cursor:default}.mo-it.opt{border-style:dashed}.mo-ic{width:2.6em;height:2.6em;flex:none}.mo-ic svg{width:100%;height:100%}.mo-tt{flex:1;display:flex;flex-direction:column}.mo-tt small{opacity:.8}.mo-ok{font-size:1.4em}
+.mo-hd small{opacity:.8}.mo-hd h2{font-size:1.6em;margin:.1em 0 .4em}
+.mo-bd{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:1.2em;align-items:start}@media(max-width:820px){.mo-bd{grid-template-columns:1fr}}
+
+.mo-im{position:relative;min-height:12em;background:#0d2236;border:2px solid #4ade8066;border-radius:.8em;overflow:hidden;cursor:zoom-in;display:flex;align-items:center;justify-content:center;padding:.4em}
+.mo-iw{position:relative;line-height:0;max-width:100%;width:fit-content;display:inline-block}
+.mo-iw img{display:block;max-width:100%;max-height:min(58vh,30em);border-radius:.3em;object-fit:contain}
+.mo-ov{position:absolute;inset:0;overflow:hidden;border-radius:.3em;pointer-events:none}
+
+.mo-im.nofoto .mo-iw{display:none}.mo-fb{display:none;width:100%;justify-content:center}.mo-im.nofoto .mo-fb{display:flex}.mo-fbw{position:relative;width:min(15em,80%);aspect-ratio:1/1}.mo-fbw>svg{width:100%;height:100%}.mo-im.nofoto+.mo-vs{display:none}.mo-nf{font-size:.78em;opacity:.55;text-align:center;margin-top:.3em}
+.mo-sp{position:absolute;border:4px solid #facc15;border-radius:.5em;box-shadow:0 0 0 999px rgba(0,0,0,.6),0 0 16px #facc15;animation:mo-pl 1.2s infinite;pointer-events:none}@keyframes mo-pl{50%{box-shadow:0 0 0 999px rgba(0,0,0,.6),0 0 30px #facc15}}
+.mo-lb{position:absolute;transform:translate(-50%,calc(-100% - 32px));background:#facc15;color:#222;font:800 .95em "Segoe UI",Arial,sans-serif;line-height:1.2;padding:.25em .7em;border-radius:.6em;white-space:nowrap;pointer-events:none;z-index:5}.mo-lb:after{content:"";position:absolute;left:50%;top:100%;margin-left:-8px;border:8px solid transparent;border-top-color:#facc15}
+.mo-lb.b{transform:translate(-50%,32px)}.mo-lb.b:after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:#facc15}
+.mo-lb.l{transform:translate(0,calc(-100% - 32px))}.mo-lb.r{transform:translate(-100%,calc(-100% - 32px))}.mo-lb.l.b{transform:translate(0,32px)}.mo-lb.r.b{transform:translate(-100%,32px)}
+.mo-ar{position:absolute;width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;filter:drop-shadow(0 0 3px #000);pointer-events:none;transform:translateX(-50%)}
+.mo-ar.d{border-top:24px solid #facc15;margin-top:-27px;animation:mo-bd .8s ease-in-out infinite}.mo-ar.u{border-bottom:24px solid #facc15;margin-top:3px;animation:mo-bu .8s ease-in-out infinite}@keyframes mo-bd{50%{margin-top:-14px}}@keyframes mo-bu{50%{margin-top:14px}}
+.mo-dot{position:absolute;transform:translate(-50%,-50%);width:2.1em;height:2.1em;border-radius:50%;background:#facc15;color:#222;border:2px solid #fff;font:800 1.05em "Segoe UI",Arial,sans-serif;cursor:pointer;box-shadow:0 2px 8px #000a;line-height:1;padding:0;pointer-events:auto}
+.mo-vs{display:flex;gap:.4em;justify-content:center;margin-top:.5em}.mo-v{background:#16263f;color:#fff;border:2px solid #4ade8077;border-radius:.5em;padding:.25em .8em;font:inherit;cursor:pointer}.mo-v.on{border-color:#facc15}
+.mo-pt.sel{background:#facc15;color:#222;border-color:#fff}#mo-ed{margin-top:.5em;background:#111;color:#4ade80;font:.85em monospace;padding:.4em .6em;border-radius:.4em;user-select:text}
+.mo-tx{font-size:1.08em;line-height:1.55;text-align:left}.mo-tx p{margin:0 0 .6em}.mo-tx table{border-collapse:collapse;width:100%;font-size:.92em}.mo-tx td,.mo-tx th{border:1px solid #4ade8066;padding:.3em .5em;text-align:left}.mo-tx th{background:#13233b}
+.mo-ch{display:flex;flex-wrap:wrap;gap:.4em;margin:.3em 0}.mo-pt{background:#16263f;color:#fff;border:2px solid #4ade80;border-radius:.5em;padding:.35em .8em;font:inherit;font-weight:700;cursor:pointer}.mo-pt.on{border-color:#facc15}
+.mo-pd{background:#0d2236;border-left:3px solid #facc15;padding:.5em .7em;border-radius:.3em;min-height:2.6em;margin-bottom:.6em}
+.mo-ps{list-style:none;padding:0;margin:.4em 0;counter-reset:s}.mo-ps li{counter-increment:s;display:flex;gap:.6em;align-items:flex-start;margin:.35em 0}.mo-ps li:before{content:counter(s);flex:none;width:1.8em;height:1.8em;border-radius:50%;background:#22c55e;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+.mo-cu{background:#2a3a1a;border:1px solid #facc15aa;border-radius:.5em;padding:.5em .7em;margin-top:.6em;font-size:.95em}
+.mo-nv{display:flex;align-items:center;justify-content:space-between;gap:.6em;flex-wrap:wrap;margin-top:1em}.mo-dots{display:flex;gap:.35em}.mo-dots i{width:.7em;height:.7em;border-radius:50%;background:#334155}.mo-dots i.on{background:#22c55e}
+.mo-fn{text-align:center}.mo-big{font-size:4em}.mo-fn .row{margin-top:.8em}
+.mo-q h2{font-size:1.4em;margin:.3em 0 .8em}.mo-ops{display:flex;flex-direction:column;gap:.6em;max-width:30em;margin:auto}
+#mo-zoom{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;cursor:zoom-out}#mo-zoom img{max-width:96vw;max-height:94vh}`;
+ function crear(c){
+  if(!document.getElementById('mo-css')){const s=document.createElement('style');s.id='mo-css';s.textContent=CSS;document.head.appendChild(s)}
+  const el=c.el,T=c.temas,api={obj:()=>null},B=Array.isArray(c.img)?c.img:[c.img||''],MAPA=c.mapa||null;let bi=0;const url=(f,b)=>MAPA&&MAPA[f]?MAPA[f]:B[b==null?bi:b]+f+'.webp';let ti=0,k=0,E=0,t0=0,modo='menu',tk=0;
+  const est=m=>{modo=m;if(c.estado)c.estado(m)},pg=t=>{if(c.pg)c.pg(t)},hecho=t=>!!t.id&&Progreso.hecha(c.app,t.id),ic=n=>(c.ic&&c.ic[n])||'';
+  
+  // Menú sin mostrar la duración en minutos
+  function menu(){tk++;est('menu');api.obj=()=>null;const cu=T.filter(t=>!t.opt),h=cu.filter(hecho).length;pg(h+' de '+cu.length+' temas completos');
+   el.innerHTML=`<div class=mo-menu><h2>${c.titulo}</h2><p>${c.sub||''}</p><div class=mo-bar><i style="width:${Math.round(h/cu.length*100)}%"></i></div><div class=mo-list>${T.map((t,i)=>`<button class="mo-it ${t.soon?'soon':''} ${t.opt?'opt':''}" data-i=${i}><span class=mo-ic>${ic(t.ico)}</span><span class=mo-tt><b>${t.t}</b><small>${t.soon?'Próximamente':(t.opt?'Opcional':'Tema de clase')}</small></span><span class=mo-ok>${hecho(t)?'✅':''}</span></button>`).join('')}</div></div>`;
+   el.onclick=e=>{const b=e.target.closest('.mo-it');if(b&&!b.classList.contains('soon'))abrir(+b.dataset.i)};
+   c.bot('¡Hola {n}! Elegí el tema que quieras para comenzar.')}
+
+  function abrir(i){tk++;ti=i;k=0;E=0;t0=Date.now();T[i].diap&&T[i].diap.length?slide(0):actividad()}
+  function slide(j){k=j;est('slide');const t=T[ti],d=t.diap[j],n=t.diap.length,imgs=d.imgs||(d.img?[d.img]:[]),alt=(d.alt||d.t).replace(/"/g,'');let vi=0,sel=-1,p1=null;pg(t.t+' · diapositiva '+(j+1)+' de '+n);
+   el.innerHTML=`<div class=mo-sl><div class=mo-hd><small>${t.t} · diapositiva ${j+1} de ${n}</small><h2>${d.t}</h2></div><div class=mo-bd><div><div class="mo-im ${imgs.length?'':'nofoto'}"><div class=mo-iw id=mo-iw>${imgs.length?`<img id=mo-img alt="${alt}">`:''}<div class=mo-ov id=mo-ov></div></div><div class=mo-fb><div class=mo-fbw>${ic(d.ic)}<div class=mo-ov id=mo-ov2></div></div></div></div>${imgs.length>1?`<div class=mo-vs>${imgs.map((_,x)=>`<button class="mo-v ${x?'':'on'}" data-v=${x}>Vista ${x+1}</button>`).join('')}</div>`:''}<div class=mo-nf id=mo-nf></div></div><div class=mo-tx>${d.txt||''}${d.partes?`<div class=mo-ch>${d.partes.map((p,x)=>`<button class=mo-pt data-p=${x}>${p[0]}</button>`).join('')}</div><div class=mo-pd id=mo-pd>Tocá cada parte para conocerla 👆</div>`:''}${d.pasos?`<ol class=mo-ps>${d.pasos.map(p=>`<li><span>${p}</span></li>`).join('')}</ol>`:''}${d.tec?`<div class=tc><b>🔧 Técnicamente</b><br>${d.tec}</div>`:''}${d.cur?`<div class=mo-cu>💡 <b>Dato curioso:</b> ${d.cur}</div>`:''}</div></div><div class=mo-nv><button class=btn id=mo-pr ${j?'':'disabled'}>◀ Anterior</button><button class=btn id=mo-lee>🔊 Leer</button><span class=mo-dots>${Array.from({length:n},(_,x)=>`<i class="${x==j?'on':''}"></i>`).join('')}</span><button class="btn go" id=mo-sg>${j<n-1?'Siguiente ▶':(t.act?'Ir a la actividad ▶':'Terminar ▶')}</button></div></div>`;
+   const box=el.querySelector('.mo-im'),im=el.querySelector('#mo-img');
+   const dib=()=>{if(!d.partes)return;const nf=box.classList.contains('nofoto'),o=el.querySelector(nf?'#mo-ov2':'#mo-ov'),rg=p=>nf?p[3]:p[2],vok=r=>nf||((r.v||0)==vi);let h='';
+    if(sel<0)d.partes.forEach((p,i)=>{const r=rg(p);if(r&&r.w!=null&&vok(r))h+=`<button class=mo-dot data-p=${i} style="left:${r.x+r.w/2}%;top:${r.y+r.h/2}%">${i+1}</button>`});
+    else{const p=d.partes[sel],r=rg(p);if(r&&r.w!=null&&vok(r)){const cx=r.x+r.w/2,al=cx<30?'l':cx>70?'r':'',ab=r.y>=24,lx=al=='l'?r.x:al=='r'?r.x+r.w:cx,ty=ab?r.y:r.y+r.h;h=`<div class=mo-sp style="left:${r.x}%;top:${r.y}%;width:${r.w}%;height:${r.h}%"></div><div class="mo-ar ${ab?'d':'u'}" style="left:${cx}%;top:${ty}%"></div><div class="mo-lb ${al} ${ab?'':'b'}" style="left:${lx}%;top:${ty}%">${sel+1}. ${p[0]}</div>`}}
+    o.innerHTML=h;el.querySelectorAll('.mo-ov').forEach(x=>{if(x!==o)x.innerHTML=''})};
+   const cargar=x=>{if(!im)return;const f=imgs[x];let tr=0;box.classList.remove('nofoto');el.querySelector('#mo-nf').textContent='';
+    im.onload=()=>{if(tr)bi=(bi+tr)%B.length;box.classList.remove('nofoto');dib()};
+    im.onerror=()=>{tr++;if(tr<B.length&&!(MAPA&&MAPA[f])){im.src=url(f,(bi+tr)%B.length)}else{box.classList.add('nofoto');el.querySelector('#mo-nf').textContent='(foto no encontrada: '+f+')';dib()}};
+    im.src=url(f)};
+   const vista=x=>{vi=x;el.querySelectorAll('.mo-v').forEach((b,y)=>b.classList.toggle('on',y==x));cargar(x)};
+   const selec=i=>{sel=(sel===i)?-1:i;const ch=el.querySelectorAll('.mo-pt'),pd=el.querySelector('#mo-pd');ch.forEach((b,x)=>{b.classList.toggle('sel',x==sel);if(x==i)b.classList.add('on')});
+    if(sel<0){pd.textContent='Tocá cada parte para conocerla 👆';dib();return}
+    const p=d.partes[i],r=p[2],wi=(p[3]&&p[3].ic)||(r&&r.ic);if(wi&&box.classList.contains('nofoto')){const sv=el.querySelector('.mo-fbw>svg');if(sv)sv.outerHTML=ic(wi)}if(box.classList.contains('nofoto')&&r&&r.v!=null&&imgs[r.v])el.querySelector('#mo-nf').textContent='(foto no encontrada: '+imgs[r.v]+')';pd.innerHTML='<b>'+(i+1)+'. '+p[0]+':</b> '+p[1];c.bot(p[0]+'. '+p[1]);if(imgs.length&&!box.classList.contains('nofoto')&&r&&(r.v||0)!=vi)vista(r.v||0);else dib()};
+   cargar(0);dib();api.obj=()=>el.querySelector('.mo-pt:not(.on)')||el.querySelector('#mo-sg');c.bot(d.bot||'Leé con calma. Cuando termines, tocá Siguiente.');
+   el.onclick=e=>{const q=s=>e.target.closest(s);let b;
+    if(b=q('.mo-pt,.mo-dot'))selec(+b.dataset.p);
+    else if(b=q('.mo-v'))vista(+b.dataset.v);
+    else if(q('#mo-sg'))sig();else if(q('#mo-pr'))ant();else if(q('#mo-lee')){if(c.hablar)c.hablar(el.querySelector('.mo-tx').innerText)}
+    else if(q('.mo-iw')){if(/[?&]editar=1/.test(location.search)&&imgs.length){const w=el.querySelector('#mo-iw').getBoundingClientRect(),x=Math.round((e.clientX-w.left)/w.width*100),y=Math.round((e.clientY-w.top)/w.height*100);let ed=el.querySelector('#mo-ed');if(!ed){ed=document.createElement('div');ed.id='mo-ed';el.querySelector('.mo-bd>div').appendChild(ed)}
+      if(!p1){p1={x,y};ed.textContent='Esquina superior izquierda: x:'+x+', y:'+y+' · ahora clic en la inferior derecha'}else{ed.textContent='{v:'+vi+', x:'+Math.min(p1.x,x)+', y:'+Math.min(p1.y,y)+', w:'+Math.abs(x-p1.x)+', h:'+Math.abs(y-p1.y)+'}';p1=null}}
+     else zoom(el.querySelector('#mo-img'))}};
+   if(el.scrollTo)el.scrollTo(0,0)}
+  const sig=()=>{const t=T[ti];if(k<t.diap.length-1)slide(k+1);else if(t.act)actividad();else cerrar({})},ant=()=>{if(k>0)slide(k-1)};
+  function zoom(i){if(!i||i.style.display=='none')return;const z=document.createElement('div');z.id='mo-zoom';z.innerHTML='<img src="'+i.src+'" alt="">';z.onclick=()=>z.remove();document.body.appendChild(z)}
+  function actividad(){const t=T[ti],g=++tk;est('act');el.onclick=null;el.onpointerdown=null;el.innerHTML='';api.obj=()=>null;
+   const ctx={el,bot:c.bot,pg,err:()=>{E++},fin:o=>{if(g===tk)cerrar(o)},obj:f=>{api.obj=f},quiz:Q=>quiz(Q,g)};t.act(ctx)}
+  function quiz(Q,g){let q=0,lk=0;const sh=()=>{lk=0;pg('Pregunta '+(q+1)+' de '+Q.length);el.innerHTML=`<div class=mo-q><small>Pregunta ${q+1} de ${Q.length}</small><h2>${Q[q][0]}</h2><div class=mo-ops>${Q[q][1].map((o,j)=>`<button class=btn data-q=${j}>${o}</button>`).join('')}</div></div>`};
+   el.onclick=e=>{const b=e.target.closest('[data-q]');if(!b||lk)return;if(+b.dataset.q==Q[q][2]){lk=1;c.bot('✅ ¡Correcto! '+Q[q][3]);q++;setTimeout(()=>{if(g!==tk)return;if(q<Q.length)sh();else cerrar({})},2400)}else{E++;c.bot('¡Casi! Probá otra vez.')}};sh()}
+  
+  // Pantalla final con botón 'Repetir ejercicios' y 'Continuar al tema siguiente'
+  function cerrar(o){o=o||{};est('fin');const t=T[ti],seg=Math.round((Date.now()-t0)/1000),st=o.omitido?1:(E==0?3:E<=3?2:1);
+   if(t.id)Progreso.registrar(c.app,t.id,{estado:'hecha',estrellas:st,errores:E,seg});pg(t.t+' · completado');api.obj=()=>null;
+   const prox=T.findIndex((x,idx)=>idx>ti&&!x.soon);
+   el.innerHTML=`<div class=mo-fn><div class=mo-big>${o.omitido?'⏭️':'🎉'}</div><h2>${o.omitido?'Práctica omitida':'¡Tema completado!'}</h2><p>${t.t}</p><p style="font-size:1.4em">${'⭐'.repeat(st)}${'☆'.repeat(3-st)} · ${E} ${E==1?'error':'errores'}</p>${o.res?`<p>${o.res}</p>`:''}<div class=row><button class=btn data-a=rep>↻ Repetir ejercicios</button>${prox!==-1?`<button class="btn go" data-a=nxt style="background:#22c55e">Continuar al tema siguiente ▶</button>`:''}<button class=btn data-a=lst>📋 Lista de temas</button><button class=btn data-a=ini>🏠 Volver al inicio</button></div></div>`;
+   el.onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;if(b.dataset.a=='rep'){E=0;t0=Date.now();actividad()}else if(b.dataset.a=='nxt'){abrir(prox)}else if(b.dataset.a=='lst')menu();else Alumno.irInicio()};
+   c.bot(o.omitido?'Está bien, {n}. Podés avanzar al siguiente tema cuando quieras.':'¡Muy bien, {n}! Completaste este tema.')}
+  addEventListener('keydown',e=>{if(modo!='slide'||/INPUT|TEXTAREA/.test(e.target.tagName))return;if(e.key=='ArrowRight')sig();else if(e.key=='ArrowLeft')ant()});
+  return{menu,obj:()=>api.obj()}}
+ return{crear}})();
+/* ===== FIN MÓDULO MOTOR v2 ===== */
+
+const $=s=>document.querySelector(s);
+const APP='teoria-tic-3',MJ_IMG=['../imagenes/teoria-tic-3/','imagenes/teoria-tic-3/','../../imagenes/teoria-tic-3/'];
+let NM='',es,voz=true,fs=16;
+
+const V=(b)=>`<svg viewBox="0 0 100 100">${b}</svg>`,SC='<rect x=11 y=19 width=78 height=48 fill="#38bdf8"/><path d="M11 67V52Q45 40 89 56V67Z" fill="#0ea5e9"/>';
+const IC={
+pantalla:V('<rect x=6 y=14 width=88 height=58 rx=4 fill="#1e293b" stroke="#94a3b8" stroke-width=3 />'+SC+'<rect x=44 y=72 width=12 height=10 fill="#94a3b8"/><rect x=30 y=82 width=40 height=6 rx=3 fill="#cbd5e1"/>'),
+pc:V('<rect x=4 y=18 width=62 height=42 rx=3 fill="#1e293b" stroke="#94a3b8" stroke-width=2 /><rect x=8 y=22 width=54 height=34 fill="#38bdf8"/><rect x=32 y=60 width=6 height=10 fill="#94a3b8"/><rect x=20 y=70 width=30 height=5 rx=2 fill="#cbd5e1"/><rect x=72 y=12 width=24 height=70 rx=3 fill="#475569" stroke="#cbd5e1" stroke-width=2 /><circle cx=84 cy=24 r=3 fill="#4ade80"/><rect x=77 y=36 width=14 height=4 fill="#cbd5e1"/><rect x=77 y=44 width=14 height=4 fill="#cbd5e1"/>'),
+notebook:V('<rect x=16 y=18 width=68 height=46 rx=3 fill="#1e293b" stroke="#94a3b8" stroke-width=3 /><rect x=21 y=23 width=58 height=36 fill="#38bdf8"/><path d="M6 70H94L88 80H12Z" fill="#cbd5e1" stroke="#64748b" stroke-width=2 /><rect x=40 y=73 width=20 height=3 rx=1.5 fill="#64748b"/>'),
+celular:V('<rect x=30 y=6 width=40 height=88 rx=7 fill="#1e293b" stroke="#94a3b8" stroke-width=3 /><rect x=34 y=16 width=32 height=66 fill="#38bdf8"/><circle cx=50 cy=88 r=2.5 fill="#64748b"/>'),
+teclado:V('<rect x=4 y=28 width=92 height=46 rx=5 fill="#334155" stroke="#94a3b8" stroke-width=2 />KBX<rect x=24 y=66 width=52 height=5 rx=2 fill="#e2e8f0"/>'),
+paint:V('<path d="M50 8C24 8 6 28 6 50C6 74 26 92 48 92C60 92 62 82 56 76C50 68 56 62 64 62H78C90 62 94 52 94 46C94 24 76 8 50 8Z" fill="#f5d9a8" stroke="#a16207" stroke-width=2.5 /><circle cx=30 cy=36 r=7 fill="#ef4444"/><circle cx=50 cy=24 r=7 fill="#facc15"/><circle cx=72 cy=34 r=7 fill="#22c55e"/><circle cx=24 cy=60 r=7 fill="#3b82f6"/>'),
+word:V('<rect x=6 y=14 width=88 height=72 rx=8 fill="#2b579a"/><rect x=6 y=14 width=38 height=72 rx=8 fill="#1e3f7a"/><text x=26 y=64 text-anchor=middle font-size=40 font-weight=700 fill="#fff" font-family=Arial>W</text><path d="M54 34H86M54 48H86M54 62H86" stroke="#93c5fd" stroke-width=4 />'),
+windows:V('<path d="M6 18L44 12V47H6Z" fill="#00a4ef"/><path d="M50 11L94 4V47H50Z" fill="#00a4ef"/><path d="M6 53H44V88L6 82Z" fill="#00a4ef"/><path d="M50 53H94V96L50 89Z" fill="#00a4ef"/>'),
+chrome:V('<path d="M11.9 28A44 44 0 0 1 88.1 28L50 50Z" fill="#ea4335"/><path d="M88.1 28A44 44 0 0 1 50 94L50 50Z" fill="#fbbc04"/><path d="M50 94A44 44 0 0 1 11.9 28L50 50Z" fill="#34a853"/><circle cx=50 cy=50 r=21 fill="#fff"/><circle cx=50 cy=50 r=16 fill="#4285f4"/>'),
+router:V('<rect x=10 y=54 width=80 height=28 rx=6 fill="#334155" stroke="#94a3b8" stroke-width=2 /><circle cx=24 cy=68 r=3 fill="#4ade80"/><circle cx=34 cy=68 r=3 fill="#4ade80"/><circle cx=44 cy=68 r=3 fill="#facc15"/><path d="M24 54V22M76 54V22" stroke="#94a3b8" stroke-width=5 stroke-linecap=round />'),
+nube:V('<path d="M28 74A18 18 0 0 1 30 38A24 24 0 0 1 76 40A17 17 0 0 1 74 74Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width=3 /><path d="M50 62V42M42 50L50 42L58 50" fill=none stroke="#38bdf8" stroke-width=5 stroke-linecap=round stroke-linejoin=round />'),
+candado:V('<path d="M32 44V32A18 18 0 0 1 68 32V44" fill=none stroke="#94a3b8" stroke-width=8 /><rect x=22 y=44 width=56 height=44 rx=6 fill="#facc15" stroke="#a16207" stroke-width=3 /><circle cx=50 cy=64 r=5 fill="#a16207"/>'),
+libre:V('<path d="M32 44V30A18 18 0 0 1 68 30V36" fill=none stroke="#94a3b8" stroke-width=8 /><rect x=22 y=44 width=56 height=44 rx=6 fill="#4ade80" stroke="#166534" stroke-width=3 /><circle cx=50 cy=64 r=5 fill="#166534"/>'),
+escudo:V('<path d="M50 6L88 20V50C88 74 70 88 50 96C30 88 12 74 12 50V20Z" fill="#2563eb" stroke="#93c5fd" stroke-width=3 /><path d="M32 50L45 63L70 36" fill=none stroke="#fff" stroke-width=8 stroke-linecap=round stroke-linejoin=round />')
+};
+IC.teclado=IC.teclado.replace('KBX',`${[0,1,2].map(r=>Array.from({length:10},(_,c)=>`<rect x=${9+c*8.5} y=${33+r*11} width=7 height=8 rx=1.5 fill=#e2e8f0 />`).join('')).join('')}`);
+
+const FI=(e,k)=>V(`<path d="M22 6H60L80 26V94H22Z" fill="#f1f5f9" stroke="#64748b" stroke-width=3 /><path d="M60 6V26H80" fill="#cbd5e1" stroke="#64748b" stroke-width=3 /><rect x=14 y=54 width=58 height=24 rx=3 fill="${k}"/><text x=43 y=72 text-anchor=middle font-size=16 font-weight=700 fill="#fff" font-family=Arial>${e}</text>`);
+Object.assign(IC,{
+docx:FI('DOCX','#2b579a'),xlsx:FI('XLSX','#217346'),pptx:FI('PPTX','#d24726'),txt:FI('TXT','#64748b'),zip:FI('ZIP','#a16207'),exe:FI('EXE','#dc2626'),mp4:FI('MP4','#0ea5e9'),jpg:FI('JPG','#16a34a'),pdf:FI('PDF','#dc2626'),mp3:FI('MP3','#7c3aed'),
+android:V('<path d="M18 62A32 32 0 0 1 82 62Z" fill="#3ddc84"/><circle cx=38 cy=50 r=3 fill="#fff"/><circle cx=62 cy=50 r=3 fill="#fff"/><rect x=18 y=66 width=64 height=22 rx=8 fill="#3ddc84"/>'),
+linux:V('<ellipse cx=50 cy=56 rx=28 ry=36 fill="#111827"/><ellipse cx=50 cy=64 rx=17 ry=24 fill="#f8fafc"/><circle cx=42 cy=30 r=5 fill="#fff"/><circle cx=58 cy=30 r=5 fill="#fff"/><circle cx=42 cy=31 r=2 fill="#000"/><circle cx=58 cy=31 r=2 fill="#000"/><path d="M42 38H58L50 46Z" fill="#facc15"/>'),
+macos:V('<rect x=12 y=16 width=76 height=52 rx=4 fill="#1e293b" stroke="#94a3b8" stroke-width=3 /><rect x=17 y=21 width=66 height=42 fill="#6366f1"/><text x=50 y=48 text-anchor=middle font-size=14 font-weight=700 fill="#fff" font-family=Arial>macOS</text><path d="M4 74H96L90 84H10Z" fill="#cbd5e1" stroke="#64748b" stroke-width=2 />'),
+ios:V('<rect x=30 y=6 width=40 height=88 rx=7 fill="#1e293b" stroke="#94a3b8" stroke-width=3 /><rect x=34 y=16 width=32 height=66 fill="#0ea5e9"/><text x=50 y=54 text-anchor=middle font-size=15 font-weight=700 fill="#fff" font-family=Arial>iOS</text>')
+});
+
+function say(t){t=t.replace(/\{n\}/g,NM);$('#bt-text').innerHTML=t;const btn=$('#bt-action');if(btn)btn.style.display='none';$('#bt-text').scrollTop=0;hablar(t)}
+function hablar(t){if(voz&&es){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,'').replace(/[\u{1F000}-\u{1FFFF}\u2600-\u27BF]/gu,''));u.voice=es;u.lang=es.lang;speechSynthesis.speak(u)}}
+function tv(){voz=!voz;Alumno.setPref('voz',voz);$('#vb').textContent=voz?'🔊':'🔇';if(!voz&&window.speechSynthesis)speechSynthesis.cancel()}
+function fz(d){fs=Math.min(26,Math.max(12,fs+d));document.body.style.fontSize=fs+'px';Alumno.setPref('fs',fs)}
+function fondo(){const c=document.body.classList.toggle('calm');$('#bgb').textContent=c?'🌌 Fondo animado':'🌌 Fondo estático'}
+(function(){const f=()=>{es=(window.speechSynthesis?speechSynthesis.getVoices():[]).find(v=>v.lang.toLowerCase().startsWith('es'))};f();if(window.speechSynthesis)speechSynthesis.onvoiceschanged=f;setTimeout(()=>{if(!es){voz=false;$('#vb').textContent='🔇';$('#vb').disabled=true}},2000)})();
+
+function tick(){
+  const r=$('#ring'), arr=$('#ptr-arrow'), e=M&&M.obj(), b=e&&e.getBoundingClientRect();
+  if(!b||!b.width||e.disabled||e.style?.display==='none'){
+    r.style.display='none';
+    if(arr) arr.style.display='none';
+  } else {
+    const w=b.width>b.height*2, d=Math.max(b.width,b.height)+(w?10:20), h=Math.min(d,b.height+30);
+    Object.assign(r.style,{display:'block',width:d+'px',height:h+'px',left:b.left+b.width/2-d/2+'px',top:b.top+b.height/2-h/2+'px',borderRadius:w?'2em':'50%'});
+    if(arr){
+      arr.style.display='block';
+      let t = b.top - 44;
+      let l = b.left + b.width/2 - 20;
+      if(t < 50) t = b.bottom + 8;
+      arr.style.top = Math.max(10, Math.min(window.innerHeight - 50, t)) + 'px';
+      arr.style.left = Math.max(10, Math.min(window.innerWidth - 50, l)) + 'px';
+    }
+  }
+  requestAnimationFrame(tick);
+}
+
+function flechas(){const e=$('#alt'),f=$('#sa2'),r=e.getBoundingClientRect(),mas=e.scrollHeight-e.clientHeight-e.scrollTop>10;f.style.display=mas?'flex':'none';if(mas){f.style.left=(r.right-48)+'px';f.style.top=(r.bottom-52)+'px'}requestAnimationFrame(flechas)}
+$('#sa2').onclick=()=>$('#alt').scrollBy({top:240,behavior:'smooth'});
+
+/* ================= CONTENIDOS DE LA CLASE 3 ================= */
+
+/* a00: Repaso de la clase 2 */
+const Q1=[
+  ['¿Cuál de estos periféricos es de entrada?',['Pantalla','Impresora','Teclado','Parlantes'],2,'Por el teclado le das información a la computadora.'],
+  ['¿Qué cable lleva imagen y sonido en alta definición a una TV?',['HDMI','USB tipo A','Cable de red','Ninguno'],0,'HDMI lleva imagen y sonido juntos en un solo cable digital.'],
+  ['¿Cuál guardás en el bolsillo para llevar tus archivos a todos lados?',['Impresora','Cámara web','Pendrive','Micrófono'],2,'El pendrive guarda archivos y es resistente a golpes.']
+];
+
+/* a01: ¿Qué es el software? (Sin partes en foto 1 y con 3 diapositivas explicativas de los 3 tipos) */
+const SOFT=[
+{t:'El software: la mente de la computadora',img:'c3-soft-01',ic:'word',alt:'Laptop con código e iconos digitales en español',
+ txt:'<p>En las clases anteriores vimos el <b>hardware</b>: todo lo que podés tocar. Pero sin instrucciones, el procesador no sabe qué hacer.</p><p>El <b>software</b> es la parte <b>lógica e intangible</b>: los programas, juegos, documentos y aplicaciones. No se tocan con las manos, pero se ven y se usan en la pantalla.</p><p>Una analogía clásica: si la computadora fuera un piano (hardware), el software sería la música escrita en la partitura.</p>',
+ bot:'El hardware es el cuerpo y el software es el conocimiento y las ideas.'},
+{t:'1. Software de Sistema: la base de todo',img:'c3-so-windows',ic:'windows',alt:'Sistema operativo Windows como software de sistema',
+ txt:'<p>Es el software más importante y el primero que arranca: el <b>Sistema Operativo</b> (como Windows, Linux o Android).</p><p>Su trabajo es coordinar todo el hardware: encender la pantalla, escuchar el teclado, manejar la memoria y permitir que los demás programas puedan funcionar de forma ordenada.</p>',
+ bot:'Sin software de sistema, la máquina enciende pero no muestra nada.'},
+{t:'2. Software de Aplicación: tus herramientas diarias',img:'c3-apps-01',ic:'paint',alt:'Aplicaciones y programas de uso cotidiano',
+ txt:'<p>Son todos los programas diseñados para que las personas realicen tareas concretas en su día a día:</p><ul style="margin-left:1.2em;line-height:1.6"><li>Escribir una tarea escolar (Word).</li><li>Dibujar y pintar un paisaje (Paint).</li><li>Navegar por internet (Chrome).</li><li>Jugar videojuegos o chatear con amigos.</li></ul>',
+ bot:'Son los programas que vos elegís abrir para hacer lo que necesitás.'},
+{t:'3. Software de Programación y Utilitarios',img:'c3-app-instalador',ic:'exe',alt:'Asistente de instalación y utilitarios',
+ txt:'<p>Son los programas que asisten a la computadora o sirven para crear nuevo software:</p><ul style="margin-left:1.2em;line-height:1.6"><li><b>Instaladores (.exe):</b> colocan programas nuevos en el sistema.</li><li><b>Antivirus y optimizadores:</b> protegen y limpian el equipo.</li><li><b>Lenguajes de programación:</b> herramientas con las que los programadores escriben nuevo código.</li></ul>',
+ bot:'Son como las herramientas del taller que mantienen todo a punto.'}
+];
+
+function actSoft(m){
+ m.quiz([
+  ['¿Cuál de estos elementos es software?',['El teclado físico','El programa Paint','El cable HDMI','La memoria RAM'],1,'Paint es un programa (software); los demás son objetos que se tocan (hardware).'],
+  ['¿A qué categoría pertenece un navegador como Google Chrome o WhatsApp?',['Software de Aplicación','Hardware de Entrada','Memoria ROM','Sistema operativo'],0,'Son aplicaciones pensadas para tareas concretas de los usuarios.'],
+  ['¿Qué pasaría si una computadora tuviera hardware pero ningún software instalado?',['Funcionaría más rápido','Encendería pero se quedaría con pantalla negra sin saber qué hacer','Imprimiría sola','Se rompería el mouse'],1,'Sin software, el procesador no tiene instrucciones para ejecutar.']
+ ]);
+}
+
+/* a02: Sistemas operativos (Dividido por cada sistema con introducción, Huayra aclarado y partes) */
+const SO=[
+{t:'¿Qué es un sistema operativo?',ic:'windows',
+ txt:'<p>Cuando prendés una computadora o celular, el primer programa que arranca es el <b>sistema operativo (SO)</b>. Es el <b>director de la orquesta</b>: coordina la memoria, la pantalla, el procesador y todos tus archivos.</p><p>A continuación vamos a recorrer los 5 sistemas operativos más importantes del mundo uno por uno.</p>',
+ tec:'Software de sistema que administra los recursos de hardware y provee servicios a las aplicaciones.',
+ bot:'Sin él, la computadora no sabría ni cómo mostrar una ventana.'},
+{t:'Windows (Microsoft)',img:'c3-so-windows',ic:'windows',alt:'Escritorio de Windows 10 con menú inicio abierto',
+ txt:'<p>Desarrollado por <b>Microsoft</b>. Es el sistema operativo más extendido del mundo en computadoras personales y oficinas. Es un sistema <b>privativo</b> (comercial).</p>',
+ partes:[
+  ['Baldosas interactivas (Live Tiles)','Muestran información actualizada como noticias, clima o juegos.',{x:22,y:18,w:47,h:54}],
+  ['Lista alfabética de programas','Columna para buscar cualquier programa instalado por su nombre.',{x:4,y:17,w:18,h:74}],
+  ['Barra de tareas y Menú Inicio','Borde inferior con botón de inicio, cuadro de búsqueda y programas abiertos.',{x:0,y:94,w:100,h:6}]
+ ],
+ bot:'Windows se destaca por su menú Inicio y su enorme compatibilidad con programas y juegos.'},
+{t:'macOS (Apple)',img:'c3-so-macos',ic:'macos',alt:'Escritorio de macOS con Dock inferior',
+ txt:'<p>Es el sistema operativo exclusivo de las computadoras <b>Mac</b> (MacBook, iMac) de Apple. Se caracteriza por su diseño elegante, estabilidad y seguridad.</p>',
+ partes:[
+  ['Dock de aplicaciones','Barra inferior flotante con iconos translúcidos para abrir programas con un clic.',{x:2,y:91,w:96,h:8}],
+  ['Barra de menús con la Manzana','Borde superior con la manzana de Apple y los menús del programa activo.',{x:0,y:0,w:100,h:4}]
+ ],
+ bot:'macOS solo funciona legalmente en computadoras fabricadas por Apple.'},
+{t:'GNU/Linux y Huayra',img:'c3-so-linux',ic:'linux',alt:'Escritorio de Huayra Linux en Conectar Igualdad',
+ txt:'<p><b>Linux</b> es un sistema operativo <b>libre y comunitario</b>. Cualquiera puede ver su código, mejorarlo y distribuirlo gratis. Por eso existen cientos de versiones llamadas <b>distribuciones</b> (como Ubuntu, Linux Mint o Debian).</p><p>En Argentina se creó <b>Huayra GNU/Linux</b> para las netbooks de Conectar Igualdad. Aunque esa edición escolar específica fue discontinuada con el tiempo, el ecosistema de Linux sigue más vivo que nunca en servidores, celulares y computadoras del mundo.</p>',
+ partes:[
+  ['Menú Aplicaciones y Lugares','Accesos superiores a herramientas educativas, juegos y carpetas.',{x:0,y:0,w:19,h:4}],
+  ['Iconos del escritorio Huayra','Acceso directo a la carpeta personal y la papelera.',{x:1,y:6,w:10,h:37}],
+  ['Identidad Huayra / Conectar Igualdad','Fondo representativo del proyecto nacional educativo.',{x:20,y:77,w:72,h:16}]
+ ],
+ bot:'Linux es el corazón libre de internet y de la educación tecnológica.'},
+{t:'Android (Google)',img:'c3-so-android',ic:'android',alt:'Pantalla de inicio de celular Android',
+ txt:'<p>Desarrollado por <b>Google</b> y basado en Linux. Es el sistema operativo móvil más utilizado del planeta, presente en millones de teléfonos y tablets de marcas como Samsung, Motorola o Xiaomi.</p>',
+ partes:[
+  ['Barra de búsqueda de Google','Acceso inmediato para consultar internet, usar la voz o la cámara.',{x:6,y:89,w:88,h:6}],
+  ['Iconos del dock inferior','Llamadas telefónicas, mensajes de texto, Chrome y tienda Play Store.',{x:5,y:79,w:90,h:7}],
+  ['Widget de fecha y estado','Muestra el reloj, la batería y la señal arriba.',{x:4,y:1,w:92,h:14}]
+ ],
+ bot:'Prácticamente 7 de cada 10 celulares del mundo funcionan con Android.'},
+{t:'iOS (Apple iPhone)',img:'c3-so-ios',ic:'ios',alt:'Pantalla de inicio de iPhone con iOS',
+ txt:'<p>El sistema operativo exclusivo de los teléfonos <b>iPhone</b> de Apple (y iPadOS en las tablets iPad). Se caracteriza por su fluidez, privacidad y su tienda App Store.</p>',
+ partes:[
+  ['Widgets de información','Bloques grandes con el pronóstico del clima y el calendario.',{x:6,y:9,w:88,h:22}],
+  ['Cuadrícula de aplicaciones','Organización limpia de apps con esquinas redondeadas.',{x:6,y:44,w:88,h:34}],
+  ['Dock de acceso rápido','Cuatro aplicaciones fijas que te acompañan al deslizar pantallas.',{x:4,y:85,w:92,h:11}]
+ ],
+ bot:'¡Completamos el recorrido por los 5 grandes sistemas operativos!'}
+];
+
+const QSO=[
+  ['¿Qué es el sistema operativo?',['Un cable para conectar el monitor','El programa principal que administra toda la computadora','Un juego para internet','Un tipo de archivo de texto'],1,'Es el director de la orquesta que permite que todo funcione.'],
+  ['¿Qué ocurrió con Huayra Linux en Argentina?',['Fue un sistema comercial cerrado','Fue la distribución educativa de Conectar Igualdad que mostró el poder de Linux','Nunca se usó en escuelas','Reemplazó a todos los celulares'],1,'Huayra demostró que las escuelas pueden usar software libre nacional.'],
+  ['¿Qué sistema operativo móvil lidera en la gran mayoría de celulares del mundo?',['Android de Google','Windows Phone','macOS','MS-DOS'],0,'Android es el líder global en teléfonos móviles y tablets.']
+];
+
+/* a03: Programas y aplicaciones (Con diapositivas detalladas para cada programa) */
+const APPS=[
+{t:'Los programas y aplicaciones',img:'c3-apps-01',ic:'paint',alt:'Variedad de programas abiertos',
+ txt:'<p>Los programas son las herramientas que instalamos en el sistema operativo para trabajar, estudiar o divertirnos. Vamos a conocer cada una de las familias principales con sus fotos reales:</p>',
+ bot:'Cada programa está diseñado para un tipo de tarea específica.'},
+{t:'Procesadores de texto: Word y Bloc de notas',imgs:['c3-app-word','c3-app-blocnotas'],ic:'word',alt:'Word y Bloc de notas',
+ txt:'<p><b>Microsoft Word (Vista 1):</b> permite redactar informes con títulos grandes, tablas, imágenes y gráficos.</p><p><b>Bloc de notas (Vista 2):</b> texto plano rápido y ligero sin formato, ideal para anotaciones urgentes o código de programación.</p>',
+ partes:[
+  ['Documento con títulos y gráficos','Hoja estructurada de Word.',{v:0,x:22,y:20,w:56,h:76}],
+  ['Texto plano sin formato','Área de escritura simple del Bloc de notas.',{v:1,x:3,y:10,w:94,h:84}]
+ ],
+ bot:'Cambiá de vista arriba para ver la diferencia entre texto con formato y texto plano.'},
+{t:'Planillas de cálculo: Microsoft Excel',img:'c3-app-excel',ic:'xlsx',alt:'Planilla de cálculo con datos y cuentas',
+ txt:'<p><b>Excel</b> organiza la información en una cuadrícula de <b>filas y columnas (celdas)</b>. Su gran poder es hacer cuentas matemáticas y estadísticas automáticamente.</p>',
+ partes:[
+  ['Celdas con datos y tablas','Donde se anotan números, productos o nombres.',{x:7,y:52,w:90,h:44}],
+  ['Cinta de herramientas y fórmulas','Funciones para sumar, promediar y dar color.',{x:0,y:0,w:100,h:35}]
+ ],
+ bot:'Si tenés que calcular presupuestos o notas de alumnos, Excel es el rey.'},
+{t:'Presentaciones visuales: PowerPoint',img:'c3-app-powerpoint',ic:'pptx',alt:'Presentación de diapositivas en PowerPoint',
+ txt:'<p><b>PowerPoint</b> sirve para armar <b>diapositivas</b> visuales para exponer un tema frente a la clase o una reunión con textos breves, fotos y animaciones.</p>',
+ partes:[
+  ['Diapositiva central de diseño','Lienzo donde se ordenan los textos e imágenes.',{x:26,y:24,w:62,h:68}],
+  ['Panel lateral de diapositivas','Lista de páginas que componen la presentación.',{x:8,y:27,w:12,h:65}]
+ ],
+ bot:'Las diapositivas ayudan a explicar ideas de forma clara y visual.'},
+{t:'Documentos digitales universales: Lector PDF',img:'c3-app-pdf',ic:'pdf',alt:'Visor de PDF en navegador',
+ txt:'<p>El formato <b>PDF</b> se diseñó para que un documento se vea exactamente igual en cualquier pantalla o impresora sin desarmarse. Se lee con el navegador o lectores dedicados.</p>',
+ partes:[
+  ['Página PDF protegida','Texto y gráficos que no se mueven de lugar.',{x:30,y:20,w:62,h:78}],
+  ['Miniaturas de navegación','Permite saltar rápidamente entre hojas.',{x:7,y:22,w:10,h:76}]
+ ],
+ bot:'Los libros digitales, boletas y certificados siempre se mandan en PDF.'},
+{t:'Creatividad y dibujo: Paint',img:'c3-app-fotos',ic:'paint',alt:'Programa de dibujo Paint',
+ txt:'<p><b>Paint</b> es el programa clásico para crear dibujos sencillos con pinceles, recortar imágenes o pintar con colores.</p>',
+ partes:[
+  ['Lienzo de dibujo blanco','Área donde se crean las ilustraciones.',{x:25,y:13,w:55,h:65}],
+  ['Caja de herramientas y paleta','Pinceles, formas geométricas y colores.',{x:16,y:13,w:9,h:75}]
+ ],
+ bot:'¡Todos aprendimos a usar el mouse practicando en Paint!'},
+{t:'Mundo multimedia: Winamp y VLC',imgs:['c3-app-musica','c3-app-video'],ic:'mp3',alt:'Reproductores multimedia de música y video',
+ txt:'<p><b>Winamp (Vista 1):</b> reproduce música organizando listas de canciones y álbumes.</p><p><b>VLC Media Player (Vista 2):</b> reproduce prácticamente cualquier archivo de video con subtítulos y audio.</p>',
+ partes:[
+  ['Controles de música (Winamp)','Barra inferior con Play, Pausa y volumen.',{v:0,x:1,y:87,w:98,h:12}],
+  ['Ventana de video (VLC)','Pantalla con el cono naranja donde se proyectan películas.',{v:1,x:2,y:28,w:96,h:44}]
+ ],
+ bot:'Los reproductores multimedia decodifican sonido e imagen digital.'},
+{t:'Utilitarios: Compresión y Asistentes',imgs:['c3-app-compresor','c3-app-instalador'],ic:'zip',alt:'Carpeta comprimida ZIP y asistente de instalación',
+ txt:'<p><b>Carpetas comprimidas (Vista 1):</b> empaquetan muchos archivos juntos para enviarlos por correo ocupando menos espacio.</p><p><b>Instaladores (Vista 2):</b> guían paso a paso para agregar nuevos programas a Windows de forma segura.</p>',
+ partes:[
+  ['Cierre cremallera de compresión','Símbolo de que los archivos están comprimidos.',{v:0,x:28,y:56,w:44,h:38}],
+  ['Asistente de instalación','Ventana con botón "Siguiente" para instalar software.',{v:1,x:13,y:23,w:80,h:72}]
+ ],
+ bot:'¡Completamos el recorrido por todas las familias de programas que tenemos instalados!'}
+];
+
+function actApps(m){
+ m.quiz([
+  ['¿Qué programa usarías para redactar un informe con portada y gráficos?',['Un reproductor de video','Microsoft Word','Paint','La calculadora'],1,'Los procesadores de texto como Word son los indicados para informes.'],
+  ['¿Por qué se usa el formato PDF para enviar boletas o certificados?',['Porque se deforma en otras computadoras','Porque se ve idéntico en cualquier dispositivo y no se desconfigura','Porque ocupa 10 veces más','Porque no se puede imprimir'],1,'El formato PDF garantiza que el diseño permanezca intacto.'],
+  ['¿Para qué sirve comprimir archivos en un ZIP?',['Para cambiarles de idioma','Para juntar varios archivos y que pesen menos al enviarlos','Para formatear la máquina','Para dibujar'],1,'Las carpetas comprimidas ahorran espacio y facilitan el envío por internet.']
+ ]);
+}
+
+/* a04: Archivos y extensiones */
+const EXT=[
+{t:'Todo archivo tiene nombre y apellido',ic:'docx',
+ txt:'<p>Cada archivo guardado en el disco se identifica con dos partes separadas por un punto:</p><p style="text-align:center;font-size:1.8em;margin:.4em 0"><span style="background:#1e3a5f;padding:.1em .35em;border-radius:.3em">tarea-ciencias</span><span style="background:#2b579a;padding:.1em .35em;border-radius:.3em;margin-left:.1em">.docx</span></p><ul style="margin-left:1.2em"><li>El <b>nombre</b> (<i>tarea-ciencias</i>) lo elegís vos para saber qué contiene.</li><li>El <b>apellido</b> (<i>.docx</i>) se llama <b>extensión</b>: le dice a la computadora de qué tipo es el archivo y <b>qué programa debe abrirlo</b>.</li></ul>',
+ cur:'Si le cambiás el apellido a mano a un archivo (por ejemplo, renombrando "foto.jpg" a "foto.mp3"), no lo convertís en música: ¡lo dejás ilegible!',
+ bot:'El apellido le dice a Windows con qué programa abrir el archivo.'},
+{t:'Los 10 apellidos más comunes en fotos reales',imgs:['c3-app-word','c3-app-excel','c3-app-powerpoint','c3-app-pdf','c3-app-fotos','c3-app-musica','c3-app-video','c3-app-blocnotas','c3-app-compresor','c3-app-instalador'],ic:'docx',alt:'Programas reales de cada extensión',
+ txt:'<p><b>Tocá cada apellido</b> para ver su programa real capturado en pantalla:</p>',
+ partes:[
+  ['.docx (Word)','Documento de texto con títulos y gráficos.',{v:0,x:22,y:20,w:56,h:76}],
+  ['.xlsx (Excel)','Planilla de cálculo con filas, columnas y cuentas.',{v:1,x:7,y:52,w:90,h:44}],
+  ['.pptx (PowerPoint)','Presentación con diapositivas visuales.',{v:2,x:26,y:24,w:62,h:68}],
+  ['.pdf (Documento cerrado)','Formato digital estándar para documentos que no deben modificarse.',{v:3,x:30,y:20,w:62,h:78}],
+  ['.jpg / .png (Imágenes)','Dibujos y fotografías.',{v:4,x:25,y:13,w:55,h:65}],
+  ['.mp3 (Audio)','Canciones y audios reproducidos con lista y barra de tiempo.',{v:5,x:1,y:87,w:98,h:12}],
+  ['.mp4 (Video)','Películas y grabaciones con video y audio sincronizados.',{v:6,x:2,y:28,w:96,h:44}],
+  ['.txt (Texto plano)','Notas simples sin negrita, colores ni formatos.',{v:7,x:3,y:10,w:94,h:84}],
+  ['.zip (Comprimido)','Carpeta con cierre que junta varios archivos pesando menos.',{v:8,x:28,y:56,w:44,h:38}],
+  ['.exe (Programa instalador)','Archivo ejecutable de Windows. ¡Abrí solo los confiables!',{v:9,x:13,y:23,w:80,h:72}]
+ ],
+ bot:'Tocá cada botón para ver cómo cambia la foto del programa que lo abre.'}
+];
+
+const QEXT=[
+  ['¿Qué programa abre por defecto un archivo que termina en .docx?',['Paint','Microsoft Word o LibreOffice Writer','El reproductor de música','La calculadora'],1,'Los archivos .docx pertenecen a procesadores de texto.'],
+  ['En el archivo "vacaciones.jpg", ¿cuál es la extensión?',['vacaciones','.jpg','vacaciones.jpg','Ninguna'],1,'La extensión es el sufijo que va después del punto (.jpg).'],
+  ['¿Por qué hay que tener especial cuidado con los archivos con extensión .exe?',['Porque no se pueden borrar','Porque son programas que se ejecutan y podrían ser virus disfrazados','Porque ocupan poco espacio','Porque no tienen sonido'],1,'Un archivo .exe ejecuta instrucciones directamente en el procesador.']
+];
+
+/* a05: Licencias del software */
+const LICENCIAS=[
+{t:'¿Quién es dueño de un programa?',img:'c3-lic-01',ic:'libre',alt:'Software Libre vs Software Privativo',
+ txt:'<p>Cuando usás un programa, su autor define mediante una <b>licencia</b> qué podés y qué no podés hacer con él:</p><ul style="margin-left:1.2em;line-height:1.6"><li><b>Software Privativo (Comercial):</b> El código del programa es secreto del fabricante (ej: Windows, Photoshop). No podés ver cómo está hecho por dentro, ni modificarlo ni repartir copias libremente.</li><li><b>Software Libre y Código Abierto:</b> Respeta la libertad de los usuarios (ej: Linux, LibreOffice). Podés usarlo para cualquier fin, estudiar cómo funciona, compartirlo con amigos y mejorarlo.</li></ul>',
+ partes:[
+   ['Software Privativo (Enjaulado)','El usuario está limitado por candados y no puede ver el código.',{x:10,y:32,w:34,h:60}],
+   ['Software Libre (Abierto)','Código abierto, libre y comunitario para aprender y compartir.',{x:51,y:25,w:43,h:68}]
+ ],
+ bot:'Mirá la foto: la computadora con candado representa el software cerrado, y la sonriente el software libre.'},
+{t:'Las cuatro libertades esenciales del Software Libre',ic:'libre',
+ pasos:[
+  'Libertad 0: Usar el programa para cualquier propósito (educación, trabajo, hogar).',
+  'Libertad 1: Estudiar cómo funciona el código por dentro y adaptarlo a tus necesidades.',
+  'Libertad 2: Distribuir copias para ayudar a tu escuela o a tus compañeros.',
+  'Libertad 3: Mejorar el programa y publicar esas mejoras para beneficio de toda la sociedad.'
+ ],
+ bot:'Gracias a estas libertades, Huayra Linux se puede copiar e instalar gratis en todas las escuelas.'}
+];
+
+function actLicencias(m){
+ m.quiz([
+  ['¿Qué libertad te da el Software Libre respecto a su código?',['Está prohibido mirarlo','Podés estudiar el código, modificarlo y compartirlo','Tenés que pagar cada vez que lo abrís','Solo funciona en inglés'],1,'El Software Libre permite ver el código fuente y aprender de él.'],
+  ['¿Cuál de estos sistemas operativos es un ejemplo de Software Libre?',['Windows 11','macOS','Linux (como Huayra o Ubuntu)','iOS de iPhone'],2,'Linux y Huayra son sistemas operativos libres y comunitarios.'],
+  ['Si un amigo te pide una copia de un programa de Software Libre, ¿qué hacés?',['No podés dárselo porque es delito','Se lo podés copiar libremente porque la licencia lo permite','Tenés que llamar al fabricante','Tenés que formatear tu compu'],1,'Compartir copias es una de las libertades fundamentales del Software Libre.']
+ ]);
+}
+
+/* a06: Internet y la web (Recuadros amarillos exactamente calibrados) */
+const INTERNET=[
+{t:'Internet: la red de redes mundial',img:'c3-web-01',ic:'chrome',alt:'Navegador con barra de direcciones URL destacada',
+ txt:'<p><b>Internet</b> es la gigantesca red física de cables, satélites y antenas que conecta computadoras en todo el planeta. <b>La Web (WWW)</b> es el servicio de páginas, fotos y videos que navegan sobre esa red.</p>',
+ partes:[
+   ['Barra de direcciones URL (Omnibox)','El óvalo azul donde escribís la dirección web o hacés búsquedas directas.',{x:24.5,y:23,w:74,h:22}],
+   ['Pestaña activa (New Tab)','Permite tener abiertas varias páginas a la vez en una misma ventana.',{x:1,y:3,w:43,h:22}],
+   ['Botones de navegación','Atrás, adelante, recargar página y botón de inicio.',{x:2,y:26,w:20,h:18}]
+ ],
+ bot:'Tocá cada parte del navegador: ahora el recuadro amarillo encaja justo sobre la barra azul.'},
+{t:'Navegador vs. Buscador y la URL',ic:'chrome',
+ txt:'<p>No hay que confundir el programa con el sitio web:</p><table><tr><th>Herramienta</th><th>¿Qué es?</th><th>Ejemplos</th></tr><tr><td><b>Navegador</b></td><td>El programa instalado en tu compu para abrir internet.</td><td>Google Chrome, Mozilla Firefox, Microsoft Edge, Safari.</td></tr><tr><td><b>Buscador</b></td><td>Una página web que busca información entre millones de sitios.</td><td>Google, Bing, DuckDuckGo.</td></tr></table><p style="margin-top:.6em">El candadito en la dirección significa <b>HTTPS (seguro)</b>: tus datos viajan cifrados.</p>',
+ bot:'Chrome es el vehículo; Google es el mapa que te dice dónde ir.'}
+];
+
+function actInternet(m){
+ m.quiz([
+  ['¿Cuál es la diferencia entre un navegador y un buscador?',['Son exactamente lo mismo','El navegador es el programa instalado y el buscador es una página web de consulta','El buscador es un cable','El navegador solo funciona con teclado'],1,'El navegador (ej. Chrome) abre páginas; el buscador (ej. Google) rastrea enlaces.'],
+  ['¿Qué indica el candado al inicio de una dirección web (HTTPS)?',['Que la página está cerrada por mantenimiento','Que la información viaja protegida y cifrada','Que tenés que pagar para verla','Que no hay internet'],1,'HTTPS asegura que nadie intermedio pueda espiar tus contraseñas o datos.'],
+  ['¿Cuál de los siguientes es un navegador web?',['Mozilla Firefox','Microsoft Word','WhatsApp','El procesador'],0,'Firefox es un navegador web libre para explorar internet.']
+ ]);
+}
+
+/* a07: Cómo viaja una página y la nube */
+const NUBE=[
+{t:'El modelo Cliente - Servidor y La Nube',img:'c3-nube-01',ic:'nube',alt:'Servidores en un centro de datos real',
+ txt:'<p>Cuando abrís un video o guardás un archivo "en la nube", tus datos viajan a <b>centros de datos (datacenters)</b> como el de la foto: enormes edificios con miles de computadoras servidoras conectadas día y noche.</p>',
+ partes:[
+   ['Torres de servidores (izquierda)','Computadoras sin pantalla que almacenan y procesan millones de páginas web.',{x:0,y:0,w:41,h:98}],
+   ['Torres de servidores (derecha)','Filas refrigeradas con discos duros y memorias de respaldo.',{x:59,y:0,w:41,h:98}],
+   ['Pasillo central refrigerado','Mantiene la temperatura baja para que nada se recaliente.',{x:20,y:55,w:60,h:44}]
+ ],
+ bot:'La nube no está en el cielo: son computadoras reales en edificios seguros.'},
+{t:'¿Por qué conviene usar la nube?',ic:'nube',
+ txt:'<p>Servicios como <b>Google Drive</b> o <b>OneDrive</b> ofrecen grandes ventajas:</p><ul style="margin-left:1.2em;line-height:1.6"><li><b>Acceso universal:</b> podés empezar tu tarea en la escuela y continuarla en tu casa desde el celular o la compu.</li><li><b>Copia de seguridad automática:</b> si se rompe tu equipo, tus fotos y documentos siguen a salvo en tu cuenta.</li><li><b>Trabajo colaborativo:</b> varios compañeros pueden escribir al mismo tiempo en el mismo documento.</li></ul>',
+ bot:'¡Tus archivos nunca se pierden si están guardados en tu cuenta de la nube!'}
+];
+
+function actNube(m){
+ m.quiz([
+  ['En internet, ¿qué papel cumple tu computadora cuando busca una página?',['Es el Servidor','Es el Cliente que hace la solicitud','Es el satélite','Es un cable submarino'],1,'Tu dispositivo actúa como cliente que solicita la información.'],
+  ['¿Dónde se guardan realmente los archivos cuando usamos "la nube"?',['En el satélite de la luna','En computadoras servidoras de centros de datos conectadas a internet','En el aire','Dentro del teclado'],1,'La nube está formada por servidores físicos en datacenters.'],
+  ['¿Cuál es una gran ventaja de guardar tus tareas en la nube?',['Que no necesitás contraseña','Que podés acceder a tus archivos desde cualquier compu y no se pierden si tu equipo se rompe','Que la compu no usa batería','Que imprime sola'],1,'Tus archivos quedan respaldados en un lugar seguro y accesible.']
+ ]);
+}
+
+/* a08: Cómo nos conectamos (Cables submarinos y Wi-Fi sin número) */
+const CONEXIONES=[
+{t:'Las autopistas de internet: cables submarinos',imgs:['c3-cables-mar','c3-router-01'],ic:'router',alt:'Cables de fibra óptica submarinos y router Wi-Fi',
+ txt:'<p>El <b>99% de los datos de internet entre continentes viaja por el fondo del mar</b> a través de gruesos cables de fibra óptica que transmiten luz láser a través de hilos de vidrio ultradelgados.</p><p>En la <b>Vista 2</b> podés ver cómo el <b>router</b> reparte esa señal dentro de tu casa o escuela mediante ondas de radio <b>Wi-Fi</b> o cables de red.</p>',
+ partes:[
+   // Vista 0: c3-cables-mar
+   ['Cable tendido en el lecho marino','Miles de kilómetros de cable descansando en el fondo oceánico.',{v:0,x:2,y:5,w:96,h:42}],
+   ['Capas de protección de acero','Blindaje que protege el cable de la presión del agua y mordeduras de tiburones.',{v:0,x:2,y:60,w:58,h:35}],
+   ['Hilos de fibra óptica (vidrio)','Por donde viajan los datos a la velocidad de la luz mediante pulsos láser.',{v:0,x:60,y:72,w:22,h:22}],
+
+   // Vista 1: c3-router-01
+   ['Antenas Wi-Fi','Emiten ondas de radio inalámbricas para celulares y laptops.',{v:1,x:30,y:31,w:42,h:56}],
+   ['Luz LED indicadora','Avisa si hay señal de internet activa.',{v:1,x:35,y:72,w:4,h:3}],
+   ['Cables de red Ethernet','Conexión por cable de máxima velocidad para computadoras.',{v:1,x:74,y:57,w:25,h:20}]
+ ],
+ cur:'En Argentina, los principales cables submarinos de internet entran por las playas de Las Toninas (Buenos Aires).',
+ bot:'Cambiá de vista para ver cómo viaja internet bajo el mar y cómo se reparte en tu casa con el router.'}
+];
+
+function actConexiones(m){
+ m.quiz([
+  ['¿Por dónde viaja la mayor parte de los datos de internet entre continentes?',['Por satélites espaciales','Por cables de fibra óptica submarinos bajo el mar','Por globos aerostáticos','Por ondas de radio'],1,'Los cables submarinos transportan el 99% de los datos mundiales.'],
+  ['¿Qué aparato emite la señal de Wi-Fi en el hogar o la escuela?',['El router','La impresora','El monitor','El mouse'],0,'El router recibe la señal de red y la distribuye por Wi-Fi o cable.'],
+  ['¿Por qué se usa vidrio en los cables de fibra óptica?',['Porque es más barato que el plástico','Porque permite transmitir pulsos de luz a altísima velocidad','Porque no se rompe nunca','Para ver los colores'],1,'La luz viaja rebotando a través del hilo de vidrio ultradelgado.']
+ ]);
+}
+
+/* a09: Seguridad y convivencia digital */
+const SEGURIDAD=[
+{t:'Cuidado con las trampas: el phishing',img:'c3-seg-01',ic:'candado',alt:'Ilustración de phishing con ladrón pescando tarjeta',
+ txt:'<p>El <b>phishing</b> (pesca de datos) es una estafa donde ciberdelincuentes se hacen pasar por empresas, bancos o sorteos enviando mensajes tentadores para robarte contraseñas o dinero.</p>',
+ partes:[
+   ['Ciberdelincuente disfrazado','Usa identidades falsas para engañar a los usuarios.',{x:54,y:18,w:42,h:68}],
+   ['Tarjeta y datos bancarios','El botín que intentan robar mediante páginas falsas.',{x:23,y:18,w:42,h:68}],
+   ['Anzuelo / Mensaje trampa','Un link que promete premios mágicos o alerta sobre "cuentas bloqueadas".',{x:38,y:37,w:23,h:32}]
+ ],
+ bot:'Si un mensaje te promete regalos o te pide tu clave... ¡es una trampa de pesca!'},
+{t:'Tu huella digital y contraseñas fuertes',ic:'escudo',
+ txt:'<p>Dos reglas de oro para cuidarte en internet:</p><ol class="mo-ps"><li><span><b>Contraseñas fuertes:</b> mínimo 10 letras mezclando mayúsculas, minúsculas, números y símbolos (ej: <code>MiGat0!Comio</code>). ¡Nunca la compartas!</span></li><li><span><b>Huella digital:</b> todo lo que subís a internet (fotos, comentarios, videos) queda para siempre. Pensá bien antes de publicar y tratá a los demás con respeto digital.</span></li></ol>',
+ bot:'Cuidar tu seguridad te permite disfrutar de internet con total tranquilidad.'}
+];
+
+function actSeguridad(m){
+ m.quiz([
+  ['¿Cuál de las siguientes es una contraseña segura?',['12345678','marito2012','Sol#Play49!Luna','contraseña'],2,'Combina mayúsculas, minúsculas, números y símbolos sin datos personales obvios.'],
+  ['Si te llega un mensaje de WhatsApp que dice "¡Ganaste un iPhone! Entrá al link y poné tu contraseña":',['Completás los datos rápido para no perderlo','Desconfiás y le avisás a un adulto: es una estafa (phishing)','Se lo reenviás a tus amigos','Hacés clic enseguida'],1,'Es un clásico engaño de phishing para robar cuentas.'],
+  ['¿Qué es la "huella digital" en internet?',['El lector para desbloquear el celular','El rastro permanente de fotos, comentarios y acciones que dejamos al navegar','Una aplicación para dibujar','Una tecla del teclado'],1,'Todo lo que compartimos en internet construye nuestra reputación digital para siempre.']
+ ]);
+}
+
+/* ================= LISTA COMPLETA DE TEMAS (TEMAS) ================= */
+const TEMAS=[
+  {id:'a00',t:'Repaso de la clase anterior',min:3,ico:'pc',opt:true,diap:[],act:m=>m.quiz(Q1)},
+  {id:'a01',t:'¿Qué es el software?',min:6,ico:'word',diap:SOFT,act:actSoft},
+  {id:'a02',t:'Sistemas operativos',min:10,ico:'windows',diap:SO,act:m=>m.quiz(QSO)},
+  {id:'a03',t:'Programas y aplicaciones',min:8,ico:'paint',diap:APPS,act:actApps},
+  {id:'a04',t:'Archivos y extensiones',min:12,ico:'docx',diap:EXT,act:m=>m.quiz(QEXT)},
+  {id:'a05',t:'Licencias del software',min:8,ico:'libre',diap:LICENCIAS,act:actLicencias},
+  {id:'a06',t:'Internet y la web',min:9,ico:'chrome',diap:INTERNET,act:actInternet},
+  {id:'a07',t:'Cómo viaja una página y la nube',min:7,ico:'nube',diap:NUBE,act:actNube},
+  {id:'a08',t:'Cómo nos conectamos',min:9,ico:'router',diap:CONEXIONES,act:actConexiones},
+  {id:'a09',t:'Seguridad y convivencia digital',min:10,ico:'escudo',diap:SEGURIDAD,act:actSeguridad}
+];
+
+/* ================= ARRANQUE DE LA APP ================= */
+let M=null;
+M=Motor.crear({
+  app:APP,
+  el:$('#alt'),
+  img:MJ_IMG,
+  ic:IC,
+  titulo:'Clase 3 · Software, internet y seguridad',
+  sub:'Elegí un tema de la lista para explorar las diapositivas y completar los desafíos interactivos.',
+  temas:TEMAS,
+  bot:say,
+  hablar,
+  pg:t=>{$('#pt').textContent=t},
+  estado:m=>{$('#sk').style.display=m=='act'?'block':'none'}
+});
+
+$('#sk').onclick=()=>M.menu();
+$('#lst').onclick=()=>M.menu();
+tick();
+flechas();
+
+Alumno.botonInicio($('#top'));
+
+{
+  const pf=Alumno.prefs();
+  if(pf.fs&&pf.fs!==fs) fz(pf.fs-fs);
+  if(pf.voz===false&&voz) tv();
+}
+
+Alumno.pedir(a=>{
+  NM=(a.nombre||'').split(' ')[0]||'Estudiante';
+  M.menu();
+});
+</script></body></html>
+<!-- Aplicación: Clase 3 · Software, internet y seguridad (appId: teoria-tic-3)
+Versión 1.2 — 26/10/2026 — Pantalla de login con título y autor Profesor Mario Jofré, menú sin duración, software ampliado a 3 tipos con fotos sin marcas, SO dividido por cada sistema con Huayra aclarado, apps ampliadas con capturas individuales, botón 'Repetir ejercicios' y 'Continuar al tema siguiente', recuadro de Chrome corregido y Wi-Fi sin número
+-->

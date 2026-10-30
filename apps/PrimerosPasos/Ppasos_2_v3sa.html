@@ -1,0 +1,853 @@
+<!-- app: primeros-pasos-2 | contrato: v1 | módulos: alumno v1.1, progreso v1, teclado v1 (pequeño) | fecha: 2026-10-26 -->
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Primeros pasos en Windows Parte 2</title>
+<style>
+:root{--kb:#eee;--kt:#222;--kd:#666;--tr:#d1d5db}
+*{box-sizing:border-box;margin:0}
+body{font:16px "Segoe UI",Arial,sans-serif;height:100vh;overflow:hidden;user-select:none;background:#073a78}
+button{font:inherit;cursor:pointer}button:disabled{opacity:.4;cursor:default}
+
+/* Barra superior */
+#top{position:fixed;top:0;left:0;right:0;height:2.4em;background:#1f2937;color:#fff;display:flex;align-items:center;gap:.4em;padding:0 .5em;z-index:50}
+#top button, #top a.btn-nav{background:#374151;color:#fff;border:0;border-radius:.3em;padding:.2em .6em;text-decoration:none;font-size:.85em;display:inline-flex;align-items:center;gap:.3em}
+#top a.btn-nav:hover, #top button:hover{background:#4b5563}
+#top .btn-home{background:#1e40af!important;border-color:#38bdf8!important;font-weight:700}
+#pb{flex:1;height:1.2em;background:#4b5563;border-radius:1em;overflow:hidden;position:relative}
+#pf{height:100%;width:0;background:#22c55e;transition:.4s}
+#pt{position:absolute;inset:0;text-align:center;font-size:.75em;line-height:1.6}
+
+/* Escritorio */
+#desk{position:fixed;top:2.4em;bottom:2.5em;left:0;right:0;overflow:hidden;background:radial-gradient(ellipse at 75% 45%,#4fb3ff,#0a5fc0 40%,#06336b)}
+#desk:before{content:"";position:absolute;right:14%;top:18%;width:30%;height:52%;opacity:.55;background:linear-gradient(#fff,#fff) 0 0/47% 47% no-repeat,linear-gradient(#fff,#fff) 100% 0/47% 47% no-repeat,linear-gradient(#fff,#fff) 0 100%/47% 47% no-repeat,linear-gradient(#fff,#fff) 100% 100%/47% 47% no-repeat}
+#stage{position:absolute;inset:0;pointer-events:none}#stage>*{pointer-events:auto}
+.ico{position:absolute;width:6em;text-align:center;color:#fff;font-size:.85em;text-shadow:0 1px 3px #000;padding:.3em;border-radius:.3em}
+.ico b{display:block;font-size:2.8em;font-weight:400}.ico:hover{background:#fff3}
+#acts{position:absolute;left:9em;top:.5em;display:flex;gap:.6em}.ab{display:flex;flex-direction:column;width:8.8em}.ab small{color:#fff;font-weight:700;text-shadow:0 1px 3px #000;margin-bottom:.2em}.ico.act{position:static;width:100%}
+
+/* Barra de tareas e Inicio */
+#tb{position:fixed;bottom:0;left:0;right:0;height:2.5em;background:#101820;display:flex;align-items:center;z-index:60;color:#fff}
+#st{width:3em;height:100%;border:0;background:none;color:#fff;font-size:1.1em}#st:hover{background:#fff3}
+#tasks{flex:1;display:flex}#ck{padding:0 1em;font-size:.85em}
+.tk{padding:.3em .9em;background:#fff2;border:0;border-bottom:3px solid #4cc2ff;margin:0 .2em;color:#fff}
+.blink{animation:bl .5s 8}@keyframes bl{50%{background:#f90}}
+#sm{position:fixed;left:0;bottom:2.5em;width:20em;height:25em;background:#222;color:#fff;z-index:70;display:none;animation:up .25s}
+@keyframes up{from{transform:translateY(2em);opacity:0}}
+#sw{display:flex;height:100%}#ss{width:3em;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.4em;padding:.5em 0;font-size:1.3em}
+#ss div:hover{background:#fff3}#sl{padding:.7em;flex:1}#sl p{padding:.4em;border-radius:.2em;display:flex;align-items:center;gap:.4em}#sl p:hover{background:#fff3}
+#pw{padding:0 .3em}
+#pp{position:absolute;left:3.2em;bottom:.6em;background:#2b2b2b;display:none;min-width:9em;box-shadow:0 0 8px #000}#pp div{padding:.5em 1em}#pp div:hover{background:#fff3}
+
+/* Columna lateral compacta */
+#side{position:fixed;right:.4em;bottom:2.8em;width:17.2em;max-height:calc(100vh - 5.5em);z-index:80;display:flex;flex-direction:column-reverse;gap:.25em;pointer-events:none}
+#side>*{pointer-events:auto}
+#bit{display:flex;align-items:center;justify-content:flex-end;gap:.4em}
+#bot{font-size:2em;line-height:1;animation:fl 2s infinite}@keyframes fl{50%{transform:translateY(-.15em)}}
+#bn{font-size:.75em;font-weight:700;color:#fff;background:#1f2937;border-radius:1em;padding:.1em .7em}
+
+/* Burbuja con botón Entendido siempre visible */
+#bub{background:#fff;border-radius:.7em;padding:.45em .7em;box-shadow:0 2px 8px #0006;font-size:.82em;color:#222;line-height:1.35;max-height:28vh;display:flex;flex-direction:column}
+#bt-text{overflow-y:auto;max-height:22vh;padding-right:.2em}
+#bt-action{flex-shrink:0;margin-top:.35em;padding-top:.25em;border-top:1px dashed #e5e7eb;display:flex;align-items:center;gap:.3em}
+.ent{display:block;background:#2b79c2;color:#fff;border:0;border-radius:.4em;padding:.25em .7em;font-size:.9em}
+.arw{color:#16a34a;font-size:1.4em;font-weight:900;animation:ar .6s infinite}@keyframes ar{50%{opacity:.15;transform:translateX(5px)}}
+
+#hb{display:flex;gap:.3em;flex-wrap:wrap}#hb button{border:0;border-radius:1em;padding:.2em .6em;font-size:.8em;font-weight:700;background:#f59e0b}
+#gp{background:#fff;border-radius:.7em;padding:.4em;box-shadow:0 2px 8px #0006;display:none;flex-direction:column;gap:.3em;align-items:center;text-align:center;font-size:.82em}
+#pads{display:flex;gap:.8em;font-size:.72em;align-items:flex-end}
+.pad{position:relative;width:6em;height:3.8em;border:2px solid #555;border-radius:.5em;background:#ddd;margin:0 auto .2em}
+.ms{width:3.6em;height:5.2em;border-radius:1.8em 1.8em 2.2em 2.2em}
+.z{position:absolute;bottom:0;width:50%;height:42%;border:1px dashed #777}.ms .z{top:0;bottom:auto;height:45%}.z.l{left:0}.z.r{right:0}
+.z.on{background:#ef4444;animation:kb .6s infinite}
+
+/* Contenedor del Teclado Virtual Pequeño */
+#kb-wrap{display:none;background:#fff;border-radius:.6em;padding:.2em .2em 0 .2em;box-shadow:0 2px 8px #0005;width:100%;margin:0;line-height:1}
+#kb-wrap .kv.s{padding-top:1.6em;padding-bottom:0;margin:0}
+#kb-wrap .kv.s .kbd{font-size:.43em;grid-template-rows:1.4em repeat(5,2.1em);padding:.15em;margin-bottom:0}
+#kb-wrap svg.arc-line{display:block;height:0}
+
+/* Anillo rojo y Flecha animada independiente */
+#ring{position:fixed;display:none;border:4px solid rgba(255,0,0,.85);background:rgba(255,0,0,.25);border-radius:50%;pointer-events:none;z-index:9999;animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.15)}}
+.hl{outline:4px solid #facc15!important;outline-offset:2px;box-shadow:0 0 16px #facc15!important}
+#ptr-arrow{position:fixed;display:none;z-index:10002;pointer-events:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.75));transition:top .18s ease,left .18s ease}
+#ptr-arrow svg{display:block;animation:bounce-arr .5s infinite alternate ease-in-out}
+@keyframes bounce-arr{from{transform:translate(0,0)}to{transform:translate(var(--ax,0),var(--ay,-10px))}}
+
+/* Flecha azul del cursor */
+#cursor-arrow{position:fixed;display:none;z-index:10001;pointer-events:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5));transition:left .15s ease,top .15s ease}
+#cursor-arrow svg{display:block;animation:cursor-bounce .5s infinite alternate ease-in-out}
+@keyframes cursor-bounce{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+
+/* Ventanas y Programas simulados */
+.win{position:absolute;background:#fff;border:1px solid #2b79c2;box-shadow:0 8px 30px #0008;display:flex;flex-direction:column;color:#222;z-index:30}
+.win.max{inset:0 17.5em 0 0!important;width:auto!important;height:auto!important}
+.tt{background:#2b79c2;color:#fff;padding:.3em .6em;display:flex;align-items:center}.tt b{margin-left:auto;display:flex}
+.wb{border:0;background:none;color:#fff;width:2.6em;height:1.8em}.wb:hover{background:#fff4}.wb.x:hover{background:#e81123}
+.rb{background:#fff;border:1px solid #ccc;border-radius:.3em;padding:.3em .6em}.rb:hover{background:#f3f4f6}
+#nvb{display:flex;gap:.3em;padding:.3em;align-items:center;border-bottom:1px solid #ddd;background:#f9fafb}
+#bc{flex:1;border:1px solid #bbb;padding:.2em .5em;margin-left:.3em;background:#fff;border-radius:.2em}
+.cr{cursor:pointer}.cr:hover{background:#e5f3ff}
+#exb{display:flex;flex:1;min-height:0}#tree{width:15em;border-right:1px solid #ddd;overflow:auto;padding:.3em;font-size:.9em;background:#fcfcfc}
+.tr{padding:.25em .4em;cursor:pointer;white-space:nowrap;border-radius:.2em}.tr:hover{background:#e5f3ff}.tr.on{background:#cce8ff}
+#files{flex:1;overflow:auto;padding:.6em;display:flex;flex-wrap:wrap;align-content:flex-start;gap:.4em;background:#fff}
+.it{text-align:center;padding:.4em;border:1px solid transparent;width:7.2em;word-break:break-word;font-size:.85em;cursor:pointer;border-radius:.3em}
+.it b{display:block;font-size:2.4em;font-weight:400}.it:hover{background:#e5f3ff}.it.s{background:#cce8ff;border-color:#66b0f0}
+#sq{background:#fff;color:#333;padding:.4em .6em;border-radius:.2em;margin-bottom:.4em;min-height:2em}
+#sd{position:absolute;left:10%;top:15%;width:34em;background:#f2f2f2;border:2px solid #2b79c2;box-shadow:0 6px 24px #000a;z-index:6;color:#222}
+.ov{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:1em;z-index:260;color:#fff;text-align:center;background:linear-gradient(135deg,#0a5fc0,#06336b)}
+#fin{z-index:260}.big{font-size:1.15em;padding:.5em 1.3em;border:0;border-radius:.5em;background:#22c55e;color:#fff;margin:.3em}
+#cert{background:#fff;color:#222;border:6px double #b8860b;padding:1.5em 3em;border-radius:.5em}
+#blk{position:fixed;inset:0;background:#000;z-index:300;display:none}
+#cr{font-size:.7em;color:#fffc;padding-right:.8em}
+
+/* CSS Teclado Módulo (pequeño, con hl-key) */
+.kw.dk{--kb:#26282b;--kt:#fff;--kd:#0b0c0d;--tr:#101113}
+.kv{position:relative;width:100%;padding-top:3.6em}.kv.s{padding-top:2.4em}
+.kbd{display:grid;grid-template-columns:repeat(120,minmax(0,1fr));grid-template-rows:1.9em repeat(5,2.9em);gap:0;background:var(--tr);padding:.3em;border-radius:.6em;user-select:none;width:100%;font-size:1em}
+.kv.s .kbd{font-size:.52em}
+.k{background:var(--kb);color:var(--kt);border:.14em solid var(--kd);border-bottom-width:.25em;border-radius:.35em;margin:.14em;display:flex;align-items:center;justify-content:center;position:relative;font-weight:700;font-size:1.05em;white-space:nowrap;overflow:hidden;min-width:0}
+.k.t b{transform:translateY(.28em)}.k.tx b{font-size:.8em}.k.en{grid-row:span 2}
+.k i{position:absolute;left:.3em;top:.05em;font-size:.7em;font-style:normal;font-weight:600;opacity:.85}
+.k s{position:absolute;right:.2em;bottom:0;font-size:.5em;text-decoration:none;color:#2b79c2}
+.k em{font-style:normal}
+.kv.s .k i,.kv.s .k s,.kv.s .lg{display:none}.kv.s .k.t b{transform:none}
+.hl-key{background:#3b82f6!important;color:#fff!important;border-color:#1d4ed8!important;transform:translateY(2px)}
+.nx{background:#22c55e!important;color:#fff!important;border-color:#15803d!important}
+.gd{background:#facc15!important;color:#222!important;border-color:#b45309!important;animation:kb .6s infinite}
+.bad{background:#ef4444!important;color:#fff!important;border-color:#991b1b!important}
+.dn{background:#86efac!important;color:#14532d!important;transform:translateY(2px)}
+@keyframes kb{50%{background:#f97316;transform:translateY(3px)}}
+.bd{position:absolute;display:flex;flex-direction:column;align-items:center;background:#fff;color:#1f2937;border:2px solid #2b79c2;border-radius:.6em;padding:.1em .45em;font-weight:800;font-size:.8em;line-height:1.1;box-shadow:0 2px 6px #0005;opacity:0;transform:translate(-50%,-85%);transition:opacity .35s,transform .35s;z-index:3;white-space:nowrap;pointer-events:none}
+.bd.show{opacity:1;transform:translate(-50%,-100%)}.bd span{font-size:1.7em}.bd.tap{border-color:#d97706}.bd.tap.show span{animation:tp .7s infinite}
+@keyframes tp{50%{transform:translateY(.25em)}}
+.kv.s .bd{font-size:.5em;border-width:1px}
+svg.arc-line{position:absolute;left:0;top:0;pointer-events:none;z-index:2;overflow:visible}
+</style></head><body><script src="../../js/guard.js?v=2"></script>
+<div id=top>
+  <button onclick="Alumno.irInicio()" class="btn-nav btn-home">🏠 Volver al inicio</button>
+  <button onclick="menu()">📋 Menú Principal</button>
+  <button id=cn onclick="menu()" style="display:none;background:#dc2626">✖ Cancelar actividad</button>
+  <div id=pb><div id=pf></div><div id=pt>0 de 5 actividades</div></div>
+  <button onclick="ts()" id=sb>🔔</button>
+  <button onclick="fz(-2)">A−</button>
+  <button onclick="fz(2)">A+</button>
+</div>
+
+<!-- ESCRITORIO -->
+<div id=desk>
+  <div class="ico" id="ipc" style="left:1em;top:1em"><b>💻</b>Este equipo</div>
+  <div class="ico" style="left:1em;top:8em"><b>🗑️</b>Papelera</div>
+  <div class="ico" data-f="1" style="left:1em;top:15em"><b>📁</b>Mis trabajos</div>
+  <div id=acts></div>
+  <div id=stage></div>
+</div>
+
+<div id=menu><h2 style="color:#fff">Elige una actividad (te sugerimos seguir el orden 1 → 5)</h2></div>
+
+<!-- BARRA DE TAREAS -->
+<div id=tb>
+  <button id=st><svg width=16 height=16 viewBox="0 0 16 16" fill=#fff><path fill=#fff d="M0 2l6-1v6H0zM7 .8L16 0v7H7zM0 8h6v6l-6-1zM7 8h9v8l-9-1z"/></svg></button>
+  <button id=tbf class=tk style="border:0;font-size:1.2em" title="Explorador de archivos">📁</button>
+  <div id=tasks></div>
+  <div id=cr>Profe Mario Jofré</div>
+  <div id=ck></div>
+</div>
+
+<div id=sm>
+  <div id=sw>
+    <div id=ss>
+      <div>☰</div><div>👤</div><div>🖼️</div><div>⚙️</div>
+      <div id=pw title=Energía><svg viewBox="0 0 24 24" style="width:1em;height:1em;vertical-align:-.12em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v9M6.3 6.5a8 8 0 1 0 11.4 0"/></svg></div>
+    </div>
+    <div id=sl>
+      <div id=sq>🔍 Escribe aquí para buscar</div>
+      <h4 style="margin-bottom:.5em">Programas</h4>
+      <p data-a="ex">📁 Explorador de archivos</p>
+      <p data-a="np">📝 Bloc de notas</p>
+      <p data-a="ca">🧮 Calculadora</p>
+      <p data-a="pa">🎨 Paint</p>
+      <p data-a="ch">
+        <svg viewBox="0 0 100 100" style="width:1.2em;height:1.2em"><path d="M11.9 28A44 44 0 0 1 88.1 28L50 50Z" fill="#ea4335"/><path d="M88.1 28A44 44 0 0 1 50 94L50 50Z" fill="#fbbc04"/><path d="M50 94A44 44 0 0 1 11.9 28L50 50Z" fill="#34a853"/><circle cx="50" cy="50" r="21" fill="#fff"/><circle cx="50" cy="50" r="16" fill="#4285f4"/></svg>
+        Google Chrome
+      </p>
+    </div>
+  </div>
+  <div id=pp>
+    <div>🌙 Suspender</div>
+    <div id=off><svg viewBox="0 0 24 24" style="width:1em;height:1em;vertical-align:-.12em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v9M6.3 6.5a8 8 0 1 0 11.4 0"/></svg> Apagar</div>
+    <div>🔄 Reiniciar</div>
+  </div>
+</div>
+
+<!-- COLUMNA LATERAL COMPACTA -->
+<div id=side>
+  <div id=gp>
+    <div id=pads>
+      <div>Touchpad<div class=pad><span class="z l" id=pl></span><span class="z r" id=pr></span></div></div>
+      <div>Mouse<div class="pad ms"><span class="z l" id=ml></span><span class="z r" id=mr></span></div></div>
+    </div>
+    <small id=gl></small>
+  </div>
+  <div id="kb-wrap" class="kw"></div>
+  <div id=hb>
+    <button id=help onclick="hp()">? Ayuda / Repetir</button>
+    <button id=vb onclick="tv()">🔊</button>
+    <button onclick="rs()">🔄 Reiniciar Todo</button>
+  </div>
+  <div id=bit>
+    <div id=bub>
+      <div id="bt-text"></div>
+      <div id="bt-action" style="display:none">
+        <span class="arw">➜</span>
+        <button class="ent" onclick="S.nx=true">Entendido ▶</button>
+      </div>
+    </div>
+    <div id=bot>🤖</div>
+    <div id=bn>ManuBot</div>
+  </div>
+</div>
+
+<div id=ring></div>
+<div id="ptr-arrow">
+  <svg width="40" height="40" viewBox="0 0 32 32">
+    <path fill="#facc15" stroke="#111" stroke-width="2.5" stroke-linejoin="round" d="M16 30 L4 14 L11 14 L11 2 L21 2 L21 14 L28 14 Z"/>
+  </svg>
+</div>
+<div id="cursor-arrow">
+  <svg width="24" height="24" viewBox="0 0 32 32">
+    <path fill="#3b82f6" stroke="#1d4ed8" stroke-width="2.5" stroke-linejoin="round" d="M16 2 L4 18 L11 18 L11 30 L21 30 L21 18 L28 18 Z"/>
+  </svg>
+</div>
+
+<div id=fin class=ov></div>
+<div id=blk></div>
+
+<script>
+/* 🔒 COMPATIBILIDAD GITHUB PAGES — NO MODIFICAR: navegación al index y guardado local del alumno/progreso dependen de esta sección. */
+/* ===== INICIO MÓDULO ALUMNO v1.1 ===== */
+const MJ_INDEX='../../index.html';
+const Alumno=(()=>{
+ const mem={},ls=(()=>{try{localStorage.setItem('mj:t',1);localStorage.removeItem('mj:t');return localStorage}catch(e){return null}})();
+ const leer=k=>{try{const v=ls?ls.getItem('mj:'+k):mem[k];return v==null?null:JSON.parse(v)}catch(e){return null}};
+ const guardar=(k,v)=>{try{const s=JSON.stringify(v);if(ls)ls.setItem('mj:'+k,s);else mem[k]=s;return true}catch(e){return false}};
+ const borrar=k=>{try{if(ls)ls.removeItem('mj:'+k);else delete mem[k]}catch(e){}};
+ const limpio=s=>String(s==null?'':s).replace(/[<>&"'`\\\/]/g,'').replace(/\s+/g,' ').trim().slice(0,40);
+ const slug=s=>limpio(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+ const get=()=>{const a=leer('alumno');return a&&a.id?a:null};
+ const set=d=>{d=d||{};const nombre=limpio(d.nombre),curso=limpio(d.curso);if(nombre.length<2)return null;
+  const a={nombre,curso,id:slug(nombre)+(curso?'_'+slug(curso):''),creado:new Date().toISOString()};guardar('alumno',a);return a};
+ const DEF={fs:16,voz:true,snd:true,kbDark:false};
+ const prefs=()=>{const p=leer('prefs')||{},o={};for(const k in DEF)o[k]=k in p?p[k]:DEF[k];return o};
+ const setPref=(k,v)=>{if(!(k in DEF))return;const p=prefs();p[k]=v;guardar('prefs',p)};
+ const irInicio=()=>{location.href=MJ_INDEX};
+ const botonInicio=el=>{const b=document.createElement('button');b.textContent='🏠 Inicio';b.title='Volver al inicio';b.onclick=irInicio;
+  b.style.cssText=el?'background:#374151;color:#fff;border:0;border-radius:.3em;padding:.15em .6em;cursor:pointer;font:inherit'
+   :'position:fixed;top:.4em;right:.4em;z-index:9998;background:#374151;color:#fff;border:0;border-radius:.4em;padding:.3em .7em;cursor:pointer;font:inherit';
+  if(el)el.insertBefore(b,el.firstChild);else document.body.appendChild(b);return b};
+ function pedir(cb){const a=get();if(a){cb(a);return}
+  const d=document.createElement('div'),ci='font:inherit;font-size:1.2em;padding:.4em;border-radius:.4em;border:0;text-align:center;width:min(20em,90%);color:#222';
+  d.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5em;text-align:center;color:#fff;font:18px "Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,#0a5fc0,#06336b)';
+  d.innerHTML='<h1 style="font-size:1.6em;margin:0 0 .2em">🖥️ Primeros pasos en Windows Parte II</h1>'+
+   '<h2 style="font-size:1.15em;font-weight:400;color:#93c5fd;margin:0 0 1em">Diseñado por el Profesor: Mario Jofré</h2>'+
+   '<p style="margin:.3em">Por favor, escribe tu nombre para comenzar:</p>'+
+   '<input id=mjn maxlength=40 autocomplete=off style="'+ci+'"><p id=mje style="min-height:1.6em;margin:.5em;color:#fde68a;font-weight:700"></p>'+
+   '<button id=mjb style="font:inherit;font-size:1.2em;padding:.5em 1.4em;border:0;border-radius:.5em;background:#22c55e;color:#fff;cursor:pointer">Ingresar al Escritorio</button>';
+  document.body.appendChild(d);
+  const n=d.querySelector('#mjn'),e=d.querySelector('#mje');
+  const go=()=>{const x=set({nombre:n.value});if(!x){e.textContent='Escribe tu nombre y apellido.';n.focus();return}d.remove();cb(x)};
+  ['keydown','keyup'].forEach(t=>d.addEventListener(t,ev=>{ev.stopPropagation();if(t=='keydown'&&ev.key=='Enter')go()}));
+  d.querySelector('#mjb').onclick=go;n.focus()}
+ return{get,set,nombre:()=>{const a=get();return a?a.nombre:''},limpiar:()=>borrar('alumno'),pedir,prefs,setPref,irInicio,botonInicio,
+  almacen:{leer,guardar,borrar},limpio,slug}})();
+/* ===== FIN MÓDULO ALUMNO v1.1 ===== */
+
+/* ===== INICIO MÓDULO PROGRESO v1 ===== */
+const Progreso=(()=>{
+ const AL=Alumno.almacen,uid=()=>{const a=Alumno.get();return a?a.id:'anonimo'},K=()=>'progreso:'+uid(),KE=()=>'enviado:'+uid();
+ const todo=()=>{const d=AL.leer(K());return d&&d.v==1&&d.act&&typeof d.act=='object'?d:{v:1,act:{}}};
+ const reg=(app,act,d)=>{d=d||{};const p=todo(),key=app+'/'+act,o=p.act[key]||{},fin=d.estado=='hecha';
+  p.act[key]={estado:fin||o.estado=='hecha'?'hecha':'en-curso',
+   estrellas:Math.max(o.estrellas||0,Math.min(3,Math.max(0,Math.round(+d.estrellas||0)))),
+   errores:d.errores!=null?Math.max(0,Math.round(+d.errores||0)):(o.errores||0),
+   seg:d.seg!=null?Math.max(0,Math.round(+d.seg||0)):(o.seg||0),
+   veces:(o.veces||0)+(fin?1:0),fecha:new Date().toISOString(),mod:Date.now()};
+  AL.guardar(K(),p);return p.act[key]};
+ const get=app=>{const p=todo().act,r={};for(const key in p)if(!app||key.indexOf(app+'/')==0)r[app?key.slice(app.length+1):key]=p[key];return r};
+ const hecha=(app,act)=>{const o=todo().act[app+'/'+act];return !!o&&o.estado=='hecha'};
+ const resumen=(app,total)=>{const g=get(app),ids=Object.keys(g).filter(x=>g[x].estado=='hecha'),hechas=ids.length;
+  return{hechas,total:total||hechas,pct:total?Math.min(100,Math.round(hechas/total*100)):0,estrellas:ids.reduce((n,x)=>n+(g[x].estrellas||0),0)}};
+ const pendientes=()=>{const env=AL.leer(KE())||0,p=todo().act,l=[];
+  for(const key in p)if((p[key].mod||0)>env){const i=key.indexOf('/');l.push(Object.assign({app:key.slice(0,i),act:key.slice(i+1)},p[key]))}return l};
+ const marcarEnviado=l=>{if(!l||!l.length)return;AL.guardar(KE(),Math.max.apply(null,l.map(x=>x.mod||0)))};
+ const exportar=()=>JSON.stringify({v:1,alumno:Alumno.get(),act:todo().act,fecha:new Date().toISOString()});
+ const importar=t=>{let d;try{d=JSON.parse(t)}catch(e){return -1}
+  if(!d||d.v!=1||!d.act||typeof d.act!='object')return -1;
+  if(!Alumno.get()&&d.alumno&&d.alumno.nombre)Alumno.set({nombre:d.alumno.nombre,curso:d.alumno.curso});
+  const a=Alumno.get();if(d.alumno&&a&&d.alumno.id&&d.alumno.id!=a.id)return -2;
+  const p=todo();let n=0;for(const key in d.act){const x=d.act[key],o=p.act[key];if(x&&x.estado&&(!o||(x.mod||0)>(o.mod||0))){p.act[key]=x;n++}}
+  AL.guardar(K(),p);return n};
+ const borrar=app=>{if(!app){AL.borrar(K());AL.borrar(KE());return}const p=todo();for(const key in p.act)if(key.indexOf(app+'/')==0)delete p.act[key];AL.guardar(K(),p)};
+ return{registrar:reg,get,hecha,resumen,pendientes,marcarEnviado,exportar,importar,borrar}})();
+/* ===== FIN MÓDULO PROGRESO v1 ===== */
+
+/* ===== INICIO MÓDULO TECLADO VIRTUAL (PEQUEÑO) ===== */
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function layout(){const a=[],K=(c,m,t='',w=8,x='',s='')=>a.push({c,m,t,w,x,s});
+ K('Escape','Esc','',8,'tx');for(let i=1;i<=12;i++)K('F'+i,'F'+i,'',7,'tx');
+ [['Pause','Pausa'],['PrintScreen','ImpPnt'],['Insert','Ins'],['Delete','Supr']].forEach(([c,m])=>K(c,m,'',7,'tx'));
+ [['Backquote','|','°'],['Digit1','1','!'],['Digit2','2','"'],['Digit3','3','#'],['Digit4','4','$'],['Digit5','5','%'],['Digit6','6','&'],['Digit7','7','/'],['Digit8','8','('],['Digit9','9',')'],['Digit0','0','='],['Minus',"'",'?'],['Equal','¿','¡']].forEach(([c,m,t])=>K(c,m,t));
+ K('Backspace','⌫<em class=lg> Borrar</em>','',16,'tx');
+ K('Tab','⇥','',14);'QWERTYUIOP'.split('').forEach(l=>K('Key'+l,l));K('BracketLeft','´','¨');K('BracketRight','+','*');K('Enter','↵<em class=lg> Enter</em>','',10,'tx en');
+ K('CapsLock','Bloq Mayús','',14,'tx');'ASDFGHJKL'.split('').forEach(l=>K('Key'+l,l));K('Semicolon','Ñ');K('Quote','{','[');K('Backslash','}',']');
+ K('ShiftLeft','⇧<em class=lg> Shift</em>','',10,'tx');K('IntlBackslash','<','>');'ZXCVBNM'.split('').forEach(l=>K('Key'+l,l));K('Comma',',',';');K('Period','.',':');K('Slash','-','_');K('ShiftRight','⇧<em class=lg> Shift</em>','',22,'tx');
+ K('ControlLeft','Ctrl','',10,'tx');K('Fn','Fn','',8,'tx');K('MetaLeft','⊞','',8);K('AltLeft','Alt','',10,'tx');K('Space','<em class=lg>Espacio</em>','',36,'tx');K('AltRight','Alt Gr','',10,'tx');K('ContextMenu','☰','',8);K('ControlRight','Ctrl','',10,'tx');
+ [['ArrowLeft','◀','Inicio'],['ArrowUp','▲','RePág'],['ArrowDown','▼','AvPág'],['ArrowRight','▶','Fin']].forEach(([c,m,s])=>K(c,m,'',5,'',s));
+ return a}
+const cell=k=>`<div class="k ${k.x} ${k.t?'t':''}" data-c="${k.c}" style="grid-column:span ${k.w}">${k.t?`<i>${esc(k.t)}</i>`:''}<b>${k.m.includes('class=lg')?k.m:esc(k.m)}</b>${k.s?`<s>${k.s}</s>`:''}</div>`;
+const MOD=new Set('ShiftLeft ShiftRight ControlLeft ControlRight AltLeft AltRight MetaLeft'.split(' '));
+const NM={ControlLeft:'Ctrl',ShiftLeft:'Shift',ShiftRight:'Shift',Fn:'Fn',ArrowLeft:'◀ Inicio',ArrowRight:'▶ Fin',Delete:'Supr'},nm=c=>NM[c]||c.replace('Key','');
+const LEFT=new Set('Backquote Digit1 Digit2 Digit3 Digit4 Digit5 Tab CapsLock IntlBackslash KeyQ KeyW KeyE KeyR KeyT KeyA KeyS KeyD KeyF KeyG KeyZ KeyX KeyC KeyV KeyB'.split(' '));
+const res=cs=>{const o=cs.find(c=>c!='Shift')||'';return cs.map(c=>c=='Shift'?(LEFT.has(o)?'ShiftRight':'ShiftLeft'):c)};
+const MAP={' ':[['Space']],'ñ':[['Semicolon']],'Ñ':[['Shift','Semicolon']],'ü':[['Shift','BracketLeft'],['KeyU']],'Ü':[['Shift','BracketLeft'],['Shift','KeyU']]};
+layout().forEach(k=>{if(/^Key/.test(k.c)){MAP[k.m.toLowerCase()]=[[k.c]];MAP[k.m]=[['Shift',k.c]]}else if(k.m.length==1&&k.c!='MetaLeft'){MAP[k.m]=[[k.c]];if(k.t)MAP[k.t]=[['Shift',k.c]]}});
+MAP['ñ']=[['Semicolon']];MAP['Ñ']=[['Shift','Semicolon']];
+Object.entries({'@':'KeyQ','\\':'Minus','~':'BracketRight','^':'Quote','`':'Backslash','¬':'Backquote'}).forEach(([c,k])=>MAP[c]=[['AltRight',k]]);
+'aeiou'.split('').forEach((v,i)=>{MAP['áéíóú'[i]]=[['BracketLeft'],['Key'+v.toUpperCase()]];MAP['ÁÉÍÓÚ'[i]]=[['BracketLeft'],['Shift','Key'+v.toUpperCase()]]});
+const HELD=new Set,KBS=[],DEF='Elige una combinación de teclas arriba 👆';
+function KB(el,V,msg){el.innerHTML=`<div class="kv s"><div class=kbd>${layout().map(cell).join('')}</div><svg class=arc-line></svg></div>`;
+ const kv=el.firstChild,svg=kv.querySelector('svg'),m={};kv.querySelectorAll('.k').forEach(k=>m[k.dataset.c]=k);
+ let C=null,T=[],st=0,B=[];
+ const at=(ms,f)=>T.push(setTimeout(f,ms)),setM=h=>{if(msg)msg.innerHTML=h},stop=()=>{T.forEach(clearTimeout);T=[]};
+ const held=c=>HELD.has(c)||(/Left$/.test(c)&&HELD.has(c.replace('Left','Right')));
+ const clr=()=>{stop();Object.values(m).forEach(k=>k.classList.remove('hl-key','gd','nx'));kv.querySelectorAll('.bd').forEach(b=>b.remove());svg.innerHTML='';svg.removeAttribute('class');kv.classList.remove('okh');B=[]};
+ const txt=()=>C.h.length?`Mantén presionada <b>${C.h.map(nm).join(' + ')}</b> y toca <b>${nm(C.t)}</b>`:`Toca la tecla <b>${nm(C.t)}</b>`;
+ const holds=()=>B.filter(x=>x.b.classList.contains('hold'));
+ function build(){const vr=kv.getBoundingClientRect(),top=kv.querySelector('.kbd').getBoundingClientRect().top-vr.top-4,W=vr.width;
+  const px=cs=>cs.reduce((n,c)=>{const r=m[c].getBoundingClientRect();return n+r.left-vr.left+r.width/2},0)/cs.length;
+  const mk=(cls,html,x)=>{const b=document.createElement('div');b.className='bd '+cls;b.innerHTML=html;kv.append(b);b.style.top=top+'px';return{b,x,w:b.offsetWidth}};
+  const hd=C.h.length?mk('hold','<span>🤚</span><b>MANTÉN</b>',px(C.h)):null,tp=mk('tap','<span>☝️</span><b>TOCA</b>',px([C.t])),pl=hd?mk('plus','<b>+</b>',0):null;
+  if(hd){const [L,R]=hd.x<=tp.x?[hd,tp]:[tp,hd],min=(L.w+R.w)/2+pl.w+8;if(R.x-L.x<min){const c=(L.x+R.x)/2;L.x=c-min/2;R.x=c+min/2}
+   const o=Math.max(0,L.w/2-L.x)||-Math.max(0,R.x+R.w/2-W);L.x+=o;R.x+=o;pl.x=(L.x+R.x)/2+(L.w-R.w)/4}
+  else tp.x=Math.min(Math.max(tp.x,tp.w/2),W-tp.w/2);
+  B=[hd,pl,tp].filter(Boolean);B.forEach(x=>x.b.style.left=x.x+'px')}
+ const rv={hold(){C.h.forEach(c=>m[c].classList.add('hl-key'));holds().forEach(x=>x.b.classList.add('show'))},
+  tap(){m[C.t].classList.add('gd');B.filter(x=>!x.b.classList.contains('hold')).forEach(x=>x.b.classList.add('show'))}};
+ function play(){clr();st=0;build();const d=C.h.length?1:0,f=d?3600:2800;at(50,rv.hold);at(d?1400:50,rv.tap);
+  at(f,()=>{kv.querySelectorAll('.bd').forEach(b=>b.classList.remove('show'));Object.values(m).forEach(k=>k.classList.remove('hl-key','gd'))});at(f+900,play)}
+ function toHeld(){st=1;stop();rv.hold();rv.tap();kv.classList.add('okh');holds().forEach(x=>{x.b.firstChild.textContent='✅';x.b.lastChild.textContent='BIEN'});setM('¡Bien! Sin soltar, ahora toca <b>'+nm(C.t)+'</b>.')}
+ function ok(){st=2;stop();[...C.h,C.t].forEach(c=>m[c]&&(m[c].classList.remove('hl-key','gd'),m[c].classList.add('nx')));setM('🎉 ¡Muy bien!');at(2200,()=>{setM(txt());play()})}
+ const flash=c=>{const k=m[c];if(k){k.classList.add('bad');setTimeout(()=>k.classList.remove('bad'),500)}};
+ let TY=null;
+ function tdraw(){clr();if(!TY)return;const{t,i}=TY;TY.cb.paso&&TY.cb.paso(i);if(i>=t.length){const f=TY.cb.fin;TY=null;f&&f();return}
+  const st=MAP[t[i]];if(!st){TY.i++;return tdraw()}res(st[Math.min(TY.sub,st.length-1)]).forEach(c=>m[c]&&m[c].classList.add('nx'))}
+ function tkey(c,e){const{t,i}=TY,st=MAP[t[i]];if(!st)return;
+  if(e.key==t[i]){TY.i++;TY.sub=0;tdraw()}else if(e.key=='Dead'&&TY.sub==0&&st.length>1&&st[0].includes(c)){TY.sub=1;tdraw()}
+  else if(!MOD.has(c)&&!/^(Shift|Control|Alt|Meta|Caps|AltGraph)/.test(e.key))flash(c)}
+ const o={set(c){TY=null;C=c;setM(txt());play()},texto(t,cb={}){stop();C=null;TY={t,i:0,sub:0,cb};tdraw()},clear(){TY=null;C=null;clr();setM(DEF)},redo(){C&&play()},
+  down(c,on){m[c]&&m[c].classList.toggle('dn',on)},
+  key(c,down,e){if(TY&&down)return tkey(c,e);if(!C||st==2)return;const hs=C.h.filter(x=>x!='Fn'),all=hs.length&&hs.every(held);
+   if(down){if(all&&st==0)toHeld();
+    if(c==C.t||C.a.includes(c)){if(st==1||!hs.length)ok();else flash(c)}else if(!MOD.has(c)&&!C.h.includes(c))flash(c)}
+   else if(st==1&&!all)play()}};
+ setM(DEF);KBS.push(o);return o}
+addEventListener('keydown',e=>{
+ const t=e.target;
+ const isField=/^(INPUT|TEXTAREA)$/.test(t.tagName)||t.isContentEditable;
+ if(!isField && /^(Space|Tab|Backspace|Arrow|Delete|Enter)/.test(e.code)) e.preventDefault();
+ if(e.repeat)return;
+ HELD.add(e.code);KBS.forEach(k=>{k.down(e.code,1);k.key(e.code,1,e)})
+});
+addEventListener('keyup',e=>{HELD.delete(e.code);KBS.forEach(k=>{k.down(e.code,0);k.key(e.code,0)})});
+addEventListener('blur',()=>HELD.clear());addEventListener('resize',()=>KBS.forEach(k=>k.redo()));
+/* ===== FIN MÓDULO TECLADO VIRTUAL (PEQUEÑO) ===== */
+
+/* =====================================================================
+   ESTADO GLOBAL Y VARIABLES
+   ===================================================================== */
+const APP_ID = 'primeros-pasos-2';
+const S={name:'',done:new Set,voice:true,snd:true,fs:16,steps:[],step:0,nx:false,onEnd:null,key:null,errores:0,actStartTime:0,typing:false};
+const F={};let E,C,globalKB=null,AC,es;
+
+/* Inicializar teclado virtual y sesión */
+window.addEventListener('DOMContentLoaded', ()=>{
+  globalKB = KB($('#kb-wrap'), 'A', null);
+  Alumno.pedir(alumno => {
+    S.name = alumno.nombre;
+    const p = Alumno.prefs();
+    S.fs = p.fs;
+    document.body.style.fontSize = S.fs + 'px';
+    S.voice = p.voz;
+    $('#vb').textContent = S.voice ? '🔊' : '🔇';
+    S.snd = p.snd;
+    $('#sb').textContent = S.snd ? '🔔' : '🔕';
+    
+    for(let i=1; i<=5; i++){
+      if(Progreso.hecha(APP_ID, 'a0'+i)){
+        S.done.add(i);
+      }
+    }
+    vinit();
+    prog();
+    menu();
+  });
+});
+
+/* Sonido y Voz */
+function beep(f,d=.12,t=0){if(!S.snd)return;try{AC=AC||new AudioContext;const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.value=.08;o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+d)}catch(e){}}
+const ok=()=>beep(660),bad=()=>{S.errores++;beep(200,.25)};
+
+function vinit(){const f=()=>{es=(window.speechSynthesis?speechSynthesis.getVoices():[]).find(v=>v.lang.toLowerCase().startsWith('es'))};f();if(window.speechSynthesis)speechSynthesis.onvoiceschanged=f;
+ setTimeout(()=>{if(!es){S.voice=false;const b=$('#vb');b.disabled=true;b.textContent='🔇'}},2000)}
+
+function tv(){S.voice=!S.voice;$('#vb').textContent=S.voice?'🔊':'🔇';if(!S.voice&&window.speechSynthesis)speechSynthesis.cancel();Alumno.setPref('voz',S.voice)}
+function ts(){S.snd=!S.snd;$('#sb').textContent=S.snd?'🔔':'🔕';Alumno.setPref('snd',S.snd)}
+function fz(d){S.fs=Math.min(26,Math.max(12,S.fs+d));document.body.style.fontSize=S.fs+'px';Alumno.setPref('fs',S.fs)}
+
+/* CORRECCIÓN DE VOZ: sin "atrás atrás" ni "flecha flecha" */
+function say(t,n){
+  t=t.replace(/\{n\}/g,S.name||'Estudiante');
+  $('#bt-text').innerHTML=t;
+  const btn=$('#bt-action');
+  if(btn) btn.style.display=n?'flex':'none';
+  $('#bt-text').scrollTop=0;
+  
+  if(S.voice&&es){
+    speechSynthesis.cancel();
+    let clean = t.replace(/<[^>]+>/g,'')
+      .replace(/flecha\s*[⬅◀]/gi, 'flecha atrás')
+      .replace(/[⬅◀]/g, 'atrás')
+      .replace(/flecha\s*[➡▶]/gi, 'flecha adelante')
+      .replace(/[➡▶]/g, 'adelante')
+      .replace(/flecha\s*[⬆▲]/gi, 'flecha arriba')
+      .replace(/[⬆▲]/g, 'arriba')
+      .replace(/🔄/g, 'recargar')
+      .replace(/📁/g, 'carpeta')
+      .replace(/🏠/g, 'inicio')
+      .replace(/\bX\b/gi, 'equis')
+      .replace(/✕/g, 'equis')
+      .replace(/[\u{1F000}-\u{1FFFF}\u2600-\u27BF\uFE0F]/gu,'')
+      .replace(/\b(atrás|adelante|arriba)\s+\1\b/gi, '$1');
+    const u=new SpeechSynthesisUtterance(clean);
+    u.voice=es; u.lang=es.lang;
+    speechSynthesis.speak(u);
+  }
+}
+
+/* FLECHA ANIMADA INDEPENDIENTE */
+let forcedArrowTarget = null;
+let forcedArrowDir = 'down';
+
+function setArrow(elOrRect, dir='down'){
+  forcedArrowTarget = elOrRect;
+  forcedArrowDir = dir;
+  updateArrowPos();
+}
+
+function updateArrowPos(){
+  const arr = $('#ptr-arrow');
+  if(!forcedArrowTarget){ arr.style.display='none'; return; }
+  let target = typeof forcedArrowTarget==='function' ? forcedArrowTarget() : forcedArrowTarget;
+  if(typeof target === 'string') target = $(target);
+  if(!target){ arr.style.display='none'; return; }
+  const r = (target instanceof Element) ? target.getBoundingClientRect() : target;
+  if(!r || (r.width===0 && r.height===0)){ arr.style.display='none'; return; }
+  
+  arr.style.display = 'block';
+  let t=0, l=0, deg=0, ax=0, ay=-10;
+  if(forcedArrowDir==='down'){
+    deg = 0; t = r.top - 46; l = r.left + r.width/2 - 20; ax = 0; ay = -12;
+  } else if(forcedArrowDir==='up'){
+    deg = 180; t = r.bottom + 8; l = r.left + r.width/2 - 20; ax = 0; ay = 12;
+  } else if(forcedArrowDir==='left'){
+    deg = 90; t = r.top + r.height/2 - 20; l = r.right + 8; ax = 12; ay = 0;
+  } else if(forcedArrowDir==='right'){
+    deg = -90; t = r.top + r.height/2 - 20; l = r.left - 48; ax = -12; ay = 0;
+  }
+  arr.style.top = Math.max(10, Math.min(window.innerHeight - 52, t)) + 'px';
+  arr.style.left = Math.max(10, Math.min(window.innerWidth - 52, l)) + 'px';
+  arr.querySelector('svg').style.transform = `rotate(${deg}deg)`;
+  arr.style.setProperty('--ax', ax + 'px');
+  arr.style.setProperty('--ay', ay + 'px');
+}
+
+/* FLECHA AZUL DEL CURSOR */
+let mirror=null;
+function getMirror(font){
+  if(!mirror){mirror=document.createElement('span');mirror.style.cssText='position:absolute;visibility:hidden;white-space:pre;top:-9999px;left:-9999px';document.body.appendChild(mirror);}
+  mirror.style.font=font;
+  return mirror;
+}
+function showCursorArrow(el,i,text){
+  const r=el.getBoundingClientRect();
+  const cs=getComputedStyle(el);
+  const m=getMirror(cs.font);
+  m.textContent=text.slice(0,i);
+  const w=m.offsetWidth;
+  const arrow=$('#cursor-arrow');
+  arrow.style.display='block';
+  arrow.style.left=(r.left + parseFloat(cs.paddingLeft) + w - 16)+'px';
+  arrow.style.top=(r.bottom + 6)+'px';
+}
+function hideCursorArrow(){const a=$('#cursor-arrow');if(a)a.style.display='none';}
+
+/* Motor de Pasos */
+function run(st,end){S.steps=st;S.step=0;S.onEnd=end;show()}
+function show(){
+  const s=S.steps[S.step];if(!s)return;S.nx=false;
+  $$('.hl').forEach(x=>x.classList.remove('hl'));
+  setArrow(null);
+  if(s.arr){
+    setArrow(s.arr, s.arrDir||'down');
+    let el; try{ el = typeof s.arr==='function'?s.arr():s.arr; }catch(e){}
+    if(el && el.classList) el.classList.add('hl');
+  }
+  if(s.o) s.o();
+  say(s.t,s.n);
+  const on=(a,v)=>a.forEach(x=>$(x).classList.toggle('on',v));
+  on(['#pl','#ml'],s.p=='L');on(['#pr','#mr'],s.p=='R');
+  $('#gp').style.display=s.p?'flex':'none';$('#pads').style.display=s.p?'flex':'none';
+  $('#gl').textContent=s.p=='L'?'Clic IZQUIERDO: botón izquierdo del mouse o touchpad':s.p=='R'?'Clic DERECHO: botón derecho':''
+}
+
+setInterval(()=>{
+  const s=S.steps[S.step],r=$('#ring');
+  if(!s||S.hold){r.style.display='none';if(!s)setArrow(null);return}
+  let dn=0;try{dn=s.n?S.nx:s.d()}catch(x){}
+  if(dn){
+    ok();const k=S.steps;S.hold=1;setArrow(null);
+    $('#ring').style.display='none';
+    $$('.hl').forEach(x=>x.classList.remove('hl'));
+    setTimeout(()=>{
+      S.hold=0;if(S.steps!==k)return;
+      if(++S.step>=k.length){
+        S.steps=[];$('#gp').style.display='none';$('#kb-wrap').style.display='none';
+        if(globalKB) globalKB.clear();
+        setArrow(null);hideCursorArrow();
+        S.onEnd&&S.onEnd();
+      }else show();
+    },s.n?300:1300);
+    return;
+  }
+  
+  let e;try{e=s.n?$('.ent'):s.r&&s.r()}catch(x){}
+  const b=e&&e.getBoundingClientRect();
+  if(!b||!b.width||s.noRing){r.style.display='none'}
+  else{
+    const w=b.width>b.height*2.5,d=w?b.height+26:Math.min(Math.max(b.width,b.height)+20,120),x=w?b.left+Math.min(b.width/2,60):b.left+b.width/2;
+    Object.assign(r.style,{display:'block',width:d+'px',height:d+'px',left:x-d/2+'px',top:b.top+b.height/2-d/2+'px'});
+  }
+  
+  if(!s.arr&&!forcedArrowTarget){
+    if(s.r&&!s.n) setArrow(s.r, s.arrDir||'down');
+  }
+  updateArrowPos();
+},120);
+
+function hp(){S.steps[S.step]?show():say('Abre el <b>Menú Principal</b> y elige una actividad 📋')}
+
+/* Estructura general */
+const stage=h=>$('#stage').innerHTML=h;
+function clean(){
+  S.steps=[];S.key=null;for(const k in F)delete F[k];
+  stage('');$('#tasks').innerHTML='';
+  $('#sm').style.display=$('#pp').style.display=$('#gp').style.display=$('#ring').style.display='none';
+  $('#kb-wrap').style.display='none';
+  if(globalKB) globalKB.clear();
+  setArrow(null);hideCursorArrow();
+  E=null;
+}
+function prog(){dk();$('#pf').style.width=S.done.size/5*100+'%';$('#pt').textContent=S.done.size+' de 5 actividades'}
+function dk(){$('#acts').innerHTML=BL.map(([h,a,b])=>`<div class=ab><small>${h}</small>${Array.from({length:b-a+1},(_,i)=>a+i).map(n=>`<div class="ico act" onclick="go(${n})"><b>${A[n].i}</b>${n}. ${A[n].t}${S.done.has(n)?' ✅':''}</div>`).join('')}</div>`).join('')}
+
+function menu(q){
+  clearTimeout(S.tm);$('#cn').style.display='none';clean();$('#fin').style.display=$('#menu').style.display='none';
+  dk();$('#acts').style.display='';
+  if(!q)say('¡Hola {n}! Haz clic en una actividad del escritorio. Te sugerimos seguir el orden 1 a 5.');
+}
+function go(n){
+  S.errores=0; S.actStartTime=Date.now();
+  clearTimeout(S.tm);clean();$('#menu').style.display='none';$('#cn').style.display='';$('#acts').style.display='none';
+  A[n].f();
+}
+
+function fin(n,m=''){
+  S.done.add(n);prog();$('#cn').style.display='none';
+  const actId = 'a0' + n;
+  const seg = Math.round((Date.now() - (S.actStartTime || Date.now())) / 1000);
+  const estrellas = S.errores === 0 ? 3 : (S.errores <= 2 ? 2 : 1);
+  Progreso.registrar(APP_ID, actId, { estado: 'hecha', estrellas, errores: S.errores, seg });
+
+  S.tm=setTimeout(()=>{
+    clean();say('¡Excelente {n}! Actividad '+n+' completada. '+m);
+    S.tm=setTimeout(()=>{
+      if(S.done.size >= 5) fin8();
+      else menu(1);
+    },1200);
+  },1000);
+}
+
+function rs(){
+  if(S.rc){S.rc=0;reset()}else{S.rc=1;say('Para reiniciar todo, presiona <b>otra vez</b> el botón Reiniciar Todo.');setTimeout(()=>S.rc=0,4000)}
+}
+function reset(){
+  clearTimeout(S.tm);$('#cn').style.display='none';clean();prog();
+  $('#menu').style.display=$('#fin').style.display='none';menu();
+}
+
+/* Eventos de escritorio y atajos */
+addEventListener('click',e=>{
+  if(!e.target.closest('#sm,#st,#side')){$('#sm').style.display=$('#pp').style.display='none'}
+  const s=!S.hold&&S.steps[S.step];let r;try{r=s&&(s.n?$('.ent'):s.r&&s.r())}catch(x){}
+  if(s&&s.dc&&r&&r.contains(e.target)){
+    clearTimeout(S.dt);
+    S.dt=setTimeout(()=>{bad();say('¡Casi! Recuerda presionar el botón izquierdo dos veces muy rápido (Doble clic)')},450);
+  }
+  if(r&&!r.contains(e.target)&&!e.target.closest('#top,#side,#menu')){
+    bad();say('¡Casi! Intenta hacer clic donde indica el recuadro amarillo 🟨');
+    const k=S.step;setTimeout(()=>S.step==k&&show(),2500);
+  }
+},true);
+
+addEventListener('keydown',e=>{
+  if(/INPUT|TEXTAREA/.test(e.target.tagName))return;
+  if(S.key&&e.key=='Delete'){e.preventDefault();S.key('del')}
+  if(S.key&&e.ctrlKey&&e.key.length==1&&'cxvaz'.includes(e.key.toLowerCase())){e.preventDefault();S.key(e.key.toLowerCase())}
+});
+addEventListener('dblclick',()=>clearTimeout(S.dt),true);
+setInterval(()=>$('#ck').textContent=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),1000);
+
+/* Datos y utilidades */
+const V=[],OP={};
+const st=(t,r,d,o={})=>({t,r,d,p:'L',...o}),nt=(t,o={})=>({t,n:1,...o});
+const bt=s=>()=>$(s);
+
+const ty=(t,s,g,opts={})=>({
+  t,
+  r:bt(s),
+  noRing:true,
+  d:()=>{
+    const e=$(s);
+    const ok=e.value===g;
+    if(ok){S.typing=false;if(opts.cursor)hideCursorArrow();$('#kb-wrap').style.display='none';if(globalKB)globalKB.clear();}
+    return ok;
+  },
+  arr:bt(s),
+  arrDir:'down',
+  o:()=>{
+    const e=$(s);
+    e.focus();
+    S.typing=true;
+    $('#kb-wrap').style.display='block';
+    if(globalKB) globalKB.texto(g,{
+      paso:i=>{ if(opts.cursor) showCursorArrow(e,i,g); },
+      fin:()=>{ S.typing=false; if(opts.cursor) hideCursorArrow(); }
+    });
+    e.oninput=()=>{
+      let v=e.value;
+      while(v && !g.startsWith(v)) v=v.slice(0,-1);
+      if(v!=e.value){e.value=v;bad();say('¡Casi! Escribe exactamente: <b>'+g+'</b>')}
+    };
+  }
+});
+
+const pr=a=>()=>$$('#sl p').find(p=>p.dataset.a==a),
+ W=(id,t,b)=>{stage(`<div class="win max" id=${id}><div class=tt>${t}<b><button class="wb x" id=x${id}>✕</button></b></div>${b}</div>`);$('#x'+id).onclick=()=>stage('')},
+ PW='<svg viewBox="0 0 24 24" style="width:1em;height:1em;vertical-align:-.12em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v9M6.3 6.5a8 8 0 1 0 11.4 0"/></svg>';
+
+/* Búsqueda por tipeo en inicio */
+function fq(){$('#sq').textContent=S.q?'🔍 '+S.q:'🔍 Escribe aquí para buscar';$$('#sl p').forEach(p=>p.style.display=!S.q||p.textContent.toLowerCase().includes(S.q.toLowerCase())?'':'none')}
+
+$('#st').onclick=()=>{const s=$('#sm');s.style.display=s.style.display=='block'?'none':'block';$('#pp').style.display='none';S.q='';fq()};
+$('#pw').onclick=()=>$('#pp').style.display=$('#pp').style.display=='block'?'none':'block';
+
+const openApp=a=>F.ok&&F.ok.includes(a)?OP[a]():(bad(),say('Ahora no hace falta abrir eso 😊'));
+$('#tbf').onclick=()=>openApp('ex');$('#ipc').ondblclick=()=>openApp('ex');
+$('#sm').onclick=e=>{
+  const p=e.target.closest('#sl p');
+  if(p){
+    const a=p.dataset.a;
+    if(F.ok&&F.ok.includes(a)){$('#sm').style.display='none';OP[a]()}
+    else{bad();say('Ahora no necesitamos ese programa. Sigue la indicación 😊')}
+  }
+};
+$('#off').onclick=()=>{
+  S.steps=[];$('#sm').style.display=$('#pp').style.display='none';$('#blk').style.display='block';
+  setTimeout(()=>{$('#blk').style.display='none';if(F.off){fin(5)}else say('La PC se reinició 🙂')},2500);
+};
+
+function fin8(){
+  const all=[1,2,3,4,5].every(n=>S.done.has(n)),nm=Alumno.nombre()||S.name||'Estudiante';
+  $('#fin').innerHTML=`<h1>🎉 ¡Felicitaciones ${nm}!</h1>`+
+    (all?`<div id=cert><small>CERTIFICADO DE FINALIZACIÓN</small><h2>${nm}</h2><p>completó con éxito todas las actividades de Primeros pasos en Windows Parte II</p><p>${new Date().toLocaleDateString('es-AR')}</p></div><br>`:'<p>¡Has avanzado muchísimo hoy!</p>')+
+    `<div style="display:flex;gap:1em;justify-content:center;flex-wrap:wrap">
+       <button class="big" onclick="$('#fin').style.display='none';menu()">↻ Continuar ejercitando</button>
+       <button class="big" style="background:#1e40af" onclick="Alumno.irInicio()">🏠 Volver al inicio</button>
+     </div>`;
+  $('#fin').style.display='flex';
+}
+
+/* Programas simulados */
+OP.pa=()=>W('pa','🎨 Paint','<div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:1.4em;text-align:center">🎨 ¡Este es Paint, el programa para dibujar!</div>');
+
+// Explorador de archivos
+const LO=[['⭐ Acceso rápido',0],['🖥️ Escritorio','Escritorio'],['📄 Documentos','Documentos'],['⬇️ Descargas','Descargas'],['💻 Este equipo','Este equipo'],['💽 Disco local (C:)','Disco local (C:)']],
+ CT={Escritorio:['📁 Tareas'],Descargas:['📕 manual.pdf'],'Este equipo':['💽 Disco local (C:)','💽 Disco de datos (D:)'],'Disco local (C:)':['📁 Windows','📁 Archivos de programa']};
+const nv=l=>{E.h.push(E.loc);E.f=[];E.loc=l;exr()};
+OP.ex=()=>{
+  E={loc:'Escritorio',h:[],f:[]};
+  W('ex','📁 Explorador de archivos','<div id=nvb><button class=rb id=nb title="Atrás">⬅</button><button class=rb id=nf title="Adelante">➡</button><button class=rb id=nu title="Subir">⬆</button><div id=bc></div></div><div id=exb><div id=tree></div><div id=files></div></div>');
+  $('#nb').onclick=()=>{if(E.h.length){E.f.push(E.loc);E.loc=E.h.pop();exr()}};
+  $('#nf').onclick=()=>{if(E.f.length){E.h.push(E.loc);E.loc=E.f.pop();exr()}};
+  $('#nu').onclick=()=>nv('Este equipo');
+  exr();
+};
+function exr(){
+  const c=E.loc=='Documentos'?V.map(d=>'📝 '+d.n):CT[E.loc]||[];
+  $('#tree').innerHTML=LO.map(([l,k])=>k?`<div class="tr${E.loc==k?' on':''}" data-l="${k}">${l}</div>`:`<b style="font-size:.8em">${l}</b>`).join('');
+  $('#files').innerHTML=c.length?c.map(x=>`<div class=it><b>${x.slice(0,2)}</b>${x.slice(3)}</div>`).join(''):'<span style="color:#888;padding:1em">Esta carpeta está vacía</span>';
+  $('#bc').textContent=(E.loc=='Este equipo'?'':'Este equipo › ')+E.loc;
+  $$('#tree .tr').forEach(x=>x.onclick=()=>nv(x.dataset.l));
+  $$('#files .it').forEach((x,i)=>{
+    x.onclick=()=>{$$('#files .it').forEach(y=>y.classList.remove('s'));x.classList.add('s')};
+    x.ondblclick=()=>{if(E.loc=='Documentos'&&V[i]){F.dbl=1;OP.np(V[i])}}
+  });
+}
+
+// Bloc de notas
+OP.np=d=>{
+  W('np',`📝 ${d?d.n:'Sin título'} - Bloc de notas`,`<div style="display:flex;gap:1em;padding:.3em .8em;border-bottom:1px solid #ddd;background:#f3f4f6"><span class=cr id=npa>Archivo</span><span>Edición</span><span>Ver</span></div><div id=npm style="display:none;position:absolute;top:4.2em;left:.6em;background:#f2f2f2;border:1px solid #999;z-index:5;box-shadow:2px 2px 6px #0006;color:#222"><div>Nuevo</div><div>Abrir...</div><div>Guardar</div><div id=npg style="padding:.3em 1em;cursor:pointer">Guardar como...</div></div><textarea id=nta style="flex:1;border:0;padding:.6em;font:1.1em Consolas,monospace;resize:none;outline:0;user-select:text"></textarea>`);
+  $('#nta').value=d?d.t:'';
+  $('#npa').onclick=()=>$('#npm').style.display='block';
+  $('#npg').onclick=()=>{
+    $('#npm').style.display='none';F.dir=null;
+    $('#np').insertAdjacentHTML('beforeend','<div id=sd style="position:absolute;left:10%;top:15%;width:34em;background:#f2f2f2;border:2px solid #2b79c2;box-shadow:0 6px 24px #000a;z-index:6;color:#222"><div class=tt>Guardar como</div><div style="padding:.6em">Guardar en:<div style="display:flex;gap:.3em;margin:.4em 0"><div class=tr data-d=Escritorio>🖥️ Escritorio</div><div class=tr data-d=Documentos>📄 Documentos</div><div class=tr data-d=Descargas>⬇️ Descargas</div></div>Nombre del archivo:<input id=sn style="width:100%;font-size:1em;padding:.3em"><div style="margin-top:.6em;text-align:right"><button class=rb id=sg>Guardar</button> <button class=rb id=sc>Cancelar</button></div></div></div>');
+    $$('#sd [data-d]').forEach(x=>x.onclick=()=>{F.dir=x.dataset.d;$$('#sd [data-d]').forEach(y=>y.classList.toggle('on',y==x))});
+    $('#sc').onclick=()=>$('#sd').remove();
+    $('#sg').onclick=()=>{
+      const n=$('#sn').value.trim();
+      if(F.dir!='Documentos'){bad();say('Primero elige la carpeta <b>Documentos</b> 👆')}
+      else if(!n){bad();say('Escribe un nombre para tu archivo 🙂')}
+      else{V.push({n:n+'.txt',t:$('#nta').value});$('#sd').remove()}
+    }
+  };
+};
+
+// Google Chrome con búsqueda de OpenOffice
+const U={home:'www.google.com.ar',res:'www.google.com.ar/search?q=openoffice',art:'www.openoffice.org/es/'},
+ PG={
+  home:'<div style="text-align:center;margin-top:2.5em"><div style="font-size:4em;font-weight:700"><span style=color:#4285f4>G</span><span style=color:#ea4335>o</span><span style=color:#fbbc05>o</span><span style=color:#4285f4>g</span><span style=color:#34a853>l</span><span style=color:#ea4335>e</span></div><input id=gq style="width:60%;font-size:1.2em;padding:.5em 1em;border-radius:2em;border:1px solid #aaa;margin:1em 0" placeholder="Escribe aquí lo que quieres buscar"><br><button class=rb id=gb>🔍 Buscar con Google</button></div>',
+  res:'<div style="padding:1em 2em;color:#222"><small>Aproximadamente 45.000.000 resultados</small><div class=lk id=l1 style="color:#1a0dab;text-decoration:underline;margin-top:1em;font-size:1.2em;cursor:pointer">Apache OpenOffice - Sitio oficial en español</div><div style=color:#006621>www.openoffice.org/es/</div><div style="margin-top:.3em;font-size:.9em">La suite de oficina libre y gratuita. Incluye procesador de textos Writer, planilla Calc y presentaciones Impress.</div><div class=lk id=l2 style="color:#1a0dab;text-decoration:underline;margin-top:1.2em;font-size:1.2em;cursor:pointer">Qué es OpenOffice - Wikipedia</div><div style=color:#006621>es.wikipedia.org/wiki/Apache_OpenOffice</div></div>',
+  art:'<div style="padding:1.5em 3em;color:#222;font-size:1.1em"><h2>Apache OpenOffice</h2><p style="margin-top:.6em">Es una suite de oficina libre y gratuita que incluye procesador de textos (Writer), planilla de cálculo (Calc) y presentaciones (Impress).</p><p style="margin-top:.6em">Es una alternativa abierta y gratuita a Microsoft Office. Estás leyendo una página web. Para volver a los resultados, usa la flecha ⬅ atrás.</p></div>'
+ };
+const go2=p=>{C.h=C.h.slice(0,C.i+1);C.h.push(p);C.i++;chr()},se=()=>{if($('#gq').value.trim())go2('res');else{bad();say('Escribe algo para buscar 🙂')}};
+function chr(){
+  const p=C.h[C.i];$('#adr').value=U[p];$('#pg').innerHTML=PG[p];
+  if(p=='home'){$('#gb').onclick=se;$('#gq').onkeydown=e=>{if(e.key=='Enter')se()}}
+  $$('.lk').forEach(x=>x.onclick=()=>go2('art'));
+}
+OP.ch=()=>{
+  C={h:['home'],i:0};
+  W('ch','🌐 Google Chrome','<div style="display:flex;gap:.3em;padding:.4em;background:#dee1e6;align-items:center"><button class=rb id=cb title="Atrás">⬅</button><button class=rb id=cf title="Adelante">➡</button><button class=rb id=cl title="Recargar">🔄</button><button class=rb id=ci title="Inicio">🏠</button><input id=adr readonly style="flex:1;font-size:1em;padding:.3em .8em;border-radius:1em;border:1px solid #aaa"></div><div id=pg style="flex:1;background:#fff;overflow:auto"></div>');
+  $('#cb').onclick=()=>{if(C.i>0){C.i--;chr()}};
+  $('#cf').onclick=()=>{if(C.i<C.h.length-1){C.i++;chr()}};
+  $('#cl').onclick=()=>{chr();say('Recargar vuelve a cargar la página web 🔄')};
+  $('#ci').onclick=()=>go2('home');
+  chr();
+};
+
+/* ACTIVIDADES */
+const A={
+1:{t:'Buscar programas en Inicio',i:'🔍',f(){F.ok=['pa'];run([
+ nt('¡Hola {n}! Vamos a abrir programas buscándolos. Todo empieza en el botón <b>Inicio</b>, abajo a la izquierda.'),
+ st('Haz clic en el botón <b>Inicio</b> (el de las ventanitas, abajo a la izquierda).',bt('#st'),()=>$('#sm').style.display=='block',{arr:bt('#st')}),
+ nt('Mira: <b>no hace falta hacer clic</b> en ningún cuadro. Solo empieza a escribir con el teclado.'),
+ {
+   t:'Escribe con el teclado la palabra <b>Paint</b>, sin hacer clic en ningún lado.',
+   r:bt('#sq'),
+   d:()=>{const ok=S.q.toLowerCase()=='paint';if(ok)S.typing=false;return ok;},
+   arr:bt('#sq'),
+   o:()=>{
+     S.q='';fq();
+     $('#kb-wrap').style.display='block';
+     S.typing=true;
+     if(globalKB) globalKB.texto('Paint',{
+       paso:i=>{S.q='Paint'.slice(0,i);fq();},
+       fin:()=>{S.typing=false;}
+     });
+   }
+ },
+ nt('Fíjate: el menú fue filtrando los programas letra por letra. Quedó solo el que buscabas.', {o:()=>{$('#kb-wrap').style.display='none';if(globalKB)globalKB.clear();}}),
+ st('Haz clic en <b>Paint</b> en la lista para abrirlo.',pr('pa'),()=>$('#pa'),{arr:pr('pa')}),
+ nt('¡Eso es Paint! Así abres cualquier programa: Inicio, escribir su nombre y clic en el resultado.'),
+ st('Cierra Paint haciendo clic en la <b>X</b> de arriba a la derecha.',bt('#xpa'),()=>!$('#pa'),{arr:bt('#xpa')})
+],()=>fin(1,'Ya sabes buscar programas desde Inicio.'))}},
+
+2:{t:'Explorador de archivos',i:'📁',f(){F.ok=['ex'];run([
+ nt('El <b>Explorador de archivos</b> sirve para ver tus carpetas y documentos. Se abre con la <b>carpeta amarilla 📁</b> de la barra de tareas o desde Inicio.'),
+ st('Haz clic en la carpeta amarilla 📁 de la barra de tareas.',bt('#tbf'),()=>$('#ex'),{arr:bt('#tbf')}),
+ nt('La ventana tiene dos partes. A la <b>izquierda</b> están los accesos rápidos: Escritorio, Documentos, Descargas y Este equipo.',{arr:bt('#tree')}),
+ nt('Arriba está la <b>barra de direcciones</b>: te dice en qué carpeta estás.',{arr:bt('#bc')}),
+ nt('El botón <b>⬅ Atrás</b> te lleva a la carpeta anterior.',{arr:bt('#nb')}),
+ nt('El botón <b>➡ Adelante</b> te lleva de nuevo a la carpeta que habías dejado.',{arr:bt('#nf')}),
+ nt('El botón <b>⬆ Subir</b> te lleva a la carpeta que contiene la actual.',{arr:bt('#nu')}),
+ st('Haz clic en <b>Descargas</b>, en el panel izquierdo.',bt('#tree'),()=>E&&E.loc=='Descargas',{arr:()=>$('#tree [data-l="Descargas"]'),noRing:true}),
+ nt('A la <b>derecha</b> ves lo que hay guardado dentro de Descargas. Cada vez que eliges un lugar a la izquierda, la derecha cambia.',{arr:bt('#files')}),
+ st('Ahora haz clic en <b>Este equipo</b> en el panel izquierdo.',bt('#tree'),()=>E&&E.loc=='Este equipo',{arr:()=>$('#tree [data-l="Este equipo"]'),noRing:true}),
+ nt('Arriba está la <b>ruta</b>: te dice dónde estás parado. Las flechas ⬅ y ➡ te mueven entre carpetas.',{arr:bt('#bc')}),
+ st('Haz clic en la flecha <b>⬅ atrás</b> para volver a Descargas.',bt('#nvb'),()=>E&&E.loc=='Descargas',{arr:bt('#nb'),noRing:true}),
+ st('Cierra el Explorador haciendo clic en la <b>X</b>.',bt('#ex'),()=>!$('#ex'),{arr:bt('#xex'),noRing:true})
+],()=>fin(2,'Ya conoces el Explorador de archivos.'))}},
+
+3:{t:'Crear, guardar y abrir un archivo',i:'📝',f(){F.ok=['np','ex'];V.length=0;run([
+ nt('Vamos a escribir un texto, guardarlo y volver a abrirlo. El <b>Bloc de notas</b> se abre desde el menú <b>Inicio</b>.'),
+ st('Haz clic en <b>Inicio</b>.',bt('#st'),()=>$('#sm').style.display=='block',{arr:bt('#st'),noRing:true}),
+ st('En la lista de programas, haz clic en <b>Bloc de notas</b>.',pr('np'),()=>$('#np'),{arr:pr('np'),noRing:true}),
+ ty('Escribe en la hoja blanca: <b>hola mundo!</b> (el signo ! se hace con Shift y el 1).','#nta','hola mundo!',{cursor:true}),
+ st('Para guardar, haz clic en el menú <b>Archivo</b>.',bt('#npa'),()=>$('#npm').style.display=='block',{arr:bt('#npa'),noRing:true}),
+ st('Elige <b>Guardar como...</b>',bt('#npg'),()=>$('#sd'),{arr:bt('#npg'),noRing:true}),
+ nt('Se abrió una ventana emergente. Ahí eliges <b>dónde</b> guardar el archivo y qué <b>nombre</b> ponerle.'),
+ st('Haz clic en la carpeta <b>Documentos</b>.',()=>$('#sd [data-d="Documentos"]'),()=>F.dir=='Documentos',{arr:()=>$('#sd [data-d="Documentos"]'),noRing:true}),
+ ty('Escribe el nombre: <b>Mi_Primer_Texto</b> (el guion bajo _ se hace con Shift y el guion).','#sn','Mi_Primer_Texto'),
+ st('Haz clic en el botón <b>Guardar</b>.',bt('#sg'),()=>V.length>0,{arr:bt('#sg'),noRing:true}),
+ st('¡Guardado! Cierra el Bloc de notas haciendo clic en la <b>X</b>.',bt('#xnp'),()=>!$('#np'),{arr:bt('#xnp'),noRing:true}),
+ st('Ahora busquemos el archivo. Abre el Explorador con la carpeta amarilla 📁 de la barra de tareas.',bt('#tbf'),()=>$('#ex'),{arr:bt('#tbf'),noRing:true}),
+ st('Haz clic en <b>Documentos</b> a la izquierda.',()=>$('#tree [data-l="Documentos"]'),()=>E&&E.loc=='Documentos',{arr:()=>$('#tree [data-l="Documentos"]'),noRing:true}),
+ st('Ahí está tu archivo. Hazle <b>doble clic rápido</b> para abrirlo.',()=>$('#files .it'),()=>F.dbl&&$('#np'),{dc:1,arr:()=>$('#files .it'),noRing:true}),
+ nt('¡Mira! Tu texto volvió a aparecer intacto. Guardar y abrir: así se conservan los trabajos.')
+],()=>fin(3,'Ya sabes guardar y abrir archivos.'))}},
+
+4:{t:'Navegar en internet',i:'🌐',f(){F.ok=['ch'];run([
+ nt('Para navegar en internet usamos un programa llamado <b>navegador web</b>. En este simulador usamos <b>Google Chrome</b>, pero en tu computadora podés tener instalado <b>Mozilla Firefox</b> o <b>Microsoft Edge</b>. Todos cumplen la misma función.'),
+ st('Haz clic en <b>Inicio</b>.',bt('#st'),()=>$('#sm').style.display=='block',{arr:bt('#st'),noRing:true}),
+ st('Haz clic en <b>Google Chrome</b>.',pr('ch'),()=>$('#ch'),{arr:pr('ch'),noRing:true}),
+ nt('Arriba está la <b>barra de direcciones</b>: ahí se ve la dirección de la página en la que estás.',{arr:bt('#adr')}),
+ nt('El botón <b>⬅ Atrás</b> te devuelve a la página anterior.',{arr:bt('#cb')}),
+ nt('El botón <b>➡ Adelante</b> te lleva de nuevo a la página que habías dejado.',{arr:bt('#cf')}),
+ nt('El botón <b>🔄 Recargar</b> vuelve a cargar la página actual.',{arr:bt('#cl')}),
+ nt('El botón <b>🏠 Inicio</b> te lleva a la página de inicio del navegador.',{arr:bt('#ci')}),
+ nt('Esta es la página de Google. En el centro está la <b>caja de búsqueda</b>.',{arr:bt('#gq')}),
+ ty('Escribe en la caja de búsqueda: <b>OpenOffice</b>','#gq','OpenOffice'),
+ st('Presiona la tecla <b>Enter</b> o haz clic en <b>Buscar con Google</b>.',bt('#gb'),()=>C.h[C.i]=='res',{
+   k:['enter'],arr:bt('#gb'),noRing:true,
+   o:()=>{
+     $('#kb-wrap').style.display='block';
+     if(globalKB) globalKB.set({h:[], t:'Enter', a:[]});
+   }
+ }),
+ nt('Estos resultados son <b>enlaces</b> (o links). Cuando pasas el puntero por encima, se transforma en una manito 👆.'),
+ st('Haz clic en el primer resultado: <b>Apache OpenOffice</b>.',bt('#l1'),()=>C.h[C.i]=='art',{arr:bt('#l1'),noRing:true}),
+ nt('¡Entraste a la página web! Con la flecha ⬅ atrás podés volver a los resultados de búsqueda.'),
+ st('Haz clic en la flecha <b>⬅ atrás</b> del navegador.',bt('#cb'),()=>C.h[C.i]=='res',{arr:bt('#cb'),noRing:true}),
+ st('Cierra el navegador haciendo clic en la <b>X</b>.',bt('#xch'),()=>!$('#ch'),{arr:bt('#xch'),noRing:true})
+],()=>fin(4,'Ya sabes buscar en internet.'))}},
+
+5:{t:'Apagar la PC',i:PW,f(){F.off=1;run([
+ nt('Para terminar, apagaremos la computadora de forma segura. Siempre se hace desde <b>Inicio</b>.'),
+ st('Haz clic en <b>Inicio</b>.',bt('#st'),()=>$('#sm').style.display=='block',{arr:bt('#st')}),
+ st('Haz clic en el botón de <b>Energía</b>.',bt('#pw'),()=>$('#pp').style.display=='block',{arr:bt('#pw')}),
+ st('Por último, elige <b>Apagar</b>.',bt('#off'),()=>0,{arr:bt('#off')})
+],()=>{})}}
+};
+
+const BL=[['🔍 Inicio y archivos',1,3],['🌐 Internet',4,4],[PW+' Cierre',5,5]];
+</script></body></html>

@@ -1,0 +1,1189 @@
+<!-- app: primeros-pasos | contrato: v1 | módulos: alumno v1, progreso v1, teclado v1 | fecha: 2026-10-25 -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Primeros pasos en Windows</title>
+<style>
+/* ===== ESTILOS BASE Y ESCRITORIO ===== */
+:root{--kb:#eee;--kt:#222;--kd:#666;--tr:#d1d5db}
+*{box-sizing:border-box;margin:0}
+body{font:16px "Segoe UI",Arial,sans-serif;height:100vh;overflow:hidden;user-select:none;background:#073a78}
+button{font:inherit;cursor:pointer}button:disabled{opacity:.4;cursor:default}
+
+/* Barra superior */
+#top{position:fixed;top:0;left:0;right:0;height:2.4em;background:#1f2937;color:#fff;display:flex;align-items:center;gap:.4em;padding:0 .5em;z-index:50}
+#top button, #top a.btn-nav{background:#374151;color:#fff;border:0;border-radius:.3em;padding:.2em .6em;text-decoration:none;font-size:.85em;display:inline-flex;align-items:center;gap:.3em}
+#top a.btn-nav:hover, #top button:hover{background:#4b5563}
+#top .btn-home{background:#1e40af!important;font-weight:700}
+#pb{flex:1;height:1.2em;background:#4b5563;border-radius:1em;overflow:hidden;position:relative}
+#pf{height:100%;width:0;background:#22c55e;transition:.4s}
+#pt{position:absolute;inset:0;text-align:center;font-size:.75em;line-height:1.6}
+
+/* Escritorio */
+#desk{position:fixed;top:2.4em;bottom:2.5em;left:0;right:0;overflow:hidden;background:radial-gradient(ellipse at 75% 45%,#4fb3ff,#0a5fc0 40%,#06336b)}
+#desk:before{content:"";position:absolute;right:14%;top:18%;width:30%;height:52%;opacity:.55;background:linear-gradient(#fff,#fff) 0 0/47% 47% no-repeat,linear-gradient(#fff,#fff) 100% 0/47% 47% no-repeat,linear-gradient(#fff,#fff) 0 100%/47% 47% no-repeat,linear-gradient(#fff,#fff) 100% 100%/47% 47% no-repeat}
+#stage{position:absolute;inset:0;pointer-events:none}#stage>*{pointer-events:auto}
+.ico{position:absolute;width:6em;text-align:center;color:#fff;font-size:.85em;text-shadow:0 1px 3px #000;padding:.3em;border-radius:.3em}
+.ico b{display:block;font-size:2.8em;font-weight:400}.ico:hover{background:#fff3}
+#acts{position:absolute;left:9em;top:.5em;display:flex;gap:.6em}.ab{display:flex;flex-direction:column;width:9em}.ab small{color:#fff;font-weight:700;text-shadow:0 1px 3px #000;margin-bottom:.2em}.ico.act{position:static;width:100%}
+
+/* Barra de tareas e Inicio */
+#tb{position:fixed;bottom:0;left:0;right:0;height:2.5em;background:#101820;display:flex;align-items:center;z-index:60;color:#fff}
+#st{width:3em;height:100%;border:0;background:none;color:#fff}#st:hover{background:#fff3}
+#tasks{flex:1;display:flex}#ck{padding:0 1em;font-size:.85em}#bat{font-size:.85em;padding:0 .6em}#cr{font-size:.7em;color:#fffc;padding-right:.8em}
+.tk{padding:.3em .9em;background:#fff2;border:0;border-bottom:3px solid #4cc2ff;margin:0 .2em;color:#fff}
+.blink{animation:bl .5s 8}@keyframes bl{50%{background:#f90}}
+#sm{position:fixed;left:0;bottom:2.5em;width:19em;height:25em;background:#222;color:#fff;z-index:70;display:none;animation:up .25s}
+@keyframes up{from{transform:translateY(2em);opacity:0}}
+#sw{display:flex;height:100%}#ss{width:3em;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.4em;padding:.5em 0;font-size:1.3em}
+#ss div:hover{background:#fff3}#sl{padding:.7em;flex:1}#sl p{padding:.4em;border-radius:.2em}#sl p:hover{background:#fff3}
+#pw{padding:0 .3em}
+#pp{position:absolute;left:3.2em;bottom:.6em;background:#2b2b2b;display:none;min-width:9em;box-shadow:0 0 8px #000}#pp div{padding:.5em 1em}#pp div:hover{background:#fff3}
+
+/* COLUMNA LATERAL COMPACTA */
+#side{position:fixed;right:.4em;bottom:2.8em;width:17.2em;max-height:calc(100vh - 5.5em);z-index:80;display:flex;flex-direction:column-reverse;gap:.25em;pointer-events:none}
+#side>*{pointer-events:auto}
+#bit{display:flex;align-items:center;justify-content:flex-end;gap:.4em}
+#bot{font-size:2em;line-height:1;animation:fl 2s infinite}@keyframes fl{50%{transform:translateY(-.15em)}}
+#bn{font-size:.75em;font-weight:700;color:#fff;background:#1f2937;border-radius:1em;padding:.1em .7em}
+
+/* BURBUJA DE DIÁLOGO: BOTÓN "ENTENDIDO" SIEMPRE VISIBLE */
+#bub{background:#fff;border-radius:.7em;padding:.45em .7em;box-shadow:0 2px 8px #0006;font-size:.82em;color:#222;line-height:1.35;max-height:30vh;display:flex;flex-direction:column}
+#bt-text{overflow-y:auto;max-height:22vh;padding-right:.2em}
+#bt-action{flex-shrink:0;margin-top:.35em;padding-top:.25em;border-top:1px dashed #e5e7eb;display:flex;align-items:center;gap:.3em}
+.ent{display:block;background:#2b79c2;color:#fff;border:0;border-radius:.4em;padding:.25em .7em;font-size:.9em}
+.arw{color:#16a34a;font-size:1.4em;font-weight:900;animation:ar .6s infinite}@keyframes ar{50%{opacity:.15;transform:translateX(5px)}}
+#hb{display:flex;gap:.3em;flex-wrap:wrap}#hb button{border:0;border-radius:1em;padding:.2em .6em;font-size:.8em;font-weight:700;background:#f59e0b}
+#gp{background:#fff;border-radius:.7em;padding:.4em;box-shadow:0 2px 8px #0006;display:none;flex-direction:column;gap:.3em;align-items:center;text-align:center;font-size:.82em}
+#pads{display:flex;gap:.8em;font-size:.72em;align-items:flex-end}
+.pad{position:relative;width:6em;height:3.8em;border:2px solid #555;border-radius:.5em;background:#ddd;margin:0 auto .2em}
+.ms{width:3.6em;height:5.2em;border-radius:1.8em 1.8em 2.2em 2.2em}
+.z{position:absolute;bottom:0;width:50%;height:42%;border:1px dashed #777}.ms .z{top:0;bottom:auto;height:45%}.z.l{left:0}.z.r{right:0}
+.z.on{background:#ef4444;animation:kb .6s infinite}
+
+/* TECLADO VIRTUAL LATERAL AJUSTADO */
+#kb-wrap{display:none;background:#fff;border-radius:.6em;padding:.2em .2em 0 .2em;box-shadow:0 2px 8px #0005;width:100%;margin:0;line-height:1}
+#kb-wrap .kv.s{padding-top:1.6em;padding-bottom:0;margin:0}
+#kb-wrap .kv.s .kbd{font-size:.43em;grid-template-rows:1.4em repeat(5,2.1em);padding:.15em;margin-bottom:0}
+#kb-wrap svg.arc-line{display:block;height:0}
+
+/* Indicadores: Anillo y Flecha Animada */
+#ring{position:fixed;display:none;border:4px solid rgba(255,0,0,.85);background:rgba(255,0,0,.25);border-radius:50%;pointer-events:none;z-index:9999;animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.15)}}
+.hl{outline:4px solid #facc15!important;outline-offset:2px;box-shadow:0 0 16px #facc15!important}
+
+/* Flecha animada independiente */
+#ptr-arrow{position:fixed;display:none;z-index:10002;pointer-events:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.75));transition:top .18s ease,left .18s ease}
+#ptr-arrow svg{display:block;animation:bounce-arr .5s infinite alternate ease-in-out}
+@keyframes bounce-arr{from{transform:translate(0,0)}to{transform:translate(var(--ax,0),var(--ay,-10px))}}
+
+/* Ventanas y Práctica */
+.win{position:absolute;background:#fff;border:1px solid #2b79c2;box-shadow:0 8px 30px #0008;display:flex;flex-direction:column;color:#222;z-index:30}
+.win.max{inset:0 17.5em 0 0!important;width:auto!important;height:auto!important}
+.tt{background:#2b79c2;color:#fff;padding:.3em .6em;display:flex;align-items:center}.tt b{margin-left:auto;display:flex}
+.wb{border:0;background:none;color:#fff;width:2.6em;height:1.8em}.wb:hover{background:#fff4}.wb.x:hover{background:#e81123}
+.it{text-align:center;padding:.3em;border:1px solid transparent;width:7em;font-size:.95em}.it b{display:block;font-size:2.4em;font-weight:400}.it:hover{background:#e5f3ff}.it.s{background:#cce8ff;border-color:#66b0f0}
+#ed{flex:1;overflow:auto;position:relative;padding:.8em;font-size:1.15em;line-height:1.6;white-space:pre-wrap;color:#111;background:#fff}
+.gh{color:#9ca3af}#ed:not(.fo) #cur{visibility:hidden}
+#mp{position:fixed;width:18px;height:18px;left:50%;top:50%;pointer-events:none;border-radius:50%;background:#ef4444;border:2px solid #fff;display:none;z-index:9998;box-shadow:0 0 8px #ef4444}
+.wr{background:#ef4444!important;color:#fff!important;border-radius:.2em;padding:0 .1em}
+#cur{display:inline-block;width:3px;height:1.2em;background:#111;vertical-align:text-bottom;animation:cb 1s steps(2) infinite}@keyframes cb{50%{opacity:0}}
+
+/* Áreas de movimiento aleatorio distantes (Actividad 2) */
+.target-zone{position:absolute;width:10em;height:5.5em;border:3px dashed #facc15;background:rgba(250,204,21,.25);border-radius:.8em;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font-weight:700;text-shadow:0 1px 3px #000;box-shadow:0 0 14px rgba(250,204,21,.5)}
+
+/* Área de selección (Actividad 4) */
+#sed-box{flex:1;padding:1.2em;font-size:1.1em;line-height:1.8;overflow:auto;background:#fff;user-select:text!important;-webkit-user-select:text!important}
+#sed-box *{user-select:text!important;-webkit-user-select:text!important}
+.word-plain{font-weight:700;color:#1e3a8a;cursor:text;padding:0 .2em}
+.sel-line{margin:.8em 0;padding:.3em .6em;background:#f3f4f6;border-left:5px solid #3b82f6;cursor:text;outline:none}
+.sel-para{margin-top:.8em;padding:.5em;background:#f3f4f6;border-left:5px solid #10b981;line-height:1.5;cursor:text}
+::selection{background:#2563eb!important;color:#fff!important}
+
+/* Menús y Pantallas de cierre */
+#menu{position:fixed;top:2.4em;bottom:2.5em;left:0;right:0;background:#000b;z-index:40;display:none;align-items:center;justify-content:center;flex-direction:column;gap:.6em}
+.ov{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:1em;z-index:260;color:#fff;text-align:center;background:linear-gradient(135deg,#0a5fc0,#06336b)}
+#fin{z-index:260}
+.big{font-size:1.15em;padding:.5em 1.3em;border:0;border-radius:.5em;background:#22c55e;color:#fff;margin:.3em}
+#cert{background:#fff;color:#222;border:6px double #b8860b;padding:1.5em 3em;border-radius:.5em}
+#blk{position:fixed;inset:0;background:#000;z-index:300;display:none}
+
+/* CSS Teclado Módulo */
+.kw.dk{--kb:#26282b;--kt:#fff;--kd:#0b0c0d;--tr:#101113}
+.kv{position:relative;width:100%;padding-top:3.6em}.kv.s{padding-top:2.4em}
+.kbd{display:grid;grid-template-columns:repeat(120,minmax(0,1fr));grid-template-rows:1.9em repeat(5,2.9em);gap:0;background:var(--tr);padding:.3em;border-radius:.6em;user-select:none;width:100%;font-size:1em}
+.kv.s .kbd{font-size:.52em}
+.k{background:var(--kb);color:var(--kt);border:.14em solid var(--kd);border-bottom-width:.25em;border-radius:.35em;margin:.14em;display:flex;align-items:center;justify-content:center;position:relative;font-weight:700;font-size:1.05em;white-space:nowrap;overflow:hidden;min-width:0}
+.k.t b{transform:translateY(.28em)}.k.tx b{font-size:.8em}.k.en{grid-row:span 2}
+.k i{position:absolute;left:.3em;top:.05em;font-size:.7em;font-style:normal;font-weight:600;opacity:.85}
+.k s{position:absolute;right:.2em;bottom:0;font-size:.5em;text-decoration:none;color:#2b79c2}
+.k em{font-style:normal}
+.kv.s .k i,.kv.s .k s,.kv.s .lg{display:none}.kv.s .k.t b{transform:none}
+.hl-key{background:#3b82f6!important;color:#fff!important;border-color:#1d4ed8!important;transform:translateY(2px)}
+.nx{background:#22c55e!important;color:#fff!important;border-color:#15803d!important}
+.gd{background:#facc15!important;color:#222!important;border-color:#b45309!important;animation:kb .6s infinite}
+.bad{background:#ef4444!important;color:#fff!important;border-color:#991b1b!important}
+.dn{background:#86efac!important;color:#14532d!important;transform:translateY(2px)}
+@keyframes kb{50%{background:#f97316;transform:translateY(3px)}}
+.bd{position:absolute;display:flex;flex-direction:column;align-items:center;background:#fff;color:#1f2937;border:2px solid #2b79c2;border-radius:.6em;padding:.1em .45em;font-weight:800;font-size:.8em;line-height:1.1;box-shadow:0 2px 6px #0005;opacity:0;transform:translate(-50%,-85%);transition:opacity .35s,transform .35s;z-index:3;white-space:nowrap;pointer-events:none}
+.bd.show{opacity:1;transform:translate(-50%,-100%)}.bd span{font-size:1.7em}.bd.tap{border-color:#d97706}.bd.tap.show span{animation:tp .7s infinite}
+@keyframes tp{50%{transform:translateY(.25em)}}
+.kv.s .bd{font-size:.5em;border-width:1px}
+svg.arc-line{position:absolute;left:0;top:0;pointer-events:none;z-index:2;overflow:visible}
+</style>
+</head>
+<body><script src="../../js/guard.js?v=2"></script>
+
+<!-- BARRA SUPERIOR -->
+<div id="top">
+  <button onclick="Alumno.irInicio()" class="btn-nav btn-home">🏠 Volver al inicio</button>
+  <button onclick="menu()">📋 Menú Principal</button>
+  <button id="cn" onclick="menu()" style="display:none;background:#dc2626">✖ Cancelar actividad</button>
+  <div id="pb"><div id="pf"></div><div id="pt">0 de 6 actividades</div></div>
+  <button onclick="ts()" id="sb">🔔</button>
+  <button onclick="fz(-2)">A−</button>
+  <button onclick="fz(2)">A+</button>
+</div>
+
+<!-- ESCRITORIO -->
+<div id="desk">
+  <div class="ico" id="ipc" style="left:1em;top:1em"><b>💻</b>Este equipo</div>
+  <div class="ico" id="ipa" style="left:1em;top:8em"><b>🗑️</b>Papelera</div>
+  <div class="ico" id="imt" style="left:1em;top:15em"><b>📁</b>Mis trabajos</div>
+  <div id="acts"></div>
+  <div id="stage"></div>
+</div>
+<div id="menu"><h2 style="color:#fff">Elegí una actividad (te sugerimos seguir el orden 1 → 6)</h2></div>
+
+<!-- BARRA DE TAREAS -->
+<div id="tb">
+  <button id="st"><svg width="16" height="16" viewBox="0 0 16 16"><path fill="#fff" d="M0 2l6-1v6H0zM7 .8L16 0v7H7zM0 8h6v6l-6-1zM7 8h9v8l-9-1z"/></svg></button>
+  <button id="tbf" class="tk" style="border:0;font-size:1.2em" title="Explorador de archivos">📁</button>
+  <div id="tasks"></div>
+  <div id="bat">🔋 85%</div>
+  <div id="cr">Profe Mario Jofré</div>
+  <div id="ck"></div>
+</div>
+
+<div id="sm">
+  <div id="sw">
+    <div id="ss">
+      <div>☰</div><div>👤</div><div>🖼️</div><div>⚙️</div>
+      <div id="pw" title="Energía"><svg viewBox="0 0 24 24" style="width:1em;height:1em;vertical-align:-.12em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v9M6.3 6.5a8 8 0 1 0 11.4 0"/></svg></div>
+    </div>
+    <div id="sl">
+      <h4 style="margin-bottom:.5em">Programas</h4>
+      <p>📁 Explorador de archivos</p>
+      <p id="sn">📝 Bloc de notas</p>
+      <p>🧮 Calculadora</p>
+      <p>🎨 Paint</p>
+      <p>🌐 Navegador</p>
+    </div>
+  </div>
+  <div id="pp">
+    <div>🌙 Suspender</div>
+    <div id="off"><svg viewBox="0 0 24 24" style="width:1em;height:1em;vertical-align:-.12em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v9M6.3 6.5a8 8 0 1 0 11.4 0"/></svg> Apagar</div>
+    <div>🔄 Reiniciar</div>
+  </div>
+</div>
+
+<!-- COLUMNA LATERAL -->
+<div id="side">
+  <div id="gp">
+    <div id="pads">
+      <div>Touchpad<div class="pad"><span class="z l" id="pl"></span><span class="z r" id="pr"></span></div></div>
+      <div>Mouse<div class="pad ms"><span class="z l" id="ml"></span><span class="z r" id="mr"></span></div></div>
+    </div>
+    <small id="gl"></small>
+  </div>
+  <div id="kb-wrap" class="kw"></div>
+  <div id="hb">
+    <button id="help" onclick="hp()">? Ayuda / Repetir</button>
+    <button id="vb" onclick="tv()">🔊</button>
+    <button onclick="rs()">🔄 Reiniciar Todo</button>
+  </div>
+  <div id="bit">
+    <div id="bub">
+      <div id="bt-text"></div>
+      <div id="bt-action" style="display:none">
+        <span class="arw">➜</span>
+        <button class="ent" onclick="S.nx=true">Entendido ▶</button>
+      </div>
+    </div>
+    <div id="bot">🤖</div>
+    <div id="bn">ManuBot</div>
+  </div>
+</div>
+
+<!-- Indicadores Visuales -->
+<div id="ring"></div>
+<div id="ptr-arrow">
+  <svg width="40" height="40" viewBox="0 0 32 32">
+    <path fill="#facc15" stroke="#111" stroke-width="2.5" stroke-linejoin="round" d="M16 30 L4 14 L11 14 L11 2 L21 2 L21 14 L28 14 Z"/>
+  </svg>
+</div>
+<div id="mp"></div>
+
+<!-- Pantalla Final y Apagado -->
+<div id="fin" class="ov"></div>
+<div id="blk"></div>
+
+<script>
+/* 🔒 COMPATIBILIDAD GITHUB PAGES — NO MODIFICAR: navegación al index y guardado local del alumno/progreso dependen de esta sección. */
+/* ===== INICIO MÓDULO ALUMNO v1 =====
+   Identidad del alumno + preferencias + navegación al inicio.
+   USO: pegar este bloque DENTRO de un <script> de la app, ANTES del código propio
+        (y antes de progreso.js). No se carga como archivo aparte: cada app sigue
+        siendo un único HTML.
+   Globales que crea: MJ_INDEX, Alumno  (no usar esos nombres en la app).
+   API:
+     Alumno.get()            -> {nombre,curso,id,creado} o null
+     Alumno.nombre()         -> nombre completo o ''
+     Alumno.set({nombre,curso}) -> guarda y devuelve el alumno (null si el nombre es muy corto)
+     Alumno.limpiar()        -> "este no soy yo": borra al alumno (NO borra su progreso)
+     Alumno.pedir(cb)        -> si ya hay alumno llama cb(alumno); si no, muestra una
+                                pantalla de nombre (solo pasa si abrieron la app suelta)
+     Alumno.prefs()          -> {fs,voz,snd,kbDark}   (con valores por defecto)
+     Alumno.setPref(k,v)     -> guarda una preferencia
+     Alumno.irInicio()       -> vuelve al index
+     Alumno.botonInicio(el)  -> agrega el botón "🏠 Inicio" dentro de el (o fijo arriba a la derecha)
+   Almacenamiento: localStorage con prefijo "mj:"; si no está disponible (modo privado,
+   algunos file://) usa memoria y la app sigue funcionando durante esa sesión.
+   ===================================================================== */
+const MJ_INDEX='../../index.html'; /* ← ruta RELATIVA al index desde esta app */
+const Alumno=(()=>{
+ const mem={},ls=(()=>{try{localStorage.setItem('mj:t',1);localStorage.removeItem('mj:t');return localStorage}catch(e){return null}})();
+ const leer=k=>{try{const v=ls?ls.getItem('mj:'+k):mem[k];return v==null?null:JSON.parse(v)}catch(e){return null}};
+ const guardar=(k,v)=>{try{const s=JSON.stringify(v);if(ls)ls.setItem('mj:'+k,s);else mem[k]=s;return true}catch(e){return false}};
+ const borrar=k=>{try{if(ls)ls.removeItem('mj:'+k);else delete mem[k]}catch(e){}};
+ const limpio=s=>String(s==null?'':s).replace(/[<>&"'`\\\/]/g,'').replace(/\s+/g,' ').trim().slice(0,40);
+ const slug=s=>limpio(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+ const get=()=>{const a=leer('alumno');return a&&a.id?a:null};
+ const set=d=>{d=d||{};const nombre=limpio(d.nombre),curso=limpio(d.curso);if(nombre.length<2)return null;
+  const a={nombre,curso,id:slug(nombre)+(curso?'_'+slug(curso):''),creado:new Date().toISOString()};guardar('alumno',a);return a};
+ const DEF={fs:16,voz:true,snd:true,kbDark:false};
+ const prefs=()=>{const p=leer('prefs')||{},o={};for(const k in DEF)o[k]=k in p?p[k]:DEF[k];return o};
+ const setPref=(k,v)=>{if(!(k in DEF))return;const p=prefs();p[k]=v;guardar('prefs',p)};
+ const irInicio=()=>{location.href=MJ_INDEX};
+ const botonInicio=el=>{const b=document.createElement('button');b.textContent='🏠 Inicio';b.title='Volver al inicio';b.onclick=irInicio;
+  b.style.cssText=el?'background:#374151;color:#fff;border:0;border-radius:.3em;padding:.15em .6em;cursor:pointer;font:inherit'
+   :'position:fixed;top:.4em;right:.4em;z-index:9998;background:#374151;color:#fff;border:0;border-radius:.4em;padding:.3em .7em;cursor:pointer;font:inherit';
+  if(el)el.insertBefore(b,el.firstChild);else document.body.appendChild(b);return b};
+ function pedir(cb){const a=get();if(a){cb(a);return}
+  const d=document.createElement('div'),ci='font:inherit;font-size:1.2em;padding:.4em;border-radius:.4em;border:0;text-align:center;width:min(20em,90%);color:#222';
+  d.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1em;text-align:center;color:#fff;font:18px "Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,#0a5fc0,#06336b)';
+  d.innerHTML='<h1 style="font-size:1.6em;margin:0 0 .4em">👋 ¡Bienvenido!</h1><p style="margin:.3em">Escribe tu nombre y apellido:</p>'+
+   '<input id=mjn maxlength=40 autocomplete=off style="'+ci+'"><p style="margin:.6em .3em .3em">Curso o grupo (si lo sabes):</p>'+
+   '<input id=mjc maxlength=40 autocomplete=off style="'+ci+'"><p id=mje style="min-height:1.6em;margin:.5em;color:#fde68a;font-weight:700"></p>'+
+   '<button id=mjb style="font:inherit;font-size:1.2em;padding:.5em 1.4em;border:0;border-radius:.5em;background:#22c55e;color:#fff;cursor:pointer">Ingresar</button>';
+  document.body.appendChild(d);
+  const n=d.querySelector('#mjn'),c=d.querySelector('#mjc'),e=d.querySelector('#mje');
+  const go=()=>{const x=set({nombre:n.value,curso:c.value});if(!x){e.textContent='Escribe tu nombre (mínimo 2 letras).';n.focus();return}d.remove();cb(x)};
+  ['keydown','keyup'].forEach(t=>d.addEventListener(t,ev=>{ev.stopPropagation();if(t=='keydown'&&ev.key=='Enter')go()}));
+  d.querySelector('#mjb').onclick=go;n.focus()}
+ return{get,set,nombre:()=>{const a=get();return a?a.nombre:''},limpiar:()=>borrar('alumno'),pedir,prefs,setPref,irInicio,botonInicio,
+  almacen:{leer,guardar,borrar},limpio,slug}})();
+/* ===== FIN MÓDULO ALUMNO v1 ===== */
+
+/* ===== INICIO MÓDULO PROGRESO v1 =====
+   Registro local del progreso del alumno, por actividad.
+   USO: pegar DENTRO del <script> de la app, DESPUÉS de alumno.js y antes del código propio.
+   Global que crea: Progreso (no usar ese nombre en la app).
+   Las apps SOLO guardan en el navegador. Quien envía a Google Sheets es el index.
+   Clave de cada actividad: "appId/actId"  (ej. "mecanografia/a03"). Los ids son estables:
+   no se renombran ni renumeran nunca.
+   API:
+     Progreso.registrar(appId, actId, {estado,estrellas,errores,seg})
+         estado: 'hecha' | 'en-curso' (una actividad 'hecha' nunca vuelve a 'en-curso')
+         estrellas: 0-3 (se conserva la mejor) · errores: n · seg: segundos de la última vez
+     Progreso.get(appId)            -> {actId:{estado,estrellas,errores,seg,veces,fecha,mod}}
+     Progreso.hecha(appId, actId)   -> true/false
+     Progreso.resumen(appId, total) -> {hechas,total,pct,estrellas}
+     Progreso.pendientes()          -> [{app,act,...registro}] aún no enviados (lo usa el index)
+     Progreso.marcarEnviado(lista)  -> marca como enviados los registros de esa lista (lo usa el index)
+     Progreso.exportar()            -> texto JSON de respaldo / envío
+     Progreso.importar(texto)       -> n registros incorporados; -1 texto inválido; -2 es de otro alumno
+     Progreso.borrar(appId)         -> borra el progreso de una app (o todo si no se pasa appId). Solo index/docente
+   El "Reiniciar" interno de una app NO debe llamar a borrar().
+   ===================================================================== */
+const Progreso=(()=>{
+ const AL=Alumno.almacen,uid=()=>{const a=Alumno.get();return a?a.id:'anonimo'},K=()=>'progreso:'+uid(),KE=()=>'enviado:'+uid();
+ const todo=()=>{const d=AL.leer(K());return d&&d.v==1&&d.act&&typeof d.act=='object'?d:{v:1,act:{}}};
+ const reg=(app,act,d)=>{d=d||{};const p=todo(),key=app+'/'+act,o=p.act[key]||{},fin=d.estado=='hecha';
+  p.act[key]={estado:fin||o.estado=='hecha'?'hecha':'en-curso',
+   estrellas:Math.max(o.estrellas||0,Math.min(3,Math.max(0,Math.round(+d.estrellas||0)))),
+   errores:d.errores!=null?Math.max(0,Math.round(+d.errores||0)):(o.errores||0),
+   seg:d.seg!=null?Math.max(0,Math.round(+d.seg||0)):(o.seg||0),
+   veces:(o.veces||0)+(fin?1:0),fecha:new Date().toISOString(),mod:Date.now()};
+  AL.guardar(K(),p);return p.act[key]};
+ const get=app=>{const p=todo().act,r={};for(const key in p)if(!app||key.indexOf(app+'/')==0)r[app?key.slice(app.length+1):key]=p[key];return r};
+ const hecha=(app,act)=>{const o=todo().act[app+'/'+act];return !!o&&o.estado=='hecha'};
+ const resumen=(app,total)=>{const g=get(app),ids=Object.keys(g).filter(x=>g[x].estado=='hecha'),hechas=ids.length;
+  return{hechas,total:total||hechas,pct:total?Math.min(100,Math.round(hechas/total*100)):0,estrellas:ids.reduce((n,x)=>n+(g[x].estrellas||0),0)}};
+ const pendientes=()=>{const env=AL.leer(KE())||0,p=todo().act,l=[];
+  for(const key in p)if((p[key].mod||0)>env){const i=key.indexOf('/');l.push(Object.assign({app:key.slice(0,i),act:key.slice(i+1)},p[key]))}return l};
+ const marcarEnviado=l=>{if(!l||!l.length)return;AL.guardar(KE(),Math.max.apply(null,l.map(x=>x.mod||0)))};
+ const exportar=()=>JSON.stringify({v:1,alumno:Alumno.get(),act:todo().act,fecha:new Date().toISOString()});
+ const importar=t=>{let d;try{d=JSON.parse(t)}catch(e){return -1}
+  if(!d||d.v!=1||!d.act||typeof d.act!='object')return -1;
+  if(!Alumno.get()&&d.alumno&&d.alumno.nombre)Alumno.set({nombre:d.alumno.nombre,curso:d.alumno.curso});
+  const a=Alumno.get();if(d.alumno&&a&&d.alumno.id&&d.alumno.id!=a.id)return -2;
+  const p=todo();let n=0;for(const key in d.act){const x=d.act[key],o=p.act[key];if(x&&x.estado&&(!o||(x.mod||0)>(o.mod||0))){p.act[key]=x;n++}}
+  AL.guardar(K(),p);return n};
+ const borrar=app=>{if(!app){AL.borrar(K());AL.borrar(KE());return}const p=todo();for(const key in p.act)if(key.indexOf(app+'/')==0)delete p.act[key];AL.guardar(K(),p)};
+ return{registrar:reg,get,hecha,resumen,pendientes,marcarEnviado,exportar,importar,borrar}})();
+/* ===== FIN MÓDULO PROGRESO v1 ===== */
+
+/* ===== INICIO MÓDULO TECLADO VIRTUAL ===== */
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function layout(){const a=[],K=(c,m,t='',w=8,x='',s='')=>a.push({c,m,t,w,x,s});
+ K('Escape','Esc','',8,'tx');for(let i=1;i<=12;i++)K('F'+i,'F'+i,'',7,'tx');
+ [['Pause','Pausa'],['PrintScreen','ImpPnt'],['Insert','Ins'],['Delete','Supr']].forEach(([c,m])=>K(c,m,'',7,'tx'));
+ [['Backquote','|','°'],['Digit1','1','!'],['Digit2','2','"'],['Digit3','3','#'],['Digit4','4','$'],['Digit5','5','%'],['Digit6','6','&'],['Digit7','7','/'],['Digit8','8','('],['Digit9','9',')'],['Digit0','0','='],['Minus',"'",'?'],['Equal','¿','¡']].forEach(([c,m,t])=>K(c,m,t));
+ K('Backspace','⌫<em class=lg> Borrar</em>','',16,'tx');
+ K('Tab','⇥','',14);'QWERTYUIOP'.split('').forEach(l=>K('Key'+l,l));K('BracketLeft','´','¨');K('BracketRight','+','*');K('Enter','↵<em class=lg> Enter</em>','',10,'tx en');
+ K('CapsLock','Bloq Mayús','',14,'tx');'ASDFGHJKL'.split('').forEach(l=>K('Key'+l,l));K('Semicolon','Ñ');K('Quote','{','[');K('Backslash','}',']');
+ K('ShiftLeft','⇧<em class=lg> Shift</em>','',10,'tx');K('IntlBackslash','<','>');'ZXCVBNM'.split('').forEach(l=>K('Key'+l,l));K('Comma',',',';');K('Period','.',':');K('Slash','-','_');K('ShiftRight','⇧<em class=lg> Shift</em>','',22,'tx');
+ K('ControlLeft','Ctrl','',10,'tx');K('Fn','Fn','',8,'tx');K('MetaLeft','⊞','',8);K('AltLeft','Alt','',10,'tx');K('Space','<em class=lg>Espacio</em>','',36,'tx');K('AltRight','Alt Gr','',10,'tx');K('ContextMenu','☰','',8);K('ControlRight','Ctrl','',10,'tx');
+ [['ArrowLeft','◀','Inicio'],['ArrowUp','▲','RePág'],['ArrowDown','▼','AvPág'],['ArrowRight','▶','Fin']].forEach(([c,m,s])=>K(c,m,'',5,'',s));
+ return a}
+const cell=k=>`<div class="k ${k.x} ${k.t?'t':''}" data-c="${k.c}" style="grid-column:span ${k.w}">${k.t?`<i>${esc(k.t)}</i>`:''}<b>${k.m.includes('class=lg')?k.m:esc(k.m)}</b>${k.s?`<s>${k.s}</s>`:''}</div>`;
+const MOD=new Set('ShiftLeft ShiftRight ControlLeft ControlRight AltLeft AltRight MetaLeft'.split(' '));
+const NM={ControlLeft:'Ctrl',ShiftLeft:'Shift',ShiftRight:'Shift',Fn:'Fn',ArrowLeft:'◀ Inicio',ArrowRight:'▶ Fin',Delete:'Supr'},nm=c=>NM[c]||c.replace('Key','');
+const LEFT=new Set('Backquote Digit1 Digit2 Digit3 Digit4 Digit5 Tab CapsLock IntlBackslash KeyQ KeyW KeyE KeyR KeyT KeyA KeyS KeyD KeyF KeyG KeyZ KeyX KeyC KeyV KeyB'.split(' '));
+const res=cs=>{const o=cs.find(c=>c!='Shift')||'';return cs.map(c=>c=='Shift'?(LEFT.has(o)?'ShiftRight':'ShiftLeft'):c)};
+const MAP={' ':[['Space']],'ñ':[['Semicolon']],'Ñ':[['Shift','Semicolon']],'ü':[['Shift','BracketLeft'],['KeyU']],'Ü':[['Shift','BracketLeft'],['Shift','KeyU']]};
+layout().forEach(k=>{if(/^Key/.test(k.c)){MAP[k.m.toLowerCase()]=[[k.c]];MAP[k.m]=[['Shift',k.c]]}else if(k.m.length==1&&k.c!='MetaLeft'){MAP[k.m]=[[k.c]];if(k.t)MAP[k.t]=[['Shift',k.c]]}});
+MAP['ñ']=[['Semicolon']];MAP['Ñ']=[['Shift','Semicolon']];
+Object.entries({'@':'KeyQ','\\':'Minus','~':'BracketRight','^':'Quote','`':'Backslash','¬':'Backquote'}).forEach(([c,k])=>MAP[c]=[['AltRight',k]]);
+'aeiou'.split('').forEach((v,i)=>{MAP['áéíóú'[i]]=[['BracketLeft'],['Key'+v.toUpperCase()]];MAP['ÁÉÍÓÚ'[i]]=[['BracketLeft'],['Shift','Key'+v.toUpperCase()]]});
+const HELD=new Set,KBS=[],DEF='Elige una combinación de teclas arriba 👆';
+function KB(el,size,V,msg){el.innerHTML=`<div class="kv ${size=='sm'?'s':''}"><div class=kbd>${layout().map(cell).join('')}</div><svg class=arc-line></svg></div>`;
+ const kv=el.firstChild,svg=kv.querySelector('svg'),m={};kv.querySelectorAll('.k').forEach(k=>m[k.dataset.c]=k);
+ let C=null,T=[],st=0,B=[];
+ const at=(ms,f)=>T.push(setTimeout(f,ms)),setM=h=>{if(msg)msg.innerHTML=h},stop=()=>{T.forEach(clearTimeout);T=[]};
+ const held=c=>HELD.has(c)||(/Left$/.test(c)&&HELD.has(c.replace('Left','Right')));
+ const clr=()=>{stop();Object.values(m).forEach(k=>k.classList.remove('hl-key','gd','nx'));kv.querySelectorAll('.bd').forEach(b=>b.remove());svg.innerHTML='';svg.removeAttribute('class');kv.classList.remove('okh');B=[]};
+ const txt=()=>C.h.length?`Mantén presionada <b>${C.h.map(nm).join(' + ')}</b> y toca <b>${nm(C.t)}</b>`:`Toca la tecla <b>${nm(C.t)}</b>`;
+ const holds=()=>B.filter(x=>x.b.classList.contains('hold'));
+ function build(){const vr=kv.getBoundingClientRect(),top=kv.querySelector('.kbd').getBoundingClientRect().top-vr.top-4,W=vr.width;
+  const px=cs=>cs.reduce((n,c)=>{const r=m[c].getBoundingClientRect();return n+r.left-vr.left+r.width/2},0)/cs.length;
+  const mk=(cls,html,x)=>{const b=document.createElement('div');b.className='bd '+cls;b.innerHTML=html;kv.append(b);b.style.top=top+'px';return{b,x,w:b.offsetWidth}};
+  const hd=C.h.length?mk('hold','<span>🤚</span><b>MANTÉN</b>',px(C.h)):null,tp=mk('tap','<span>☝️</span><b>TOCA</b>',px([C.t])),pl=hd?mk('plus','<b>+</b>',0):null;
+  if(hd){const [L,R]=hd.x<=tp.x?[hd,tp]:[tp,hd],min=(L.w+R.w)/2+pl.w+8;if(R.x-L.x<min){const c=(L.x+R.x)/2;L.x=c-min/2;R.x=c+min/2}
+   const o=Math.max(0,L.w/2-L.x)||-Math.max(0,R.x+R.w/2-W);L.x+=o;R.x+=o;pl.x=(L.x+R.x)/2+(L.w-R.w)/4}
+  else tp.x=Math.min(Math.max(tp.x,tp.w/2),W-tp.w/2);
+  B=[hd,pl,tp].filter(Boolean);B.forEach(x=>x.b.style.left=x.x+'px')}
+ const rv={hold(){C.h.forEach(c=>m[c].classList.add('hl-key'));holds().forEach(x=>x.b.classList.add('show'))},
+  tap(){m[C.t].classList.add('gd');B.filter(x=>!x.b.classList.contains('hold')).forEach(x=>x.b.classList.add('show'))}};
+ function play(){clr();st=0;build();const d=C.h.length?1:0,f=d?3600:2800;at(50,rv.hold);at(d?1400:50,rv.tap);
+  at(f,()=>{kv.querySelectorAll('.bd').forEach(b=>b.classList.remove('show'));Object.values(m).forEach(k=>k.classList.remove('hl-key','gd'))});at(f+900,play)}
+ function toHeld(){st=1;stop();rv.hold();rv.tap();kv.classList.add('okh');holds().forEach(x=>{x.b.firstChild.textContent='✅';x.b.lastChild.textContent='BIEN'});setM('¡Bien! Sin soltar, ahora toca <b>'+nm(C.t)+'</b>.')}
+ function okK(){st=2;stop();[...C.h,C.t].forEach(c=>m[c]&&(m[c].classList.remove('hl-key','gd'),m[c].classList.add('nx')));setM('🎉 ¡Muy bien!');at(2200,()=>{setM(txt());play()})}
+ const flash=c=>{const k=m[c];if(k){k.classList.add('bad');setTimeout(()=>k.classList.remove('bad'),500)}};
+ let TY=null;
+ function tdraw(){clr();if(!TY)return;const{t,i}=TY;TY.cb.paso&&TY.cb.paso(i);if(i>=t.length){const f=TY.cb.fin;TY=null;f&&f();return}
+  const st=MAP[t[i]];if(!st){TY.i++;return tdraw()}res(st[Math.min(TY.sub,st.length-1)]).forEach(c=>m[c]&&m[c].classList.add('nx'))}
+ function tkey(c,e){const{t,i}=TY,st=MAP[t[i]];if(!st)return;
+  if(e.key==t[i]){TY.i++;TY.sub=0;tdraw()}else if(e.key=='Dead'&&TY.sub==0&&st.length>1&&st[0].includes(c)){TY.sub=1;tdraw()}
+  else if(!MOD.has(c)&&!/^(Shift|Control|Alt|Meta|Caps|AltGraph)/.test(e.key))flash(c)}
+ const o={set(c){TY=null;C=c;setM(txt());play()},texto(t,cb={}){stop();C=null;TY={t,i:0,sub:0,cb};tdraw()},clear(){TY=null;C=null;clr();setM(DEF)},redo(){C&&play()},
+  down(c,on){m[c]&&m[c].classList.toggle('dn',on)},
+  key(c,down,e){if(TY&&down)return tkey(c,e);if(!C||st==2)return;const hs=C.h.filter(x=>x!='Fn'),all=hs.length&&hs.every(held);
+   if(down){if(all&&st==0)toHeld();
+    if(c==C.t||C.a.includes(c)){if(st==1||!hs.length)okK();else flash(c)}else if(!MOD.has(c)&&!C.h.includes(c))flash(c)}
+   else if(st==1&&!all)play()}};
+ KBS.push(o);return o}
+/* ===== FIN MÓDULO TECLADO VIRTUAL ===== */
+
+/* =====================================================================
+   ESTADO GLOBAL Y PLATAFORMA EDUCATIVA (CONTRATO v1)
+   ===================================================================== */
+const APP_ID = 'primeros-pasos';
+const S={
+  name: '', done: new Set(), voice: true, snd: true, fs: 16,
+  steps: [], step: 0, onEnd: null, kd: null, nx: false, errores: 0, curAct: 0,
+  actStartTime: 0
+};
+const F={}; let AC, es, globalKB=null;
+const PW='<svg viewBox="0 0 24 24" style="width:1em;height:1em;vertical-align:-.12em" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v9M6.3 6.5a8 8 0 1 0 11.4 0"/></svg>';
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  globalKB = KB($('#kb-wrap'), 'sm', 'A', null);
+  
+  // Contrato v1: Alumno.pedir arranca la app autónoma o toma los datos del index
+  Alumno.pedir(alumno => {
+    S.name = alumno.nombre;
+    const p = Alumno.prefs();
+    S.fs = p.fs;
+    document.body.style.fontSize = S.fs + 'px';
+    S.voice = p.voz;
+    $('#vb').textContent = S.voice ? '🔊' : '🔇';
+    S.snd = p.snd;
+    $('#sb').textContent = S.snd ? '🔔' : '🔕';
+    
+    // Inicializar actividades ya hechas según Progreso
+    for(let i=1; i<=6; i++){
+      const actId = 'a0' + i;
+      if(Progreso.hecha(APP_ID, actId)){
+        S.done.add(i);
+      }
+    }
+    
+    vinit();
+    prog();
+    menu();
+  });
+});
+
+/* Sonido y Voz */
+function beep(f,d=.12){if(!S.snd)return;try{AC=AC||new AudioContext;const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.value=.08;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
+const ok=()=>beep(660),bad=()=>{S.errores++;beep(200,.25)};
+function vinit(){const f=()=>{es=(window.speechSynthesis?speechSynthesis.getVoices():[]).find(v=>v.lang.toLowerCase().startsWith('es'))};f();if(window.speechSynthesis)speechSynthesis.onvoiceschanged=f;
+ setTimeout(()=>{f();if(!es){S.voice=false;const b=$('#vb');b.disabled=true;b.textContent='🔇';b.title='No hay voz en español'}},2000)}
+
+function tv(){
+  S.voice=!S.voice;
+  $('#vb').textContent=S.voice?'🔊':'🔇';
+  if(!S.voice&&window.speechSynthesis)speechSynthesis.cancel();
+  Alumno.setPref('voz', S.voice);
+}
+function ts(){
+  S.snd=!S.snd;
+  $('#sb').textContent=S.snd?'🔔':'🔕';
+  Alumno.setPref('snd', S.snd);
+}
+function fz(d){
+  S.fs=Math.min(26,Math.max(12,S.fs+d));
+  document.body.style.fontSize=S.fs+'px';
+  Alumno.setPref('fs', S.fs);
+}
+
+function say(t,n){
+  t=t.replace(/\{n\}/g,S.name||'Estudiante');
+  $('#bt-text').innerHTML=t;
+  const btn = $('#bt-action');
+  if(btn) btn.style.display = n ? 'flex' : 'none';
+  $('#bt-text').scrollTop = 0;
+  if(S.voice&&es){
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,'').replace(/\bX\b/g,'equis').replace(/Ctrl/g,'Control').replace(/→/g,' flecha derecha ').replace(/←/g,' flecha izquierda ').replace(/´/g,' acento ').replace(/[\u{1F000}-\u{1FFFF}\u2600-\u27BF\uFE0F]/gu,''));
+    u.voice=es; u.lang=es.lang; speechSynthesis.speak(u);
+  }
+}
+
+/* FLECHA ANIMADA INDEPENDIENTE */
+let forcedArrowTarget = null;
+let forcedArrowDir = 'down';
+
+function setArrow(elOrRect, dir='down'){
+  forcedArrowTarget = elOrRect;
+  forcedArrowDir = dir;
+  updateArrowPos();
+}
+
+function updateArrowPos(){
+  const arr = $('#ptr-arrow');
+  if(!forcedArrowTarget){ arr.style.display='none'; return; }
+  
+  let target = typeof forcedArrowTarget==='function' ? forcedArrowTarget() : forcedArrowTarget;
+  if(typeof target === 'string') target = $(target);
+  if(!target){ arr.style.display='none'; return; }
+  
+  const r = (target instanceof Element) ? target.getBoundingClientRect() : target;
+  if(!r || (r.width===0 && r.height===0)){ arr.style.display='none'; return; }
+  
+  arr.style.display = 'block';
+  let t=0, l=0, deg=0, ax=0, ay=-10;
+  
+  if(forcedArrowDir==='down'){
+    deg = 0;
+    t = r.top - 46;
+    l = r.left + r.width/2 - 20;
+    ax = 0; ay = -12;
+  } else if(forcedArrowDir==='up'){
+    deg = 180;
+    t = r.bottom + 8;
+    l = r.left + r.width/2 - 20;
+    ax = 0; ay = 12;
+  } else if(forcedArrowDir==='right'){
+    deg = 270;
+    t = r.top + r.height/2 - 20;
+    l = r.left - 48;
+    ax = -12; ay = 0;
+  } else if(forcedArrowDir==='left'){
+    deg = 90;
+    t = r.top + r.height/2 - 20;
+    l = r.right + 8;
+    ax = 12; ay = 0;
+  }
+  
+  arr.style.top = Math.max(10, Math.min(window.innerHeight - 52, t)) + 'px';
+  arr.style.left = Math.max(10, Math.min(window.innerWidth - 52, l)) + 'px';
+  arr.querySelector('svg').style.transform = `rotate(${deg}deg)`;
+  arr.style.setProperty('--ax', ax + 'px');
+  arr.style.setProperty('--ay', ay + 'px');
+}
+
+/* Helper para obtener la posición exacta del cursor en el texto */
+function getCaretRect(el, atEnd=false){
+  if(!el) return null;
+  try{
+    const r=document.createRange();
+    r.selectNodeContents(el);
+    r.collapse(!atEnd);
+    const rects=r.getClientRects();
+    if(rects.length>0){
+      const rc=rects[0];
+      return { top: rc.top, bottom: rc.bottom, left: rc.left, right: rc.right, width: 4, height: rc.height || 20 };
+    }
+  }catch(x){}
+  return el.getBoundingClientRect();
+}
+
+/* Motor de Pasos */
+const st=(t,r,d,o={})=>({t,r,d,p:'L',...o}),N=(t,o={})=>({t,n:1,d:()=>S.nx,...o}),bt=s=>()=>$(s);
+const hl=s=>()=>{const e=$(s);if(e){e.classList.add('hl');setArrow(e,'down')}};
+const rf=s=>{try{return s.r?s.r():s.n?$('.ent'):null}catch(x){return null}};
+
+function run(st,end){S.steps=st;S.step=0;S.onEnd=end;show()}
+function keys(s){
+  $('#gp').style.display=s.p?'flex':'none';$('#pads').style.display=s.p?'flex':'none';
+}
+function show(){
+  const s=S.steps[S.step];if(!s)return;S.nx=false;
+  $$('.hl').forEach(x=>x.classList.remove('hl'));
+  
+  if(s.arr) setArrow(s.arr, s.arrDir||'down');
+  else setArrow(null);
+  
+  if(s.o) s.o();
+  say(typeof s.t=='function'?s.t():s.t, s.n);
+  const on=(a,v)=>a.forEach(x=>$(x).classList.toggle('on',v));
+  on(['#pl','#ml'],s.p=='L');on(['#pr','#mr'],s.p=='R');keys(s);
+  $('#gl').textContent=s.p=='L'?'Clic IZQUIERDO: botón izquierdo del touchpad o mouse':s.p=='R'?'Clic DERECHO: botón derecho':''
+}
+
+setInterval(()=>{
+  const s=S.steps[S.step], r=$('#ring');
+  if(!s||S.hold){ r.style.display='none'; if(!s) setArrow(null); return; }
+  
+  let dn=0; try{dn=s.d()}catch(x){}
+  if(dn){
+    ok();
+    const nx=()=>{
+      if(S.steps[S.step]!==s)return;S.hold=0;
+      if(++S.step>=S.steps.length){
+        S.steps=[];$('#gp').style.display=r.style.display='none';
+        setArrow(null);
+        S.onEnd&&S.onEnd();
+      }else show();
+    };
+    if(s.n)nx();else{S.hold=1;r.style.display='none';setArrow(null);if(s.ok)say(s.ok);setTimeout(nx,s.w||1400)}
+    return;
+  }
+  
+  const e=rf(s), b=e&&e.getBoundingClientRect();
+  if(!b||!b.width||s.noRing){
+    r.style.display='none';
+  } else {
+    const w=b.width>b.height*2.5, d=w?b.height+26:Math.min(Math.max(b.width,b.height)+20,120), x=w?b.left+Math.min(b.width/2,60):b.left+b.width/2;
+    Object.assign(r.style,{display:'block',width:d+'px',height:d+'px',left:x-d/2+'px',top:b.top+b.height/2-d/2+'px'});
+  }
+  
+  if(!s.arr && !forcedArrowTarget){
+    if(s.r && !s.n){
+      setArrow(s.r, s.arrDir||'down');
+    } else {
+      const highlighted = $('.hl');
+      if(highlighted) setArrow(highlighted, s.arrDir||'down');
+    }
+  }
+  updateArrowPos();
+},120);
+
+function hp(){S.steps[S.step]?show():say('Abrí el <b>Menú Principal</b> y elegí una actividad 📋')}
+
+/* Limpieza y navegación */
+const stage=h=>$('#stage').innerHTML=h;
+function clean(){
+  S.steps=[];S.hold=0;S.kd=null;for(const k in F)delete F[k];
+  stage('');$('#tasks').innerHTML='';$$('.hl').forEach(x=>x.classList.remove('hl'));
+  $('#sm').style.display=$('#pp').style.display=$('#gp').style.display=$('#ring').style.display='none';
+  $('#kb-wrap').style.display='none';
+  $('#mp').style.display='none';
+  if(globalKB) globalKB.clear();
+  setArrow(null);
+}
+function prog(){
+  const t=Object.keys(A).length;dk();
+  $('#pf').style.width=S.done.size/t*100+'%';
+  $('#pt').textContent=S.done.size+' de '+t+' actividades';
+}
+function dk(){
+  $('#acts').innerHTML=BL.map(([h,a,b])=>`<div class=ab><small>${h}</small>${Array.from({length:b-a+1},(_,i)=>a+i).map(n=>`<div class="ico act" onclick="go(${n})"><b>${A[n].i}</b>${n}. ${A[n].t}${S.done.has(n)?' ✅':''}</div>`).join('')}</div>`).join('');
+}
+function menu(q){
+  clearTimeout(S.tm);$('#cn').style.display='none';clean();$('#fin').style.display=$('#menu').style.display='none';
+  dk();$('#acts').style.display='';
+  if(!q)say('¡Hola {n}! Soy ManuBot. Hacé clic en una actividad para practicar.');
+}
+function go(n){
+  S.curAct = n; S.errores = 0; S.actStartTime = Date.now();
+  clearTimeout(S.tm);clean();$('#menu').style.display='none';$('#cn').style.display='';$('#acts').style.display='none';
+  A[n].f();
+}
+
+function fin(n,m=''){
+  S.done.add(n);prog();$('#cn').style.display='none';
+  $('#mp').style.display='none';
+  
+  // Contrato v1: Guardar en Progreso
+  const actId = 'a0' + n;
+  const seg = Math.round((Date.now() - (S.actStartTime || Date.now())) / 1000);
+  const estrellas = S.errores === 0 ? 3 : (S.errores <= 2 ? 2 : 1);
+  Progreso.registrar(APP_ID, actId, {
+    estado: 'hecha',
+    estrellas: estrellas,
+    errores: S.errores,
+    seg: seg
+  });
+
+  S.tm=setTimeout(()=>{
+    clean();say('¡Excelente {n}! Actividad '+n+' completada. '+m);
+    S.tm=setTimeout(()=>{
+      if(S.done.size >= Object.keys(A).length) fin8();
+      else menu(1);
+    },1200);
+  },1000);
+}
+
+function rs(){
+  if(S.rc){
+    S.rc=0; reset();
+  } else {
+    S.rc=1;
+    say('Para reiniciar todo, presioná <b>otra vez</b> el botón Reiniciar Todo.');
+    setTimeout(()=>S.rc=0, 4000);
+  }
+}
+
+function reset(){
+  clearTimeout(S.tm);
+  $('#cn').style.display='none';
+  clean(); prog();
+  $('#menu').style.display=$('#fin').style.display='none';
+  menu();
+}
+
+/* Eventos de escritorio */
+$('#st').onclick=()=>{const s=$('#sm');s.style.display=s.style.display=='block'?'none':'block';$('#pp').style.display='none'};
+$('#tbf').onclick=()=>say('Esta carpeta abre el Explorador de archivos.');
+$('#ipc').ondblclick=$('#ipa').ondblclick=$('#imt').ondblclick=()=>say('Muy bien, eso abre el elemento. 😊');
+$('#pw').onclick=()=>$('#pp').style.display=$('#pp').style.display=='block'?'none':'block';
+$('#sm').onclick=e=>{if(e.target.closest('#sn')&&F.np){$('#sm').style.display='none';F.np();return}};
+$('#off').onclick=()=>{S.steps=[];$('#sm').style.display='none';$('#blk').style.display='block';setTimeout(()=>{$('#blk').style.display='none';if(F.a6){fin(6)}else say('La PC se reinició 🙂')},2500)};
+
+function fin8(){
+  const all=[1,2,3,4,5,6].every(n=>S.done.has(n)), nm=Alumno.nombre()||S.name||'Estudiante';
+  $('#fin').innerHTML=`<h1>🎉 ¡Felicitaciones ${nm}!</h1>`+
+    (all?`<div id=cert><small>CERTIFICADO DE FINALIZACIÓN</small><h2>${nm}</h2><p>Completó exitosamente todas las actividades de Primeros pasos en Windows</p><p>${new Date().toLocaleDateString('es-AR')}</p></div><br>`:'<p>¡Has practicado muchísimo hoy!</p>')+
+    `<div style="display:flex;gap:1em;justify-content:center;flex-wrap:wrap">
+       <button class="big" onclick="$('#fin').style.display='none';menu()">🔄 Continuar ejercitando</button>
+       <button class="big" style="background:#1e40af" onclick="Alumno.irInicio()">🏠 Volver al inicio</button>
+     </div>`;
+  $('#fin').style.display='flex';
+}
+
+/* MANEJADOR DE CLICS Y TECLADO UNIFICADO */
+addEventListener('click',e=>{
+  if(!e.target.closest('#sm,#st'))$('#sm').style.display=$('#pp').style.display='none';
+  const s=S.steps[S.step], r=!S.hold&&s&&rf(s);
+  if(r&&!s.x&&!r.contains(e.target)&&!e.target.closest('#top,#side,#menu')){
+    bad();
+    say(s.n?'Hacé clic en <b>Entendido</b> para continuar.':'Intenta hacer clic donde indica el círculo rojo 🔴');
+    const k=S.step;setTimeout(()=>S.step==k&&show(),2500);
+  }
+},true);
+
+addEventListener('mousemove',e=>{
+  const m=$('#mp');m.style.left=e.clientX-9+'px';m.style.top=e.clientY-9+'px';
+});
+
+addEventListener('keydown', e=>{
+  if(/^(Space|Tab|Backspace|Arrow|Delete|Enter)/.test(e.code) && !e.target.matches('textarea,input,[contenteditable]')) {
+    e.preventDefault();
+  }
+  if(e.repeat) return;
+  HELD.add(e.code);
+  KBS.forEach(k=>{ k.down(e.code,1); k.key(e.code,1,e); });
+  
+  const M={Control:'ctrl',Shift:'shift',ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down',Home:'home',End:'end',Backspace:'back',Enter:'enter',Delete:'delete'};
+  const c = M[e.key] || e.code.replace('Key','').toLowerCase();
+  if(S.kd && S.kd(e, c)) {
+    e.preventDefault();
+  }
+});
+
+addEventListener('keyup', e=>{
+  HELD.delete(e.code);
+  KBS.forEach(k=>{ k.down(e.code,0); k.key(e.code,0); });
+});
+
+addEventListener('dblclick',()=>clearTimeout(S.dt),true);
+setInterval(()=>$('#ck').textContent=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),1000);
+
+/* Helper de guía en el teclado virtual */
+function guiaTeclaParaCaracter(ch){
+  if(!globalKB || !ch) return;
+  if(ch === ' '){
+    globalKB.set({ h: [], t: 'Space', a: [] });
+  } else if(ch === ','){
+    globalKB.set({ h: [], t: 'Comma', a: [] });
+  } else if(ch === '.'){
+    globalKB.set({ h: [], t: 'Period', a: [] });
+  } else if(ch >= 'A' && ch <= 'Z'){
+    globalKB.set({ h: ['ShiftRight'], t: 'Key' + ch, a: [] });
+  } else if(ch >= 'a' && ch <= 'z'){
+    globalKB.set({ h: [], t: 'Key' + ch.toUpperCase(), a: [] });
+  }
+}
+
+/* =====================================================================
+   ACTIVIDADES
+   ==================================================================== */
+const A={
+/* 1. ESCRITORIO Y BARRA DE TAREAS */
+1:{t:'Conociendo el Escritorio y la Barra de Tareas',i:'🖥️',f(){
+ run([
+  N('¡Bienvenido {n}! Esto es el <b>Escritorio</b>: la pantalla principal. Los dibujitos se llaman <b>íconos</b>.',{
+    o:hl('#desk'), arr:bt('#desk'), arrDir:'down'
+  }),
+  N('<b>Este equipo</b>: muestra los discos y dispositivos conectados.',{
+    o:hl('#ipc'), arr:bt('#ipc'), arrDir:'down'
+  }),
+  N('<b>Papelera</b>: guarda lo que eliminás por si te arrepentís.',{
+    o:hl('#ipa'), arr:bt('#ipa'), arrDir:'down'
+  }),
+  N('<b>Mis trabajos</b>: una carpeta para guardar tus archivos.',{
+    o:hl('#imt'), arr:bt('#imt'), arrDir:'down'
+  }),
+  N('Esta franja de abajo es la <b>barra de tareas</b>. Fijate en la flecha amarilla que la señala.',{
+    o:hl('#tb'), arr:bt('#tb'), arrDir:'down'
+  }),
+  st('Probemos el menú: hacé clic en el botón de <b>Inicio</b> donde apunta la flecha.',bt('#st'),()=>$('#sm').style.display=='block',{
+    arr:bt('#st'), arrDir:'down'
+  }),
+  N('El botón de la <b>carpeta amarilla</b> es el Explorador de archivos. También está en la barra de tareas.',{
+    o:hl('#tbf'), arr:bt('#tbf'), arrDir:'down'
+  }),
+  N('La <b>batería</b> indica cuánta carga queda.',{
+    o:hl('#bat'), arr:bt('#bat'), arrDir:'down'
+  }),
+  N('El <b>reloj</b> muestra la hora actual.',{
+    o:hl('#ck'), arr:bt('#ck'), arrDir:'down'
+  })
+ ],()=>fin(1,'Ya conocés el escritorio.'))}},
+
+/* 2. EL PUNTERO */
+2:{t:'El Puntero, el Touchpad y los Clics',i:'🖱️',f(){
+ F.o=0; F.cl=0;
+ stage(`<div class=win style="inset:1.5em 18em 1.5em 2em"><div class=tt>🖱️ Práctica del puntero</div><div id=pa style="position:relative;flex:1;background:#f3f6fb"></div></div>`);
+ const pa=$('#pa');
+ 
+ function colocarZonaDistante(num){
+   $('.target-zone')?.remove();
+   const z=document.createElement('div');
+   z.className='target-zone';
+   z.id='z'+num;
+   
+   if(num===1){
+     z.innerHTML='Zona 1 de 3<br>Llevá el puntero aquí ↗';
+     z.style.left='2.5em'; z.style.top='2.5em';
+   } else if(num===2){
+     z.innerHTML='Zona 2 de 3<br>Llevá el puntero aquí ↘';
+     z.style.right='2.5em'; z.style.bottom='2.5em';
+   } else {
+     z.innerHTML='Zona 3 de 3<br>Llevá el puntero aquí ↖';
+     z.style.right='2.5em'; z.style.top='2.5em';
+   }
+   
+   pa.appendChild(z);
+   F['hitZone'+num]=false;
+   z.onmouseenter=()=>{ F['hitZone'+num]=true; };
+   setArrow(z,'down');
+ }
+ 
+ const op=n=>{
+   F.o=n;
+   pa.insertAdjacentHTML('beforeend','<div class=win id=fw style="left:8em;top:3em;width:20em;height:9em"><div class=tt>📂 '+n+'<b><button class="wb x" id=fx>✕</button></b></div><p style="padding:1em">La carpeta '+n+' está vacía.</p></div>');
+   $('#fx').onclick=()=>{$('#fw').remove();F.o=0;F.cl++};
+ };
+
+ run([
+  N('El <b>puntero</b> es la flechita (representada por el punto rojo) que ves en la pantalla. Se mueve cuando deslizás el dedo en el touchpad o movés el mouse, y sirve para <b>señalar, elegir y abrir</b> elementos.',{
+    o:()=>{
+      $('#mp').style.display='block';
+      $('#mp').style.left='50%'; $('#mp').style.top='50%';
+      setArrow($('#mp'),'down');
+    },
+    arr:bt('#mp'),
+    arrDir:'down'
+  }),
+  st('Mové el puntero (el punto rojo) hacia la <b>Zona 1</b> en la esquina superior izquierda.',()=>$('#z1'),()=>F.hitZone1,{
+    p:0,x:1,noRing:true,o:()=>{ colocarZonaDistante(1); },
+    ok:'¡Excelente! Llegaste a la primera zona.'
+  }),
+  st('Ahora cruza toda la pantalla hacia la <b>Zona 2</b> abajo a la derecha.',()=>$('#z2'),()=>F.hitZone2,{
+    p:0,x:1,noRing:true,o:()=>colocarZonaDistante(2),
+    ok:'¡Muy bien! Dominás distancias largas.'
+  }),
+  st('Y por último, subí el puntero a la <b>Zona 3</b> arriba a la derecha.',()=>$('#z3'),()=>F.hitZone3,{
+    p:0,x:1,noRing:true,o:()=>colocarZonaDistante(3),
+    ok:'¡Perfecto control del puntero!'
+  }),
+  N('Aparecieron dos carpetas en la pantalla. Practiquemos los clics.',{
+    o:()=>{
+      $('.target-zone')?.remove();
+      setArrow(null);
+      pa.innerHTML=`<div class="it" data-n="Fotos" id="fa" style="position:absolute;left:4em;top:4em"><b>📁</b>Fotos</div>
+                    <div class="it" data-n="Música" id="fm" style="position:absolute;left:16em;top:4em"><b>📁</b>Música</div>`;
+      $$('#pa .it').forEach(x=>{
+        x.onclick=()=>{ $$('#pa .it').forEach(y=>y.classList.toggle('s',y==x)); F.sel=x.dataset.n; };
+        x.ondblclick=()=>{ if(!F.o) op(x.dataset.n); };
+      });
+    }
+  }),
+  st('El <b>clic izquierdo</b> selecciona. Hacé un clic en <b>Fotos</b>.',bt('#fa'),()=>F.sel=='Fotos',{
+    arr:bt('#fa'),arrDir:'down',ok:'¡Muy bien! Se pintó de celeste porque quedó seleccionada.'
+  }),
+  st('El <b>doble clic</b> abre elementos. Hacé dos clics rápidos sobre <b>Música</b>.',bt('#fm'),()=>F.o=='Música',{
+    arr:bt('#fm'),arrDir:'down',ok:'¡Muy bien! El doble clic abrió la carpeta.'
+  }),
+  st('Cerrala haciendo clic en la <b>X</b>.',bt('#fx'),()=>F.cl>=1,{
+    arr:bt('#fx'),arrDir:'down',ok:'¡Perfecto!'
+  }),
+  st('Ahora abrí con <b>doble clic</b> la carpeta <b>Fotos</b>.',bt('#fa'),()=>F.o=='Fotos',{
+    arr:bt('#fa'),arrDir:'down',ok:'¡Excelente!'
+  }),
+  st('Cerrala con la <b>X</b>.',bt('#fx'),()=>F.cl>=2,{
+    arr:bt('#fx'),arrDir:'down'
+  })
+ ],()=>{
+   $('#mp').style.display='none';
+   fin(2,'Aprendiste a mover el puntero y hacer clics.');
+ })
+}},
+
+/* 3. TECLADO Y ESCRITURA */
+3:{t:'Teclado y Escritura (Bloc de notas)',i:'⌨️',f(){
+ const TX = "Este es el bloc de notas, sirve para escribir textos simples y luego guardarlos.";
+ let i=0, wc='', L=0;
+ 
+ const draw=()=>{
+   const ed=$('#ed');if(!ed)return;
+   const escrito = esc(TX.slice(0,i));
+   const error = wc ? `<span class="wr">${esc(wc===' '?'_':wc)}</span>` : '';
+   const cursor = `<span id="cur"></span>`;
+   const pendiente = `<span class="gh">${esc(TX.slice(i))}</span>`;
+   ed.innerHTML = escrito + error + cursor + pendiente;
+   
+   const cur = $('#cur');
+   if(cur && !wc) setArrow(cur, 'down');
+   $('#wc').textContent = `Caracteres: ${i} de ${TX.length}`;
+ };
+ 
+ F.np=()=>{
+   if($('#np')) return;
+   stage(`<div class=win id=np style="inset:1.5em 18em 1.5em 2em"><div class=tt>📝 Sin título - Bloc de notas</div>
+          <div style="background:#f3f3f3;padding:.2em .6em;font-size:.9em;border-bottom:1px solid #ccc">Archivo &nbsp; Edición &nbsp; Formato</div>
+          <div id=ed></div>
+          <div style="background:#f3f3f3;padding:.2em .6em;font-size:.85em;border-top:1px solid #ccc"><span id=wc>Progreso de escritura</span></div></div>`);
+   $('#ed').onclick=()=>{ F.ck=1; $('#ed').classList.add('fo'); };
+   draw();
+ };
+ 
+ S.kd=(e,c)=>{
+   if(!F.ty || i>=TX.length) return false;
+   
+   if(wc){
+     if(c==='back'){
+       wc=''; ok(); draw(); guiaTeclaParaCaracter(TX[i]);
+       say('¡Bien! Corregiste el error. Continuá escribiendo.');
+       return true;
+     } else {
+       bad();
+       say('¡Atención! La letra roja está mal. Presioná la tecla <b>Borrar</b> (Backspace) para quitarla.');
+       return true;
+     }
+   }
+   
+   if(c==='back'){
+     if(i>0){ i--; draw(); guiaTeclaParaCaracter(TX[i]); }
+     return true;
+   }
+   
+   if(e.key.length === 1){
+     if(e.key === TX[i]){
+       i++; ok(); draw();
+       if(i < TX.length){
+         guiaTeclaParaCaracter(TX[i]);
+       } else {
+         $('#kb-wrap').style.display='none';
+         setArrow(null);
+       }
+       return true;
+     } else {
+       wc = e.key; bad(); draw();
+       const objetivo = TX[i];
+       if(objetivo !== objetivo.toLowerCase() && e.key.toLowerCase() === objetivo.toLowerCase()){
+         say('Esa letra va en <b>mayúscula</b>: mantené <b>Shift</b> mientras presionás la <b>'+objetivo+'</b>. Ahora presioná <b>Borrar</b>.');
+       } else {
+         say('Esa tecla no es la correcta. Presioná la tecla <b>Borrar</b> (Backspace) para quitarla.');
+       }
+       return true;
+     }
+   }
+   return false;
+ };
+
+ run([
+  st('Hacé clic en el botón de <b>Inicio</b> para abrir el programa.',bt('#st'),()=>$('#sm').style.display=='block',{
+    arr:bt('#st'),arrDir:'down'
+  }),
+  st('Hacé clic en <b>Bloc de notas</b> 📝.',bt('#sn'),()=>$('#np'),{
+    arr:bt('#sn'),arrDir:'down',ok:'¡Se abrió el Bloc de notas!'
+  }),
+  st('Hacé un clic dentro de la <b>hoja blanca</b> para activar la escritura.',bt('#ed'),()=>F.ck,{
+    arr:bt('#ed'),arrDir:'down',ok:'¡Apareció el cursor! Empecemos a escribir.'
+  }),
+  {
+    t: 'Escribí el texto sobre las letras grises. El teclado virtual lateral te mostrará qué tecla presionar.',
+    r: ()=>$('#cur'),
+    d: ()=>i>=TX.length,
+    p: 0,
+    noRing: true,
+    arr: ()=>$('#cur'),
+    arrDir: 'down',
+    o: ()=>{
+      F.ty=1;
+      $('#ring').style.display='none';
+      $('#kb-wrap').style.display='block';
+      draw();
+      guiaTeclaParaCaracter(TX[i]);
+    },
+    ok: '¡Felicitaciones! Escribiste todo el texto a la perfección.'
+  }
+ ],()=>fin(3,'Completaste la práctica de teclado.'))}},
+
+/* 4. TÉCNICAS DE SELECCIÓN (CON GUÍA VISUAL Y FLECHA PRECISA EN EL CURSOR) */
+4:{t:'Cómo Seleccionar Texto',i:'✏️',f(){
+ stage(`<div class=win style="inset:1.8em 18em 1.8em 2em">
+   <div class=tt>✏️ Práctica guiada de selección</div>
+   <div id="sed-box">
+     <h4 style="color:#2563eb;margin-bottom:.3em">1. Con el mouse: Doble clic en palabras</h4>
+     <p style="font-size:1.2em;margin:.2em 0 .8em">
+       Palabras:&nbsp;&nbsp;
+       <span class="word-plain" id="sw1">computadora</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+       <span class="word-plain" id="sw2">teclado</span>
+     </p>
+     <h4 style="color:#2563eb;margin:.8em 0 .3em">2. Con el mouse: Triple clic en líneas</h4>
+     <div class="sel-line" id="sl1">Windows organiza todos los programas de la computadora.</div>
+     <div class="sel-line" id="sl2">El explorador de archivos guarda todos tus trabajos escolares.</div>
+     <h4 style="color:#2563eb;margin:.8em 0 .3em">3. Con el mouse: Selección arrastrando párrafo</h4>
+     <div class="sel-para" id="sp1"><span id="sp1-start">El</span> mouse y el teclado son herramientas fundamentales.<br>Nos permiten interactuar con todos los programas de la PC.<br>Con práctica dominarás cada combinación fácilmente.</div>
+     <h4 style="color:#2563eb;margin:.8em 0 .3em">4. Con el TECLADO: Atajos en laptops (con tecla Fn)</h4>
+     <div class="sel-line" contenteditable="true" spellcheck="false" id="kl1">El hardware son las piezas físicas que podemos tocar.</div>
+     <div class="sel-line" contenteditable="true" spellcheck="false" id="kl2">El software son las aplicaciones que usamos a diario.</div>
+   </div>
+ </div>`);
+
+ const sl=()=>getSelection().toString().trim().toLowerCase();
+ const ponCaret=(el, alFinal=false)=>{
+   el.focus();
+   const r=document.createRange();
+   r.selectNodeContents(el);
+   r.collapse(!alFinal);
+   const g=getSelection();
+   g.removeAllRanges();
+   g.addRange(r);
+ };
+ 
+ $$('#kl1, #kl2').forEach(el=>{
+   el.onkeydown=e=>{
+     if(['Backspace','Delete'].includes(e.key) || (e.key.length===1 && !e.ctrlKey && !e.metaKey)) e.preventDefault();
+   };
+ });
+
+ run([
+  N('<b>Seleccionar</b> es pintar de azul un texto para copiarlo o borrarlo. Te voy a indicar con la flecha amarilla exactamente dónde ubicarte en cada paso.'),
+  
+  // Mouse: Palabras
+  st('Hacé <b>doble clic rápido</b> sobre la palabra <b>computadora</b> señalada por la flecha amarilla.',bt('#sw1'),()=>sl()=='computadora',{
+    x:1, arr:bt('#sw1'), arrDir:'down', ok:'¡Muy bien! Palabra seleccionada.'
+  }),
+  st('Ahora hacé <b>doble clic</b> sobre la palabra <b>teclado</b>.',bt('#sw2'),()=>sl()=='teclado',{
+    x:1, arr:bt('#sw2'), arrDir:'down', ok:'¡Excelente! Doble clic dominado.'
+  }),
+  
+  // Mouse: Líneas
+  st('Hacé <b>triple clic</b> (tres clics rápidos seguidos) sobre esta primera línea para seleccionarla completa.',bt('#sl1'),
+    ()=>sl().includes('windows organiza todos'),{
+      x:1, arr:bt('#sl1'), arrDir:'down', ok:'¡Perfecto! Marcaste toda la línea.'
+  }),
+  st('Repitamos: hacé <b>triple clic</b> sobre esta segunda línea.',bt('#sl2'),
+    ()=>sl().includes('el explorador de archivos guarda'),{
+      x:1, arr:bt('#sl2'), arrDir:'down', ok:'¡Línea seleccionada!'
+  }),
+  
+  // Mouse: Párrafo arrastrando
+  st('Mirá la flecha amarilla: señala dónde empezar. <b>Hacé clic al inicio</b>, mantené apretado y <b>arrastrá hasta el final del párrafo</b>.',bt('#sp1'),
+    ()=>sl().includes('el mouse y el teclado') && sl().includes('fácilmente'),{
+      x:1,
+      arr:()=>getCaretRect($('#sp1-start'), false),
+      arrDir:'down',
+      ok:'¡Muy bien! Seleccionaste todo el párrafo arrastrando.'
+  }),
+  
+  // TECLADO: Shift + Flechas
+  N('Ahora usemos el teclado. El cursor está al principio de la línea (donde apunta la flecha). Mantené <b>Shift</b> y presioná la flecha <b>▶</b> varias veces.',{
+    o:()=>{
+      $('#kb-wrap').style.display='block';
+      ponCaret($('#kl1'),false);
+      if(globalKB) globalKB.set({h:['ShiftLeft'],t:'ArrowRight',a:[]});
+    },
+    arr:()=>getCaretRect($('#kl1'),false),
+    arrDir:'down'
+  }),
+  st('Presioná <b>Shift + ▶</b> varias veces para seleccionar las primeras letras.',bt('#kl1'),
+    ()=>sl().length>=4 && $('#kl1').contains(getSelection().anchorNode),{
+      p:0,x:1,arr:()=>getCaretRect($('#kl1'),false),arrDir:'down',
+      o:()=>{ ponCaret($('#kl1'),false); if(globalKB) globalKB.set({h:['ShiftLeft'],t:'ArrowRight',a:[]}); },
+      ok:'¡Excelente! Con Shift y las flechas seleccionás letra por letra.'
+  }),
+  
+  // TECLADO: Ctrl + Shift + Flecha
+  N('Para seleccionar <b>palabra por palabra</b>: el cursor está al inicio. Mantené <b>Ctrl + Shift</b> y tocá la flecha <b>▶</b> dos veces.',{
+    o:()=>{
+      ponCaret($('#kl1'),false);
+      if(globalKB) globalKB.set({h:['ControlLeft','ShiftLeft'],t:'ArrowRight',a:[]});
+    },
+    arr:()=>getCaretRect($('#kl1'),false),
+    arrDir:'down'
+  }),
+  st('Presioná <b>Ctrl + Shift + ▶</b> dos veces para marcar palabra por palabra.',bt('#kl1'),
+    ()=>sl().split(/\s+/).length>=2 && $('#kl1').contains(getSelection().anchorNode),{
+      p:0,x:1,arr:()=>getCaretRect($('#kl1'),false),arrDir:'down',
+      o:()=>{ ponCaret($('#kl1'),false); if(globalKB) globalKB.set({h:['ControlLeft','ShiftLeft'],t:'ArrowRight',a:[]}); },
+      ok:'¡Muy bien! Saltaste de palabra en palabra.'
+  }),
+  
+  // TECLADO: Shift + Fn + Fin
+  N('En las laptops, las teclas Inicio y Fin están en las flechas. El cursor está al inicio: mantené <b>Shift + Fn</b> y tocá la flecha <b>▶ Fin</b> para marcar hasta el final.',{
+    o:()=>{
+      ponCaret($('#kl2'),false);
+      if(globalKB) globalKB.set({h:['ShiftLeft','Fn'],t:'ArrowRight',a:['End']});
+    },
+    arr:()=>getCaretRect($('#kl2'),false),
+    arrDir:'down'
+  }),
+  st('Mantené <b>Shift + Fn</b> y tocá <b>▶ Fin</b> para seleccionar toda la segunda línea.',bt('#kl2'),
+    ()=>sl().includes('aplicaciones que usamos a diario'),{
+      p:0,x:1,arr:()=>getCaretRect($('#kl2'),false),arrDir:'down',
+      o:()=>{ ponCaret($('#kl2'),false); if(globalKB) globalKB.set({h:['ShiftLeft','Fn'],t:'ArrowRight',a:['End']}); },
+      ok:'¡Perfecto! Seleccionaste hasta el final del renglón con Shift + Fn + Fin.'
+  }),
+  
+  // TECLADO: Shift + Fn + Inicio
+  N('Ahora el cursor está al final de la línea (donde apunta la flecha). Mantené <b>Shift + Fn</b> y tocá la flecha <b>◀ Inicio</b> para marcar hacia el principio.',{
+    o:()=>{
+      ponCaret($('#kl2'),true);
+      if(globalKB) globalKB.set({h:['ShiftLeft','Fn'],t:'ArrowLeft',a:['Home']});
+    },
+    arr:()=>getCaretRect($('#kl2'),true),
+    arrDir:'down'
+  }),
+  st('Mantené <b>Shift + Fn</b> y tocá <b>◀ Inicio</b> para marcar hacia el principio.',bt('#kl2'),
+    ()=>sl().includes('el software son las aplicaciones'),{
+      p:0,x:1,arr:()=>getCaretRect($('#kl2'),true),arrDir:'down',
+      o:()=>{ ponCaret($('#kl2'),true); if(globalKB) globalKB.set({h:['ShiftLeft','Fn'],t:'ArrowLeft',a:['Home']}); },
+      ok:'¡Extraordinario! Aprendiste a seleccionar con mouse y teclado.'
+  })
+ ],()=>fin(4,'Dominaste todas las técnicas de selección.'))}},
+
+/* 5. VENTANAS Y BOTONES */
+5:{t:'Ventanas y Botones',i:'🪟',f(){
+ let mn=0, cl=0;
+ const w=()=>$('#np'), mx=()=>!!w()&&w().classList.contains('max');
+ F.np=()=>{
+   if(w())return;
+   stage(`<div class=win id=np style="left:6em;top:3em;width:33em;height:20em">
+            <div class=tt id=wtt>📝 Sin título - Bloc de notas
+              <b>
+                <button class=wb id=bmin title=Minimizar>—</button>
+                <button class=wb id=bmax title=Maximizar>☐</button>
+                <button class="wb x" id=bcl title=Cerrar>✕</button>
+              </b>
+            </div>
+            <textarea style="flex:1;border:0;padding:.5em;font:inherit">¡Esta es una ventana! Aprendé a usar los tres botones de control arriba a la derecha.</textarea>
+          </div>`);
+   $('#bmax').onclick=()=>{ w().classList.toggle('max'); $('#bmax').textContent=mx()?'❐':'☐'; };
+   $('#bmin').onclick=()=>{
+     w().style.display='none'; mn=1;
+     const b=document.createElement('button');
+     b.className='tk blink'; b.id='tbn'; b.textContent='📝 Bloc de notas';
+     b.onclick=()=>{ w().style.display=''; b.remove(); mn=0; };
+     $('#tasks').append(b);
+   };
+   $('#bcl').onclick=()=>{ w().remove(); cl=1; };
+ };
+
+ run([
+  st('Hacé clic en <b>Inicio</b> para comenzar.',bt('#st'),()=>$('#sm').style.display=='block',{
+    arr:bt('#st'),arrDir:'down'
+  }),
+  st('Abrí el <b>Bloc de notas</b>.',bt('#sn'),()=>w(),{
+    arr:bt('#sn'),arrDir:'down',ok:'¡Se abrió la ventana!'
+  }),
+  N('Todo esto es una <b>ventana</b>. Arriba a la derecha tiene tres botones principales.',{
+    o:hl('#np'), arr:bt('#wtt'), arrDir:'down'
+  }),
+  st('El botón <b>Maximizar</b> (el cuadrado) agranda la ventana a toda la pantalla. Hacé clic en él.',bt('#bmax'),mx,{
+    arr:bt('#bmax'),arrDir:'down',ok:'¡La ventana ahora ocupa toda la pantalla!'
+  }),
+  st('Ahora ese botón se llama <b>Restaurar</b>. Hacé clic para volver al tamaño anterior.',bt('#bmax'),()=>!mx(),{
+    arr:bt('#bmax'),arrDir:'down',ok:'¡Volvió a su tamaño normal!'
+  }),
+  st('El botón <b>Minimizar</b> (la rayita) guarda la ventana en la barra de tareas. Probalo.',bt('#bmin'),()=>mn,{
+    arr:bt('#bmin'),arrDir:'down',ok:'¡Muy bien! Se ocultó abajo.'
+  }),
+  st('Hacé clic en el botón parpadeante de la <b>barra de tareas</b> para reabrirla.',bt('#tbn'),()=>!mn,{
+    arr:bt('#tbn'),arrDir:'down',ok:'¡De vuelta en pantalla!'
+  }),
+  st('Por último, hacé clic en la <b>X roja</b> para <b>Cerrar</b> el programa.',bt('#bcl'),()=>cl,{
+    arr:bt('#bcl'),arrDir:'down',ok:'¡Ventana cerrada correctamente!'
+  })
+ ],()=>fin(5,'Aprendiste a controlar las ventanas.'))}},
+
+/* 6. APAGADO SEGURO */
+6:{t:'Apagado Seguro',i:PW,f(){
+ F.a6=1;
+ run([
+  st('Para apagar la computadora, hacé clic en <b>Inicio</b>.',bt('#st'),()=>$('#sm').style.display=='block',{
+    arr:bt('#st'),arrDir:'down'
+  }),
+  st('Ahora hacé clic en el botón de <b>Energía</b>.',bt('#pw'),()=>$('#pp').style.display=='block',{
+    arr:bt('#pw'),arrDir:'down'
+  }),
+  st('Por último, elegí <b>Apagar</b>.',bt('#off'),()=>0,{
+    arr:bt('#off'),arrDir:'down'
+  })
+ ],()=>{})}}
+};
+
+const BL=[['🖱️ Primeros pasos',1,2],['⌨️ Teclado y texto',3,4],['🪟 Ventanas',5,5],[PW+' Cierre',6,6]];
+</script>
+</body>
+</html>

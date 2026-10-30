@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<!-- app: teoria-tic | contrato: v1 | módulos: alumno v1, progreso v1 | fecha: 2026-10-24 -->
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Clase 1 · Conozco mi computadora</title>
+<style>
+*{box-sizing:border-box;margin:0}
+body{font:16px "Segoe UI",Arial,sans-serif;height:100vh;overflow:hidden;color:#e8f1ff;background:#050b1a;user-select:none}
+button{font:inherit;cursor:pointer}
+#bg{position:fixed;inset:0;transition:filter .8s;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22240%22%20height%3D%22240%22%20fill%3D%22none%22%20stroke%3D%22%234ade80%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20opacity%3D%22.28%22%3E%3Cpath%20d%3D%22M0%2040H70L90%2060H150L170%2040H240M0%20130H50L70%20150H130L150%20130H240M0%20200H100L120%20220H140L160%20200H240M200%2060V110M30%2060V120M110%20150V190%22%2F%3E%3Crect%20x%3D%22130%22%20y%3D%2270%22%20width%3D%2250%22%20height%3D%2240%22%20rx%3D%223%22%2F%3E%3Cpath%20d%3D%22M126%2078V104M184%2078V104%22%20stroke-width%3D%224%22%20stroke-dasharray%3D%223%205%22%2F%3E%3Cg%20fill%3D%22%23031510%22%3E%3Ccircle%20cx%3D%22200%22%20cy%3D%2260%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%22200%22%20cy%3D%22110%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2260%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%22120%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%22110%22%20cy%3D%22150%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%22110%22%20cy%3D%22190%22%20r%3D%225%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") 0 0/240px 240px,radial-gradient(ellipse at 65% 35%,#0b3a2e,#031510 75%);animation:gm 60s linear infinite}
+@keyframes gm{to{background-position:240px 240px,0 0}}
+body.calm #bg{animation:none}
+@media(prefers-reduced-motion:reduce){#bg{animation:none}}
+#top{position:fixed;top:0;left:0;right:0;height:2.5em;background:#0a1426;border-bottom:1px solid #4ade8055;display:flex;align-items:center;gap:.5em;padding:0 .6em;z-index:20}
+#top b{margin-right:auto}
+#top button{background:#16263f;color:#fff;border:1px solid #4ade8055;border-radius:.3em;padding:.15em .6em}
+#pt{background:#16263f;border-radius:1em;padding:.1em .8em;color:#4ade80;font-weight:700}
+#main{position:fixed;top:2.5em;bottom:0;left:0;right:0;display:flex}
+#stg{flex:1;position:relative;perspective:1000px;overflow:hidden;cursor:grab}
+#stg:active{cursor:grabbing}
+#cs{position:absolute;left:50%;top:48%;width:0;height:0;transform-style:preserve-3d}
+.f{position:absolute;border:2px solid #4ade8088;background:#4ade8010;transition:transform .9s,opacity .9s}
+#bk{width:240px;height:330px;left:-120px;top:-165px;transform:translateZ(-100px)}
+#lf{width:200px;height:330px;left:-100px;top:-165px;transform:rotateY(-90deg) translateZ(120px)}
+#rt{width:200px;height:330px;left:-100px;top:-165px;transform:rotateY(90deg) translateZ(120px)}
+#bt{width:240px;height:200px;left:-120px;top:-100px;transform:rotateX(-90deg) translateZ(165px)}
+#lid{width:240px;height:200px;left:-120px;top:-100px;transform:rotateX(90deg) translateZ(165px);background:#4ade8030}
+.open #lid{transform:rotateX(90deg) translateZ(330px);opacity:.25}
+.open .f:not(#lid){opacity:.35}
+.t{position:absolute;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.3,1.3,.5,1);cursor:pointer}
+.ly{position:absolute;inset:0}.ly svg{width:100%;height:100%;display:block;overflow:visible}
+.t:hover .fr{filter:drop-shadow(0 0 8px #4ade80)}.t.ok .fr{filter:drop-shadow(0 0 7px #facc15)}
+.lb{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:5px;white-space:nowrap;background:#0d2236;border:1px solid #4ade80;border-radius:.4em;padding:.1em .6em;font-size:.8em;font-weight:700;color:#fff}
+.t.ok .lb{border-color:#facc15}.t.ok .lb:after{content:" ✔";color:#facc15}
+.t.sk{animation:sk .35s}@keyframes sk{25%{margin-left:-8px}75%{margin-left:8px}}
+.sp{transform-origin:50px 50px;animation:spn 1.1s linear infinite}@keyframes spn{to{transform:rotate(360deg)}}
+#hint{position:absolute;bottom:.7em;left:0;right:0;text-align:center;font-size:.85em;opacity:.75}
+#ob{position:absolute;left:1em;top:1em;background:#4ade80;color:#04210f;border:0;border-radius:.5em;padding:.6em 1.2em;font-weight:700;font-size:1.1em;z-index:5}
+#pn{width:26em;background:#0a1426f2;border-left:1px solid #4ade8066;padding:1em;display:flex;flex-direction:column;gap:.7em;overflow:auto}
+#fi{background:#13233b;border:1px solid #4ade8066;border-radius:.6em;padding:.8em;line-height:1.4}
+#fi h2{font-size:1.3em;margin-bottom:.3em}
+.an{color:#facc15;font-weight:700}
+.dc{color:#9ec5ff;font-size:.9em;margin-top:.4em}
+#mi{background:#1e3a5f;color:#fff;border:0;border-radius:.4em;padding:.3em .8em;margin-top:.5em}
+#more{display:none;margin-top:.5em;background:#0d2236;padding:.5em;border-radius:.4em;font-size:.9em}
+.tc{margin-top:.6em;background:#0d2236;border-left:3px solid #38bdf8;padding:.5em .6em;border-radius:.3em;font-size:.88em;line-height:1.4}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:.4em;margin-top:.5em;font-size:.95em}.vs>div{background:#13233b;border-radius:.4em;padding:.4em .5em}
+.bb{height:.6em;background:#4ade80;border-radius:.4em;margin:.1em 0 .3em}
+#bub{background:#fff;color:#222;border-radius:1em;padding:.7em .9em;line-height:1.35;margin-top:auto}
+#bot{display:flex;align-items:center;gap:.4em;font-weight:700;color:#4ade80}#bot i{font-style:normal;font-size:2.4em}
+#nx{display:none;background:#22c55e;color:#fff;border:0;border-radius:.5em;padding:.6em 1em;font-weight:700}
+#ring{position:fixed;display:none;border:4px solid #ff3b3bd9;background:#ff3b3b33;border-radius:50%;pointer-events:none;z-index:99;animation:pl 1s infinite}
+@keyframes pl{50%{transform:scale(1.15)}}
+#alt{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:1em;padding:1em;overflow:auto;text-align:center}
+.btn{background:#16263f;color:#fff;border:2px solid #4ade80;border-radius:.6em;padding:.6em 1.1em;font-weight:700}.btn:hover{background:#1f3b5c}
+.cit{background:#13233b;border:2px solid #4ade8099;border-radius:1em;padding:1em 2em;min-width:14em}.cit i{display:block;font-style:normal;font-size:4.5em}.cit.sk{animation:sk .35s}
+.row{display:flex;gap:.8em;flex-wrap:wrap;justify-content:center;align-items:center}
+.nd{background:#13233b;border:2px solid #4ade8055;border-radius:.7em;padding:.7em 1em;min-width:7em;transition:.4s}.nd.lit{border-color:#facc15;box-shadow:0 0 18px #facc15aa;background:#2a3a1a}
+.sl{width:11em;height:7em;border:2px dashed #4ade8088;border-radius:.6em;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.8em;cursor:pointer;padding:.3em}.sl.ok{border:2px solid #facc15}
+.pcs{width:84px;height:60px}.pcs svg{width:100%;height:100%;display:block}
+.pcb{background:#13233b;border:2px solid #4ade8099;border-radius:.6em;padding:.4em;display:flex;flex-direction:column;align-items:center;cursor:pointer;font-size:.8em}.pcb.sel{outline:3px solid #facc15}
+.mon{width:min(26em,90%);min-height:9em;border:4px solid #64748b;border-radius:.6em;background:#0f172a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1em;transition:.4s}
+#sk{align-self:flex-end;background:none;border:0;color:#9ec5ffaa;font-size:.8em;text-decoration:underline;padding:.1em .3em}#sk:hover{color:#fff}
+.ig{width:6em;height:6em;margin:0 auto}.ig svg,.ni svg,.hi svg{width:100%;height:100%;display:block}.ni{display:inline-block;width:2.6em;height:2.6em}.hi{display:inline-block;width:1.7em;height:1.2em;vertical-align:-.2em}
+.nph{width:3.6em;height:2.6em;object-fit:cover;border-radius:.4em;border:1px solid #4ade8066;display:block;margin:0 auto .2em;background:#0d2236}
+#wel{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1em;text-align:center;background:rgba(3,21,16,.9);padding:1em}#wel input{font-size:1.4em;padding:.4em;border-radius:.4em;border:2px solid #4ade80;text-align:center;background:#fff;color:#111;user-select:text}
+
+/* ============ V3.0: portada, fotos reales, periféricos ============ */
+
+#stg.home { cursor: default; }
+#stg.home #cs, #stg.home #ob, #stg.home #hint { display: none; }
+
+#home {
+  position: absolute; inset: 0; z-index: 8; display: none; overflow: auto;
+  padding: 1em 1.2em 1.4em;
+  background: linear-gradient(180deg, #072018f2, #031510f2);
+}
+#home.vis { display: block; }
+
+.hhero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 1.1em; align-items: center; }
+.hhero h1 { font-size: 1.85em; line-height: 1.12; }
+.hhero p { margin-top: .55em; line-height: 1.45; color: #d6e6f5; }
+.hhero figure { margin: 0; }
+.hhero img { width: 100%; max-height: 18em; object-fit: cover; border-radius: .8em; border: 2px solid #4ade8066; display: block; }
+
+.hcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: .65em; margin-top: .9em; }
+.hcard {
+  display: flex; gap: .6em; align-items: flex-start; text-align: left;
+  background: #0d2236; color: #e8f1ff; border: 2px solid #4ade8055;
+  border-radius: .7em; padding: .7em; transition: .15s;
+}
+.hcard:hover { border-color: #4ade80; background: #12314b; }
+.hcard b { display: block; font-size: 1em; line-height: 1.2; }
+.hcard small { display: block; margin-top: .25em; color: #9ec5ff; font-size: .78em; line-height: 1.3; }
+.hnum {
+  flex: 0 0 auto; width: 1.8em; height: 1.8em; border-radius: .45em;
+  background: #4ade80; color: #04210f; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.hcard.hecho { border-color: #facc15; }
+.hcard.hecho .hnum { background: #facc15; }
+.hfoot { display: flex; gap: .8em; align-items: center; flex-wrap: wrap; margin-top: .9em; font-size: .85em; color: #9ec5ff; }
+
+.fbtn {
+  display: inline-flex; align-items: center; gap: .35em;
+  background: #13233b; color: #9ec5ff; border: 1px solid #4ade8088;
+  border-radius: .45em; padding: .32em .7em; font-size: .82em; font-weight: 700;
+  margin-top: .45em;
+}
+.fbtn:hover { background: #1b3350; color: #fff; }
+
+.fph { display: flex; gap: .45em; margin: .5em 0; }
+.fph img { width: 24%; height: 4.4em; object-fit: cover; border-radius: .35em; border: 1px solid #4ade8066; cursor: pointer; }
+
+.mod { position: fixed; inset: 0; z-index: 150; display: none; align-items: center; justify-content: center; padding: 1em; background: #02100bdd; }
+.mod.vis { display: flex; }
+.fbox { background: #0a1426; border: 2px solid #4ade80; border-radius: .8em; padding: 1em; width: 100%; max-width: 54em; max-height: 92vh; overflow: auto; }
+.fbox h3 { font-size: 1.2em; margin-bottom: .5em; padding-right: 4em; }
+#fmain { width: 100%; height: min(56vh, 28em); object-fit: contain; background: #000; border-radius: .5em; display: block; }
+#fthumbs { display: flex; gap: .45em; margin-top: .6em; flex-wrap: wrap; }
+#fthumbs button { padding: 0; border: 2px solid #4ade8044; background: none; border-radius: .4em; overflow: hidden; width: 6.6em; height: 4.4em; }
+#fthumbs button.on { border-color: #facc15; }
+#fthumbs img { width: 100%; height: 100%; object-fit: cover; display: block; }
+#fcap { margin-top: .55em; font-size: .88em; color: #c9d6e2; line-height: 1.4; }
+.fx { float: right; background: #16263f; color: #fff; border: 1px solid #4ade8055; border-radius: .4em; padding: .25em .7em; }
+
+#cr { margin: .2em 0 0 1.1em; font-size: .8em; line-height: 1.45; }
+#cr li { margin-bottom: .3em; }
+#cr a { color: #7dd3fc; }
+
+.pgrp { background: #0d2236; border: 1px solid #4ade8055; border-radius: .6em; padding: .6em; margin-bottom: .5em; }
+.pgrp h3 { font-size: 1em; margin-bottom: .2em; }
+.pgrp p { font-size: .85em; color: #9ec5ff; line-height: 1.3; }
+.prow { display: flex; gap: .5em; margin-top: .45em; flex-wrap: wrap; }
+.pchip { margin: 0; background: #13233b; border: 1px solid #4ade8044; border-radius: .45em; overflow: hidden; cursor: pointer; width: 7.2em; }
+.pchip img { width: 100%; height: 4.2em; object-fit: cover; display: block; }
+.pchip figcaption { font-size: .72em; padding: .2em .35em; color: #c9d6e2; }
+.pchip.rota img { display: none; }
+.pchip.rota::after { content: 'sin foto'; display: flex; height: 4.2em; align-items: center; justify-content: center; color: #64748b; font-size: .75em; }
+
+#sk {
+  display: block; width: 100%; margin-top: .55em;
+  background: #13233b; color: #facc15; border: 2px dashed #facc1599;
+  border-radius: .5em; padding: .5em; font-weight: 700; font-size: .95em;
+}
+#sk:hover { border-style: solid; background: #1d2f18; color: #fff; }
+
+.cit .fbtn { display: block; margin: .55em auto 0; }
+
+@media (max-height: 820px) {
+  .hhero img { max-height: 13em; }
+  .hhero h1 { font-size: 1.6em; }
+  .hcard small { display: none; }
+}
+
+.cit .ig{width:min(17em,44vh);height:min(17em,44vh)}.cit i{font-size:1em}.cit{padding:.5em 1.5em}
+.sarr{position:fixed;z-index:60;width:2.2em;height:2.2em;border-radius:50%;background:#22c55e;color:#fff;display:none;align-items:center;justify-content:center;font-weight:900;border:2px solid #fff;box-shadow:0 2px 8px #000a;animation:bnc 1s infinite;cursor:pointer}@keyframes bnc{50%{transform:translateY(5px)}}
+#nxw{display:flex;flex-direction:column;gap:.4em}#nr,#nh{display:none;background:#16263f;color:#fff;border:2px solid #4ade80;border-radius:.5em;padding:.5em 1em;font-weight:700;cursor:pointer;font:inherit}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:1em;max-width:62em;width:100%}.cmpc{background:#13233b;border:2px solid #4ade8066;border-radius:.8em;padding:.8em;text-align:left}.cmpc ul{margin:.4em 0 0 1.2em;font-size:.92em}.cmpc h3{margin-bottom:.2em}
+@media(max-width:760px){.cmp{grid-template-columns:1fr}}
+#dnd{position:fixed;inset:0;z-index:95;background:rgba(3,10,20,.88);display:flex;align-items:center;justify-content:center}.dbox{background:#0a1426;border:2px solid #4ade80;border-radius:1em;padding:1em 1.4em;width:min(36em,94vw);max-height:92vh;overflow:auto;text-align:left;line-height:1.4}.dbox ol{margin:.4em 0 .4em 1.3em}.dbox .btn{margin-top:.6em}
+.dstage{position:relative;height:9em;border:2px dashed #4ade8066;border-radius:.6em;margin:.6em 0;background:#0d2236;overflow:hidden}.dslot{position:absolute;right:8%;top:14%;width:7em;height:4em;border:3px dashed #4ade80;border-radius:.5em;display:flex;align-items:center;justify-content:center;font-size:.8em;color:#4ade80}
+.dpiece{position:absolute;width:4.5em;height:3.2em;animation:dmv 3.4s ease-in-out infinite}.dpiece svg.dc{position:absolute;right:-.5em;bottom:-.9em;width:1.4em;height:1.9em}.dpiece .pcs{width:100%;height:100%}
+@keyframes dmv{0%,10%{left:6%;top:52%;transform:scale(1)}20%{transform:scale(1.15)}75%{left:62%;top:20%;transform:scale(1.15)}90%,100%{left:62%;top:20%;transform:scale(1)}}
+.pcb{touch-action:none}
+#top{gap:.35em}#top button{white-space:nowrap;flex:0 0 auto}#top b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 1 auto}#top #pt{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1 1 0;text-align:center}
+
+/* ============ Fotos reales dentro de las actividades ============ */
+
+.qwrap{display:flex;flex-direction:column;align-items:center;gap:.7em;width:100%;margin:auto 0}
+.qcard{position:relative;width:min(31em,100%);background:#0d2236;border:2px solid #4ade8088;border-radius:1em;padding:.6em;box-shadow:0 18px 40px -24px #000;transition:border-color .25s,box-shadow .25s,transform .25s}
+.qph{position:relative;width:100%;height:clamp(9.5em,30vh,16em);border-radius:.7em;overflow:hidden;background:#07121f;border:1px solid #4ade8044;display:flex;align-items:center;justify-content:center}
+.qph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
+.qcard:hover .qph img{transform:scale(1.035)}
+.qph.no{font-size:3.4em;background:radial-gradient(circle at 50% 40%,#12314b,#07121f)}
+.qph.no::before{content:'🖼️';opacity:.6}
+.qinfo{display:flex;align-items:center;justify-content:center;gap:.55em;margin-top:.55em;flex-wrap:wrap}
+.qinfo b{font-size:1.15em;line-height:1.2}
+.qtag{background:#4ade80;color:#04210f;font-weight:800;border-radius:.4em;padding:.08em .45em;font-size:.78em}
+.qzoom{position:absolute;right:.75em;bottom:.75em;background:#031510d9;color:#fff;border:1px solid #4ade8099;border-radius:.45em;padding:.22em .55em;font-size:.78em;font-weight:700;cursor:pointer}
+.qzoom:hover{background:#0f3b2a;border-color:#facc15}
+.qhint{max-width:31em;text-align:center;font-size:.86em;color:#9ec5ff;line-height:1.35;padding:0 .4em}
+.qcard.ok{border-color:#facc15;box-shadow:0 0 0 3px #facc1533,0 0 28px #facc1555}
+.qcard.ok .qph::after{content:'✔';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:4.5em;color:#facc15;background:#03151066;text-shadow:0 3px 14px #000}
+.qcard.bad{border-color:#f87171;animation:sk .35s}
+@media(max-height:760px){.qph{height:clamp(8em,26vh,13em)}.qcard{padding:.5em}.qinfo b{font-size:1em}}
+
+/* ============ Visor de fotos: navegación, epígrafe y crédito ============ */
+
+.fstage{position:relative}
+.fnav{position:absolute;top:50%;transform:translateY(-50%);width:2.4em;height:2.4em;border-radius:50%;background:#031510cc;color:#fff;border:2px solid #4ade80aa;font-size:1.2em;font-weight:900;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:2}
+.fnav:hover{background:#0f3b2a;border-color:#facc15}
+.fnav[disabled]{opacity:.25;cursor:default}
+#fprev{left:.5em}#fnext{right:.5em}
+#fcap{line-height:1.45}
+.fcap-t{font-weight:700;color:#e8f1ff}
+.fcount{display:inline-block;margin-left:.4em;background:#16263f;border:1px solid #4ade8055;border-radius:1em;padding:.05em .5em;font-size:.76em;color:#9ec5ff}
+.fcred{margin-top:.3em;font-size:.8em;color:#9ec5ff}
+.fcred a{color:#7dd3fc}
+</style></head><body><script src="../../js/guard.js?v=2"></script>
+<div id=bg></div><svg width=0 height=0 style="position:absolute"><defs><linearGradient id=mt x1=0 y1=0 x2=1 y2=1><stop offset=0 stop-color="#f1f5f9"/><stop offset=.5 stop-color="#94a3b8"/><stop offset=1 stop-color="#e2e8f0"/></linearGradient></defs></svg>
+<div id=top><b>🖥️ Clase 1 · Conozco mi computadora <small style="opacity:.7">v4.0</small></b><span id=pt></span><button onclick="go(0)">📋 Estaciones</button><button onclick="abrirCreditos()">📷 Créditos</button><button id=bgb onclick="fondo()">🌌 Fondo estático</button><button id=vb onclick=tv()>🔊</button><button onclick=fz(-2)>A−</button><button onclick=fz(2)>A+</button></div>
+<div id=main>
+<div id=stg><div id=home>
+  <div class=hhero>
+    <div>
+      <h1>Conozco mi computadora</h1>
+      <p><b>Una computadora</b> es una máquina que recibe datos, los procesa, muestra resultados y guarda información. Todo lo que se puede tocar es <b>hardware</b>; los programas son <b>software</b>.</p>
+      <p>En esta clase vas a reconocer las partes de la computadora, entender para qué sirve cada una y aprender a clasificar lo que se conecta a ella.</p>
+      <div class=hfoot><span>Clase 1 &middot; Profe Mario Jofr&eacute;</span></div>
+    </div>
+    <figure><img id=hport alt="Una notebook sobre un escritorio" onerror="this.closest('figure').style.display='none'"></figure>
+  </div>
+  <div class=hcards id=hc></div>
+  <div class=hfoot>
+    <button class="btn" id=hgo>Empezar por la Estaci&oacute;n 1 &#9654;</button>
+    <button class=fbtn onclick="abrirCreditos()">&#128247; Cr&eacute;ditos de las fotos</button>
+  </div>
+</div>
+<button id=ob>📂 Abrir la computadora</button>
+<div id=cs><div class=f id=bk></div><div class=f id=lf></div><div class=f id=rt></div><div class=f id=bt></div><div class=f id=lid></div></div>
+<div id=hint>Arrastrá con el mouse o el dedo para girar la computadora</div></div>
+<div id=alt></div><div id=pn><div id=fi><h2>Bienvenido/a</h2>Vamos a mirar qué hay adentro de una computadora. Cada pieza trabaja como alguien en una casa.</div><div id=nxw><button id=nx>Continuar ▶</button><button id=nr>↻ Continuar ejercitando</button><button id=nh>🏠 Volver al inicio</button></div>
+<div id=bot><i>🤖</i>ManuBot</div><div id=bub></div><button id=sk onclick="skp()">⏭ Saltar esta estación</button></div></div>
+<div class=mod id=foto>
+  <div class=fbox>
+    <button class=fx onclick="cerrarFoto()">Cerrar &#10005;</button>
+    <h3 id=ftit>Foto</h3>
+    <div class=fstage>
+      <img id=fmain alt="" onerror="this.style.opacity=.15">
+      <button class=fnav id=fprev type=button aria-label="Foto anterior" onclick="fotoPaso(-1)">‹</button>
+      <button class=fnav id=fnext type=button aria-label="Foto siguiente" onclick="fotoPaso(1)">›</button>
+    </div>
+    <div id=fthumbs></div>
+    <div id=fcap></div>
+  </div>
+</div>
+<div id=ring></div><div class=sarr id=sa1 title="Hay más para ver: tocá para bajar">⬇</div><div class=sarr id=sa2 title="Hay más para ver: tocá para bajar">⬇</div>
+<script>
+/* 🔒 COMPATIBILIDAD GITHUB PAGES — NO MODIFICAR: navegación al index y guardado local del alumno/progreso dependen de esta sección. */
+/* ===== INICIO MÓDULO ALUMNO v1 =====
+   Identidad del alumno + preferencias + navegación al inicio.
+   USO: pegar este bloque DENTRO de un <script> de la app, ANTES del código propio
+        (y antes de progreso.js). No se carga como archivo aparte: cada app sigue
+        siendo un único HTML.
+   Globales que crea: MJ_INDEX, Alumno  (no usar esos nombres en la app).
+   API:
+     Alumno.get()            -> {nombre,curso,id,creado} o null
+     Alumno.nombre()         -> nombre completo o ''
+     Alumno.set({nombre,curso}) -> guarda y devuelve el alumno (null si el nombre es muy corto)
+     Alumno.limpiar()        -> "este no soy yo": borra al alumno (NO borra su progreso)
+     Alumno.pedir(cb)        -> si ya hay alumno llama cb(alumno); si no, muestra una
+                                pantalla de nombre (solo pasa si abrieron la app suelta)
+     Alumno.prefs()          -> {fs,voz,snd,kbDark}   (con valores por defecto)
+     Alumno.setPref(k,v)     -> guarda una preferencia
+     Alumno.irInicio()       -> vuelve al index
+     Alumno.botonInicio(el)  -> agrega el botón "🏠 Inicio" dentro de el (o fijo arriba a la derecha)
+   Almacenamiento: localStorage con prefijo "mj:"; si no está disponible (modo privado,
+   algunos file://) usa memoria y la app sigue funcionando durante esa sesión.
+   ===================================================================== */
+const MJ_INDEX='../../index.html'; /* ← ruta RELATIVA al index desde esta app. Ajustar si cambia la estructura */
+const Alumno=(()=>{
+ const mem={},ls=(()=>{try{localStorage.setItem('mj:t',1);localStorage.removeItem('mj:t');return localStorage}catch(e){return null}})();
+ const leer=k=>{try{const v=ls?ls.getItem('mj:'+k):mem[k];return v==null?null:JSON.parse(v)}catch(e){return null}};
+ const guardar=(k,v)=>{try{const s=JSON.stringify(v);if(ls)ls.setItem('mj:'+k,s);else mem[k]=s;return true}catch(e){return false}};
+ const borrar=k=>{try{if(ls)ls.removeItem('mj:'+k);else delete mem[k]}catch(e){}};
+ const limpio=s=>String(s==null?'':s).replace(/[<>&"'`\\\/]/g,'').replace(/\s+/g,' ').trim().slice(0,40);
+ const slug=s=>limpio(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+ const get=()=>{const a=leer('alumno');return a&&a.id?a:null};
+ const set=d=>{d=d||{};const nombre=limpio(d.nombre),curso=limpio(d.curso);if(nombre.length<2)return null;
+  const a={nombre,curso,id:slug(nombre)+(curso?'_'+slug(curso):''),creado:new Date().toISOString()};guardar('alumno',a);return a};
+ const DEF={fs:16,voz:true,snd:true,kbDark:false};
+ const prefs=()=>{const p=leer('prefs')||{},o={};for(const k in DEF)o[k]=k in p?p[k]:DEF[k];return o};
+ const setPref=(k,v)=>{if(!(k in DEF))return;const p=prefs();p[k]=v;guardar('prefs',p)};
+ const irInicio=()=>{location.href=MJ_INDEX};
+ const botonInicio=el=>{const b=document.createElement('button');b.textContent='🏠 Inicio';b.title='Volver al inicio';b.onclick=irInicio;
+  b.style.cssText=el?'background:#374151;color:#fff;border:0;border-radius:.3em;padding:.15em .6em;cursor:pointer;font:inherit'
+   :'position:fixed;top:.4em;right:.4em;z-index:9998;background:#374151;color:#fff;border:0;border-radius:.4em;padding:.3em .7em;cursor:pointer;font:inherit';
+  if(el)el.insertBefore(b,el.firstChild);else document.body.appendChild(b);return b};
+ function pedir(cb){const a=get();if(a){cb(a);return}
+  const d=document.createElement('div'),ci='font:inherit;font-size:1.2em;padding:.4em;border-radius:.4em;border:0;text-align:center;width:min(20em,90%);color:#222';
+  d.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1em;text-align:center;color:#fff;font:18px "Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,#0a5fc0,#06336b)';
+  d.innerHTML='<h1 style="font-size:1.6em;margin:0 0 .4em">👋 ¡Bienvenido!</h1><p style="margin:.3em">Escribe tu nombre y apellido:</p>'+
+   '<input id=mjn maxlength=40 autocomplete=off style="'+ci+'"><p style="margin:.6em .3em .3em">Curso o grupo (si lo sabes):</p>'+
+   '<input id=mjc maxlength=40 autocomplete=off style="'+ci+'"><p id=mje style="min-height:1.6em;margin:.5em;color:#fde68a;font-weight:700"></p>'+
+   '<button id=mjb style="font:inherit;font-size:1.2em;padding:.5em 1.4em;border:0;border-radius:.5em;background:#22c55e;color:#fff;cursor:pointer">Ingresar</button>';
+  document.body.appendChild(d);
+  const n=d.querySelector('#mjn'),c=d.querySelector('#mjc'),e=d.querySelector('#mje');
+  const go=()=>{const x=set({nombre:n.value,curso:c.value});if(!x){e.textContent='Escribe tu nombre (mínimo 2 letras).';n.focus();return}d.remove();cb(x)};
+  /* frena las teclas acá para que el teclado virtual (que bloquea Espacio/Borrar a nivel ventana) no moleste al escribir */
+  ['keydown','keyup'].forEach(t=>d.addEventListener(t,ev=>{ev.stopPropagation();if(t=='keydown'&&ev.key=='Enter')go()}));
+  d.querySelector('#mjb').onclick=go;n.focus()}
+ return{get,set,nombre:()=>{const a=get();return a?a.nombre:''},limpiar:()=>borrar('alumno'),pedir,prefs,setPref,irInicio,botonInicio,
+  almacen:{leer,guardar,borrar},limpio,slug}})();
+/* ===== FIN MÓDULO ALUMNO v1 ===== */
+
+/* ===== INICIO MÓDULO PROGRESO v1 =====
+   Registro local del progreso del alumno, por actividad.
+   USO: pegar DENTRO del <script> de la app, DESPUÉS de alumno.js y antes del código propio.
+   Global que crea: Progreso (no usar ese nombre en la app).
+   Las apps SOLO guardan en el navegador. Quien envía a Google Sheets es el index.
+   Clave de cada actividad: "appId/actId"  (ej. "mecanografia/a03"). Los ids son estables:
+   no se renombran ni renumeran nunca.
+   API:
+     Progreso.registrar(appId, actId, {estado,estrellas,errores,seg})
+         estado: 'hecha' | 'en-curso' (una actividad 'hecha' nunca vuelve a 'en-curso')
+         estrellas: 0-3 (se conserva la mejor) · errores: n · seg: segundos de la última vez
+     Progreso.get(appId)            -> {actId:{estado,estrellas,errores,seg,veces,fecha,mod}}
+     Progreso.hecha(appId, actId)   -> true/false
+     Progreso.resumen(appId, total) -> {hechas,total,pct,estrellas}
+     Progreso.pendientes()          -> [{app,act,...registro}] aún no enviados (lo usa el index)
+     Progreso.marcarEnviado(lista)  -> marca como enviados los registros de esa lista (lo usa el index)
+     Progreso.exportar()            -> texto JSON de respaldo / envío
+     Progreso.importar(texto)       -> n registros incorporados; -1 texto inválido; -2 es de otro alumno
+     Progreso.borrar(appId)         -> borra el progreso de una app (o todo si no se pasa appId). Solo index/docente
+   El "Reiniciar" interno de una app NO debe llamar a borrar().
+   ===================================================================== */
+const Progreso=(()=>{
+ const AL=Alumno.almacen,uid=()=>{const a=Alumno.get();return a?a.id:'anonimo'},K=()=>'progreso:'+uid(),KE=()=>'enviado:'+uid();
+ const todo=()=>{const d=AL.leer(K());return d&&d.v==1&&d.act&&typeof d.act=='object'?d:{v:1,act:{}}};
+ const reg=(app,act,d)=>{d=d||{};const p=todo(),key=app+'/'+act,o=p.act[key]||{},fin=d.estado=='hecha';
+  p.act[key]={estado:fin||o.estado=='hecha'?'hecha':'en-curso',
+   estrellas:Math.max(o.estrellas||0,Math.min(3,Math.max(0,Math.round(+d.estrellas||0)))),
+   errores:d.errores!=null?Math.max(0,Math.round(+d.errores||0)):(o.errores||0),
+   seg:d.seg!=null?Math.max(0,Math.round(+d.seg||0)):(o.seg||0),
+   veces:(o.veces||0)+(fin?1:0),fecha:new Date().toISOString(),mod:Date.now()};
+  AL.guardar(K(),p);return p.act[key]};
+ const get=app=>{const p=todo().act,r={};for(const key in p)if(!app||key.indexOf(app+'/')==0)r[app?key.slice(app.length+1):key]=p[key];return r};
+ const hecha=(app,act)=>{const o=todo().act[app+'/'+act];return !!o&&o.estado=='hecha'};
+ const resumen=(app,total)=>{const g=get(app),ids=Object.keys(g).filter(x=>g[x].estado=='hecha'),hechas=ids.length;
+  return{hechas,total:total||hechas,pct:total?Math.min(100,Math.round(hechas/total*100)):0,estrellas:ids.reduce((n,x)=>n+(g[x].estrellas||0),0)}};
+ const pendientes=()=>{const env=AL.leer(KE())||0,p=todo().act,l=[];
+  for(const key in p)if((p[key].mod||0)>env){const i=key.indexOf('/');l.push(Object.assign({app:key.slice(0,i),act:key.slice(i+1)},p[key]))}return l};
+ const marcarEnviado=l=>{if(!l||!l.length)return;AL.guardar(KE(),Math.max.apply(null,l.map(x=>x.mod||0)))};
+ const exportar=()=>JSON.stringify({v:1,alumno:Alumno.get(),act:todo().act,fecha:new Date().toISOString()});
+ const importar=t=>{let d;try{d=JSON.parse(t)}catch(e){return -1}
+  if(!d||d.v!=1||!d.act||typeof d.act!='object')return -1;
+  if(!Alumno.get()&&d.alumno&&d.alumno.nombre)Alumno.set({nombre:d.alumno.nombre,curso:d.alumno.curso});
+  const a=Alumno.get();if(d.alumno&&a&&d.alumno.id&&d.alumno.id!=a.id)return -2;
+  const p=todo();let n=0;for(const key in d.act){const x=d.act[key],o=p.act[key];if(x&&x.estado&&(!o||(x.mod||0)>(o.mod||0))){p.act[key]=x;n++}}
+  AL.guardar(K(),p);return n};
+ const borrar=app=>{if(!app){AL.borrar(K());AL.borrar(KE());return}const p=todo();for(const key in p.act)if(key.indexOf(app+'/')==0)delete p.act[key];AL.guardar(K(),p)};
+ return{registrar:reg,get,hecha,resumen,pendientes,marcarEnviado,exportar,importar,borrar}})();
+/* ===== FIN MÓDULO PROGRESO v1 ===== */
+
+const $=s=>document.querySelector(s);
+const P=[
+{e:'🧠',n:'Procesador',a:'El cocinero',f:'Piensa y hace todas las cuentas de la computadora. Cuanto más rápido trabaja, más rápido responde todo.',d:'Hace miles de millones de pasos por segundo.',t:'Unidad central de procesamiento (CPU). Circuito integrado que ejecuta las instrucciones de los programas: busca, interpreta y realiza operaciones aritméticas y lógicas.',
+x:`<div class=tc style="border-color:#facc15"><b>⚡ Velocidad de procesamiento</b><br>Se mide en <b>GHz</b> (gigahertz): 1 GHz son mil millones de pasos por segundo. Hoy lo común es de 2 a 4 GHz.<br>Además tiene <b>núcleos</b>: cada uno es como un cocinero más. Con 4 núcleos, trabajan 4 cocineros a la vez.<div style="margin-top:.4em">Muy antigua · 1 GHz<div class=bb style="width:20%"></div>Común hoy · 3 GHz<div class=bb style="width:60%"></div>Muy veloz · 5 GHz<div class=bb style="width:100%"></div></div>Más GHz y más núcleos = más rápida, pero también influyen la RAM y el disco.</div>`},
+{e:'🧩',n:'Memoria RAM',a:'La mesada de la cocina',f:'Guarda lo que estás usando ahora. Al apagar la computadora, se borra.',d:'Con más RAM, podés tener más cosas abiertas a la vez.',t:'Memoria de acceso aleatorio (RAM). Memoria volátil de lectura y escritura donde se cargan los programas y los datos en uso. Es mucho más rápida que el disco y se mide en GB.',
+x:`<div class=tc style="border-color:#facc15"><b>⚖️ RAM vs. ROM: no se confunden</b><div class=vs><div><b>RAM</b><br>🍳 La mesada<br>• Temporal: se borra al apagar<br>• Se lee y se escribe todo el tiempo<br>• Muy rápida<br>• Grande: 4, 8, 16 GB</div><div><b>ROM</b><br>📖 El recetario impreso<br>• Permanente: no se borra<br>• Se usa para leer; casi no se cambia<br>• Trae las instrucciones para encender la compu (BIOS/UEFI)<br>• Muy chica; vive en la placa madre</div></div><div style="margin-top:.4em">El disco también guarda sin energía, pero no es ROM: es para tus archivos y se puede escribir siempre.</div></div>`},
+{e:'💽',n:'Disco',a:'La alacena',f:'Guarda tus fotos, documentos y programas, aunque la apagues.',d:'Los discos modernos (SSD) no tienen partes que se muevan.',t:'Unidad de almacenamiento no volátil. El HDD guarda datos magnéticamente en platos que giran; el SSD usa memoria flash, sin partes móviles, y es más veloz. Se mide en GB o TB.'},
+{e:'🟩',n:'Placa madre',a:'La cocina completa',f:'Es el lugar donde se instalan y se conectan todas las piezas: el cocinero, la mesada, la alacena, el abanico y la electricidad. Sin ella, cada pieza estaría suelta.',d:'Es la pieza más grande de adentro y tiene un pequeño chip ROM con las instrucciones para encender.',t:'Placa base (motherboard). Circuito impreso principal que aloja el procesador, la RAM y las ranuras de expansión, e integra el chipset, el BIOS/UEFI (ROM) y los buses que comunican todos los componentes.'},
+{e:'⚡',n:'Fuente de poder',a:'El corazón',f:'Reparte a cada pieza la electricidad que llega del enchufe.',d:'Convierte la corriente de la pared en una que la compu pueda usar.',t:'Fuente de alimentación (PSU). Convierte la corriente alterna de la red (220 V) en corrientes continuas de baja tensión (12 V, 5 V y 3,3 V) para los componentes. Se mide en watts.'},
+{e:'🌀',n:'Ventilador',a:'El abanico',f:'Saca el calor para que nada se queme.',d:'Si se llena de polvo, la computadora se pone lenta y ruidosa.',t:'Sistema de refrigeración. Genera un flujo de aire que disipa el calor del procesador y otros componentes, evitando el sobrecalentamiento y la reducción automática de rendimiento (throttling).'}];
+let s=0,i=0,rx=-12,ry=25,es,voz=true,fs=16,mv=0;
+const ts=[];
+const D=[[90,90],[190,48],[150,98],[150,150],[150,98],[90,90]];
+const bl=Array.from({length:7},(_,j)=>`<ellipse cx=50 cy=30 rx=9 ry=19 transform="rotate(${j*51.4} 50 50)" fill="#38bdf8" opacity=".85"/>`).join('');
+const SV=[
+`<svg viewBox="0 0 100 100"><rect x=4 y=4 width=92 height=92 rx=7 fill="#2f7d4f"/><rect x=8 y=8 width=84 height=84 rx=5 fill=none stroke="#facc15" stroke-width=3 stroke-dasharray="2 2.6"/><rect x=22 y=22 width=56 height=56 rx=5 fill="url(#mt)" stroke="#e2e8f0" stroke-width=1.5 /><text x=50 y=56 text-anchor=middle font-size=15 font-weight=700 fill="#334155" font-family=Arial>CPU</text><path d="M4 4L18 4L4 18Z" fill="#facc15"/></svg>`,
+`<svg viewBox="0 0 200 50"><rect width=200 height=44 rx=3 fill="#1f8a4c"/><rect x=4 y=4 width=192 height=36 rx=2 fill=none stroke="#7ee2a8" stroke-width=.8 opacity=.6 />${[10,46,82,118].map(x=>`<rect x=${x} y=8 width=30 height=26 rx=2 fill="#111827"/><rect x=${x+3} y=11 width=10 height=3 fill="#475569"/>`).join('')}<rect x=156 y=10 width=30 height=22 rx=2 fill="#1f2937"/><rect y=42 width=200 height=8 fill="#facc15"/><path d="M0 46H200" stroke="#a16207" stroke-width=8 stroke-dasharray="1.5 2"/><rect x=118 y=40 width=5 height=10 fill="#0d2236"/></svg>`,
+`<svg viewBox="0 0 120 90"><rect x=2 y=2 width=116 height=86 rx=8 fill="url(#mt)" stroke="#64748b" stroke-width=2 /><circle cx=52 cy=45 r=33 fill="#64748b"/><circle cx=52 cy=45 r=26 fill="#cbd5e1"/><circle cx=52 cy=45 r=10 fill="#475569"/><circle cx=52 cy=45 r=3 fill="#e2e8f0"/><path d="M95 18L60 40" stroke="#1e293b" stroke-width=5 stroke-linecap=round /><circle cx=95 cy=18 r=6 fill="#334155"/>${[[9,9],[111,9],[9,81],[111,81]].map(p=>`<circle cx=${p[0]} cy=${p[1]} r=2.5 fill="#475569"/>`).join('')}</svg>`,
+`<svg viewBox="0 0 160 160"><rect x=2 y=2 width=156 height=156 rx=5 fill="#1f8a4c" stroke="#14532d" stroke-width=2 /><path d="M20 140V110H60M30 20V60H50M100 90H140V140M70 150V120M110 60V100H90" fill=none stroke="#7ee2a8" stroke-width=1.4 opacity=.55 /><rect x=2 y=18 width=20 height=52 fill="#cbd5e1"/><rect x=48 y=24 width=44 height=44 rx=3 fill="#e2e8f0" stroke="#64748b"/><rect x=56 y=32 width=28 height=28 fill="#94a3b8"/><rect x=108 y=14 width=9 height=66 rx=2 fill="#111827"/><rect x=122 y=14 width=9 height=66 rx=2 fill="#111827"/><rect x=20 y=96 width=100 height=7 rx=2 fill="#111827"/><rect x=20 y=114 width=100 height=7 rx=2 fill="#111827"/><circle cx=140 cy=100 r=6 fill="#0f172a"/><circle cx=140 cy=122 r=6 fill="#0f172a"/><circle cx=140 cy=144 r=6 fill="#0f172a"/><rect x=56 y=76 width=28 height=14 rx=2 fill="#111827" stroke="#7ee2a8" stroke-width=.8 /><text x=70 y=86 text-anchor=middle font-size=8 font-weight=700 fill="#e2e8f0" font-family=Arial>ROM</text></svg>`,
+`<svg viewBox="0 0 140 90"><rect x=8 y=4 width=104 height=82 rx=5 fill="#3b4252" stroke="#94a3b8" stroke-width=2 /><circle cx=60 cy=45 r=30 fill="#1e293b"/><circle cx=60 cy=45 r=22 fill=none stroke="#94a3b8" stroke-width=1.5 /><circle cx=60 cy=45 r=14 fill=none stroke="#94a3b8" stroke-width=1.5 /><circle cx=60 cy=45 r=6 fill="#94a3b8"/><path d="M60 15V75M30 45H90" stroke="#94a3b8" stroke-width=1.5 /><rect x=0 y=34 width=10 height=22 rx=2 fill="#111827"/><rect x=84 y=8 width=24 height=12 rx=2 fill="#facc15"/><path d="M112 36Q130 36 134 16" fill=none stroke="#ef4444" stroke-width=3 stroke-linecap=round /><path d="M112 45H137" fill=none stroke="#facc15" stroke-width=3 stroke-linecap=round /><path d="M112 54Q130 54 134 74" fill=none stroke="#60a5fa" stroke-width=3 stroke-linecap=round /></svg>`,
+`<svg viewBox="0 0 100 100"><rect x=2 y=2 width=96 height=96 rx=10 fill="#1e293b" stroke="#64748b" stroke-width=2 /><circle cx=50 cy=50 r=43 fill="#0d2236"/><g class=sp>${bl}</g><circle cx=50 cy=50 r=11 fill="#64748b"/><circle cx=50 cy=50 r=4 fill="#cbd5e1"/>${[[8,8],[92,8],[8,92],[92,92]].map(p=>`<circle cx=${p[0]} cy=${p[1]} r=3 fill="#475569"/>`).join('')}</svg>`];
+const O=[[-125,-170,60],[125,-170,60],[-125,0,60],[125,0,60],[-125,170,60],[125,170,60]],C=[[-45,-60,-10],[30,-110,-10],[65,50,10],[0,0,-80],[-55,105,10],[70,110,20]];
+P.forEach((p,k)=>{const t=document.createElement('div'),[w,h]=D[k];t.className='t';t.style.cssText=`width:${w}px;height:${h}px;left:${-w/2}px;top:${-h/2}px`;t.innerHTML=`<div class=ly style="transform:translateZ(-10px);filter:brightness(.4)">${SV[k]}</div><div class=ly style="transform:translateZ(-5px);filter:brightness(.65)">${SV[k]}</div><div class="ly fr">${SV[k]}</div><div class=lb>${p.n}</div>`;t.onclick=()=>pick(k);$('#cs').append(t);ts.push(t)});
+function lay(){ts.forEach((t,k)=>{const p=s?O[k]:C[k];t.style.transform=`translate3d(${p[0]}px,${p[1]}px,${p[2]}px) scale(${s?1:.6})`})}
+function rot(){const sc=Math.max(.4,Math.min(1,($('#stg').clientHeight-40)/560));$('#cs').style.transform=`scale(${sc}) rotateX(${rx}deg) rotateY(${ry}deg)`}
+function say(t){t=t.replace(/\{n\}/g,NM);$('#bub').innerHTML=t;if(voz&&es){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,'').replace(/[\u{1F000}-\u{1FFFF}\u2600-\u27BF]/gu,''));u.voice=es;u.lang=es.lang;speechSynthesis.speak(u)}}
+function tv(){voz=!voz;Alumno.setPref('voz',voz);$('#vb').textContent=voz?'🔊':'🔇';if(!voz&&window.speechSynthesis)speechSynthesis.cancel()}
+function fz(d){fs=Math.min(26,Math.max(12,fs+d));document.body.style.fontSize=fs+'px';Alumno.setPref('fs',fs)}
+function ficha(k){const p=P[k];$('#fi').innerHTML=`<h2><span class=hi>${SV[k]}</span> ${p.n}</h2><div class=an>Es como: ${p.a}</div><p style="margin-top:.4em">${p.f}</p><div class=dc>💡 Dato curioso: ${p.d}</div><div class=tc><b>🔧 Definición técnica</b><br>${p.t}</div>${p.x||''}`}
+$('#ob').onclick=()=>{if(s)return;s=1;$('#cs').classList.add('open');lay();$('#ob').style.display='none';say('¡Se abrió! Los componentes más importantes se separaron para que los veas bien. Tocá cada uno en el orden que te marca el círculo rojo.')};
+function pick(k){if(mv)return;if(!s){say('Primero tocá el botón verde <b>Abrir la computadora</b>.');return}
+ if(k>i){ts[k].classList.add('sk');setTimeout(()=>ts[k].classList.remove('sk'),400);ERR++;say('¡Casi! Ahora tocá el componente del <b>círculo rojo</b>: '+P[i].n+'.');return}
+ ficha(k);ts[k].classList.add('ok');
+ if(k==i){i++;prg(i+' de 6 componentes principales');
+  say(i<6?'¡Muy bien! '+P[k].n+': '+P[k].a.toLowerCase()+'. Seguí con el próximo componente.':'¡Excelente, {n}! Pensalo como una cocina: el cocinero (procesador), la mesada (RAM), la alacena (disco), el corazón (fuente) y el abanico (ventilador), todo instalado en la cocina completa (placa madre).');
+  if(i==6)nxv('block')}
+ else say(P[k].n+': '+P[k].a.toLowerCase()+'.')}
+const st=$('#stg');let dr=null;
+st.onpointerdown=e=>{if(e.target.closest('button'))return;dr={x:e.clientX,y:e.clientY};mv=0};
+addEventListener('pointermove',e=>{if(!dr)return;const dx=e.clientX-dr.x,dy=e.clientY-dr.y;if(Math.abs(dx)+Math.abs(dy)>4)mv=1;ry=Math.max(-70,Math.min(70,ry+dx*.4));rx=Math.max(-35,Math.min(35,rx-dy*.3));dr={x:e.clientX,y:e.clientY};rot()});
+addEventListener('pointerup',()=>{dr=null;setTimeout(()=>mv=0,0)});
+function tick(){const r=$('#ring');const e=T();const b=e&&e.getBoundingClientRect();
+ if(!b||!b.width||e.style.display=='none'){r.style.display='none'}else{const d=Math.max(b.width,b.height)+(b.width>b.height*2?10:20);Object.assign(r.style,{display:'block',width:d+'px',height:Math.min(d,b.height+30)+'px',left:b.left+b.width/2-d/2+'px',top:b.top+b.height/2-Math.min(d,b.height+30)/2+'px',borderRadius:b.width>b.height*2?'2em':'50%'})}requestAnimationFrame(tick)}
+(function(){const f=()=>{es=(window.speechSynthesis?speechSynthesis.getVoices():[]).find(v=>v.lang.toLowerCase().startsWith('es'))};f();if(window.speechSynthesis)speechSynthesis.onvoiceschanged=f;setTimeout(()=>{if(!es){voz=false;$('#vb').textContent='🔇';$('#vb').disabled=true}},2000)})();
+
+const V=(b)=>`<svg viewBox="0 0 100 100">${b}</svg>`,SC='<rect x=11 y=19 width=78 height=48 fill="#38bdf8"/><path d="M11 67V52Q45 40 89 56V67Z" fill="#0ea5e9"/>';
+const IC={pantalla:V('<rect x=6 y=14 width=88 height=58 rx=4 fill="#1e293b" stroke="#94a3b8" stroke-width=3 />'+SC+'<rect x=44 y=72 width=12 height=10 fill="#94a3b8"/><rect x=30 y=82 width=40 height=6 rx=3 fill="#cbd5e1"/>'),
+pc:V('<rect x=4 y=18 width=62 height=42 rx=3 fill="#1e293b" stroke="#94a3b8" stroke-width=2 /><rect x=8 y=22 width=54 height=34 fill="#38bdf8"/><rect x=32 y=60 width=6 height=10 fill="#94a3b8"/><rect x=20 y=70 width=30 height=5 rx=2 fill="#cbd5e1"/><rect x=72 y=12 width=24 height=70 rx=3 fill="#475569" stroke="#cbd5e1" stroke-width=2 /><circle cx=84 cy=24 r=3 fill="#4ade80"/><rect x=77 y=36 width=14 height=4 fill="#cbd5e1"/><rect x=77 y=44 width=14 height=4 fill="#cbd5e1"/>'),
+notebook:V('<rect x=16 y=18 width=68 height=46 rx=3 fill="#1e293b" stroke="#94a3b8" stroke-width=3 /><rect x=21 y=23 width=58 height=36 fill="#38bdf8"/><path d="M6 70H94L88 80H12Z" fill="#cbd5e1" stroke="#64748b" stroke-width=2 /><rect x=40 y=73 width=20 height=3 rx=1.5 fill="#64748b"/>'),
+celular:V('<rect x=30 y=6 width=40 height=88 rx=7 fill="#1e293b" stroke="#94a3b8" stroke-width=3 /><rect x=34 y=16 width=32 height=66 fill="#38bdf8"/><rect x=37 y=22 width=9 height=9 rx=2 fill="#facc15"/><rect x=54 y=22 width=9 height=9 rx=2 fill="#f87171"/><rect x=37 y=36 width=9 height=9 rx=2 fill="#4ade80"/><rect x=54 y=36 width=9 height=9 rx=2 fill="#fff"/><rect x=44 y=10 width=12 height=2.5 rx=1.2 fill="#64748b"/><circle cx=50 cy=88 r=2.5 fill="#64748b"/>'),
+cajero:V('<rect x=18 y=8 width=64 height=84 rx=4 fill="#64748b" stroke="#cbd5e1" stroke-width=2 /><rect x=26 y=16 width=48 height=26 rx=2 fill="#38bdf8"/><rect x=28 y=48 width=24 height=22 rx=2 fill="#1e293b"/>'+[[33,54],[40,54],[47,54],[33,60],[40,60],[47,60],[33,66],[40,66],[47,66]].map(p=>`<circle cx=${p[0]} cy=${p[1]} r=2 fill="#94a3b8"/>`).join('')+'<rect x=56 y=52 width=18 height=4 fill="#0f172a"/><rect x=28 y=76 width=44 height=6 rx=2 fill="#0f172a"/>'),
+reloj:V('<rect x=34 y=4 width=32 height=18 rx=3 fill="#475569"/><rect x=34 y=78 width=32 height=18 rx=3 fill="#475569"/><rect x=26 y=20 width=48 height=60 rx=12 fill="#1e293b" stroke="#cbd5e1" stroke-width=3 /><rect x=31 y=26 width=38 height=48 rx=8 fill="#0f172a"/><text x=50 y=46 text-anchor=middle font-size=13 font-weight=700 fill="#4ade80" font-family=Arial>10:08</text><path d="M38 60H46L50 54L54 66L58 60H62" fill=none stroke="#f87171" stroke-width=2 />'),
+heladera:V('<rect x=26 y=4 width=48 height=92 rx=4 fill="#e2e8f0" stroke="#94a3b8" stroke-width=2 /><path d="M26 36H74" stroke="#94a3b8" stroke-width=2 /><rect x=32 y=16 width=3 height=14 rx=1.5 fill="#64748b"/><rect x=32 y=44 width=3 height=22 rx=1.5 fill="#64748b"/>'),
+tostadora:V('<path d="M24 56V40Q22 22 34 22Q46 22 44 40V56Z" fill="#d6a35c"/><path d="M54 56V40Q52 22 64 22Q76 22 74 40V56Z" fill="#d6a35c"/><rect x=14 y=50 width=72 height=32 rx=10 fill="#cbd5e1" stroke="#64748b" stroke-width=2 /><rect x=88 y=58 width=6 height=14 rx=2 fill="#475569"/><circle cx=30 cy=66 r=3 fill="#64748b"/>'),
+teclado:V('<rect x=4 y=28 width=92 height=46 rx=5 fill="#334155" stroke="#94a3b8" stroke-width=2 />KBX<rect x=24 y=66 width=52 height=5 rx=2 fill="#e2e8f0"/>'),
+mouse:V('<path d="M50 6C70 6 78 20 78 40V62C78 82 66 94 50 94C34 94 22 82 22 62V40C22 20 30 6 50 6Z" fill="#e2e8f0" stroke="#64748b" stroke-width=3 /><path d="M22 44H78M50 6V44" stroke="#64748b" stroke-width=2.5 fill=none /><rect x=45 y=18 width=10 height=18 rx=5 fill="#475569"/>'),
+pendrive:V('<rect x=4 y=38 width=28 height=24 fill="#cbd5e1" stroke="#64748b" stroke-width=2 /><rect x=10 y=44 width=5 height=5 fill="#334155"/><rect x=10 y=52 width=5 height=5 fill="#334155"/><rect x=32 y=30 width=62 height=40 rx=8 fill="#2563eb"/><circle cx=82 cy=50 r=5 fill="#0d2236"/><rect x=40 y=36 width=18 height=4 rx=2 fill="#93c5fd"/>'),
+parlantes:V('<rect x=22 y=6 width=56 height=88 rx=6 fill="#1e293b" stroke="#64748b" stroke-width=2 /><circle cx=50 cy=28 r=10 fill="#334155" stroke="#94a3b8"/><circle cx=50 cy=28 r=4 fill="#94a3b8"/><circle cx=50 cy=66 r=20 fill="#334155" stroke="#94a3b8" stroke-width=2 /><circle cx=50 cy=66 r=10 fill="#0f172a" stroke="#94a3b8"/><circle cx=50 cy=66 r=3 fill="#94a3b8"/>'),
+paint:V('<path d="M50 8C24 8 6 28 6 50C6 74 26 92 48 92C60 92 62 82 56 76C50 68 56 62 64 62H78C90 62 94 52 94 46C94 24 76 8 50 8Z" fill="#f5d9a8" stroke="#a16207" stroke-width=2.5 /><circle cx=30 cy=36 r=7 fill="#ef4444"/><circle cx=50 cy=24 r=7 fill="#facc15"/><circle cx=72 cy=34 r=7 fill="#22c55e"/><circle cx=24 cy=60 r=7 fill="#3b82f6"/><path d="M60 60L88 12" stroke="#92400e" stroke-width=5 stroke-linecap=round /><path d="M86 16L92 6" stroke="#38bdf8" stroke-width=5 stroke-linecap=round />'),
+word:V('<rect x=6 y=14 width=88 height=72 rx=8 fill="#2b579a"/><rect x=6 y=14 width=38 height=72 rx=8 fill="#1e3f7a"/><text x=26 y=64 text-anchor=middle font-size=40 font-weight=700 fill="#fff" font-family=Arial>W</text><path d="M54 34H86M54 48H86M54 62H86" stroke="#93c5fd" stroke-width=4 />'),
+windows:V('<path d="M6 18L44 12V47H6Z" fill="#00a4ef"/><path d="M50 11L94 4V47H50Z" fill="#00a4ef"/><path d="M6 53H44V88L6 82Z" fill="#00a4ef"/><path d="M50 53H94V96L50 89Z" fill="#00a4ef"/>'),
+chrome:V('<path d="M11.9 28A44 44 0 0 1 88.1 28L50 50Z" fill="#ea4335"/><path d="M88.1 28A44 44 0 0 1 50 94L50 50Z" fill="#fbbc04"/><path d="M50 94A44 44 0 0 1 11.9 28L50 50Z" fill="#34a853"/><circle cx=50 cy=50 r=21 fill="#fff"/><circle cx=50 cy=50 r=16 fill="#4285f4"/>'),
+whatsapp:V('<path d="M50 6A44 44 0 0 0 12 72L6 94L29 88A44 44 0 1 0 50 6Z" fill="#25d366"/><path d="M50 18A32 32 0 0 0 23 66L20 80L34 76A32 32 0 1 0 50 18Z" fill=none stroke="#fff" stroke-width=5 /><path d="M38 34C36 36 35 40 38 46C42 54 48 60 56 64C60 66 64 65 66 62V58L58 54L55 57C52 56 46 50 44 46L47 43L43 35Z" fill="#fff"/>')};
+IC.teclado=IC.teclado.replace('KBX',`${[0,1,2].map(r=>Array.from({length:10},(_,c)=>`<rect x=${9+c*8.5} y=${33+r*11} width=7 height=8 rx=1.5 fill=#e2e8f0 />`).join('')).join('')}`);IC.cpu=SV[0];IC.disco=SV[2];Object.assign(IC,{microfono:V('<rect x=38 y=6 width=24 height=44 rx=12 fill="#64748b" stroke="#cbd5e1" stroke-width=2 /><path d="M42 18H58M42 26H58M42 34H58" stroke="#cbd5e1" stroke-width=2 /><path d="M28 36A22 22 0 0 0 72 36" fill=none stroke="#94a3b8" stroke-width=3 /><path d="M50 58V82M34 88H66" stroke="#94a3b8" stroke-width=4 stroke-linecap=round />'),impresora:V('<rect x=24 y=8 width=52 height=26 fill="#fff" stroke="#94a3b8" stroke-width=2 /><path d="M32 16H68M32 22H60" stroke="#94a3b8" stroke-width=2 /><rect x=8 y=32 width=84 height=40 rx=6 fill="#475569" stroke="#cbd5e1" stroke-width=2 /><rect x=16 y=42 width=22 height=6 rx=2 fill="#1e293b"/><circle cx=78 cy=46 r=3 fill="#4ade80"/><rect x=24 y=62 width=52 height=26 fill="#fff" stroke="#94a3b8" stroke-width=2 /><path d="M32 70H68M32 77H58" stroke="#94a3b8" stroke-width=2 />')});
+let G=0;
+const tm=(f,d)=>{const g=G;return setTimeout(()=>{if(g===G)f()},d)};function skp(){if(cur<6)go(cur+1)}
+let NM="",cur=1,T=()=>null;const A=$('#alt'),HUE=[0,95,150,0,60,-100,-85];
+const prg=t=>$('#pt').textContent='Estación '+cur+' de 6 · '+t,setF=h=>$('#fi').innerHTML=h,I=a=>a.map(x=>({e:x[0],n:x[1],c:x[2],w:x[3]})),end=m=>{prg('completada ✔');say(m);nxv('block')};
+function go(n){G++;cur=n;$('#sk').style.display=n==6?'none':'';nxv('none');$('#bg').style.filter=`hue-rotate(${HUE[n]}deg)`;$('#stg').style.display=n==3?'block':'none';A.style.display=n==3?'none':'flex';A.onclick=null;A.lk=0;A.innerHTML='';T=()=>null;[0,st1,st2,st3,st4,st5,st6][n]()}
+$('#nx').onclick=()=>go(cur+1);
+function cls(c,after){let k=0;const n=c.items.length;
+ const sh=()=>{const t=c.items[k];A.innerHTML=`<div class=cit id=ci><i>${IC[t.e]?`<div class=ig>${IC[t.e]}</div>`:t.e}</i><b>${t.n}</b></div><div class=row>${c.cats.map(x=>`<button class=btn data-c=${x.id}>${x.l}</button>`).join('')}</div>`;prg(k+' de '+n+' clasificados')};
+ A.onclick=e=>{const b=e.target.closest('[data-c]');if(!b||A.lk)return;const t=c.items[k];
+  if(b.dataset.c==t.c){A.lk=1;say('✅ ¡Correcto! '+t.w);$('#ci').style.borderColor='#facc15';k++;tm(()=>{A.lk=0;if(k<n)sh();else{A.onclick=null;prg(n+' de '+n+' clasificados');after()}},2600)}
+  else{say('¡Casi! '+c.h);const x=$('#ci');x.classList.add('sk');tm(()=>x.classList.remove('sk'),400)}};sh()}
+function st1(){setF('<h2>🌐 ¿Qué es una computadora?</h2>Una computadora es una máquina que <b>recibe</b> datos, los <b>piensa</b>, los <b>muestra</b> y los <b>guarda</b>.<div class=tc><b>🔧 Definición técnica</b><br>Dispositivo electrónico programable que procesa información según instrucciones.</div>');say('¡Hola {n}! Soy ManuBot. Te voy a mostrar varios aparatos: elegí si es una computadora o no.');
+ cls({h:'Pensá: ¿recibe datos, los piensa y los muestra, y le podés dar órdenes distintas?',cats:[{id:'y',l:'✅ Es una computadora'},{id:'n',l:'❌ No lo es'}],items:I([['pc','Computadora de escritorio','y','Recibe tus órdenes, las piensa y te muestra el resultado.'],['notebook','Notebook','y','Es una computadora que se lleva a todos lados.'],['celular','Celular','y','Tu celular es una computadora chiquita.'],['cajero','Cajero automático','y','Recibe tu tarjeta y tu clave, procesa y muestra.'],['reloj','Reloj inteligente','y','Tiene procesador y pantalla, aunque sea diminuto.'],['heladera','Heladera común','n','Hace una sola cosa fija: no le podés dar órdenes distintas.'],['tostadora','Tostadora común','n','Tampoco: no recibe datos ni los procesa.']])},()=>end('¡Muy bien, {n}! Hasta tu celular es una computadora. Ahora vemos qué es hardware y qué es software.'))}
+function st2(){setF('<h2>⚖️ Hardware y software</h2>🖐️ <b>Hardware</b>: lo que podés <b>tocar</b>.<br>💭 <b>Software</b>: lo que <b>usás</b> pero no tocás.<br>Es como el <b>cuerpo</b> y la <b>mente</b>: uno sin el otro no sirve.<div class=tc><b>🔧 Definición técnica</b><br>Hardware: componentes físicos del sistema. Software: programas e instrucciones que el hardware ejecuta.</div>');say('Te voy a mostrar objetos de a uno. Decime si se pueden tocar o no.');
+ cls({h:'Pensá: ¿lo podés agarrar con la mano o es un programa?',cats:[{id:'h',l:'🖐️ Hardware: se puede tocar'},{id:'s',l:'💭 Software: no se toca'}],items:I([['teclado','Teclado','h','Lo podés tocar.'],['paint','Paint','s','Es un programa: lo usás, pero no lo tocás.'],['mouse','Mouse','h','Lo agarrás con la mano.'],['word','Word','s','Es un programa para escribir.'],['pendrive','Pendrive','h','Lo agarrás con la mano; sus archivos, en cambio, no se tocan.'],['windows','Windows','s','Es el sistema que ordena todo lo demás.'],['parlantes','Parlantes','h','Son objetos físicos.'],['chrome','Chrome','s','Es un programa para navegar en internet.'],['pantalla','Pantalla','h','La ves y la tocás: es una pieza física.'],['whatsapp','WhatsApp','s','Es una aplicación: no se toca, se usa.']])},()=>end('¡Excelente, {n}! Hardware es el cuerpo y software es la mente. Ahora abrimos la computadora por dentro.'))}
+function st3(){setF('<h2>🔍 Por dentro</h2>Vamos a abrir la computadora y conocer sus componentes más importantes. Cada una trabaja como alguien en una cocina.');prg('0 de 6 componentes principales');T=()=>s?(i<6?ts[i]:null):$('#ob');rot();say('Ahora abrimos la computadora por dentro. Tocá el botón verde <b>Abrir la computadora</b>.')}
+function dnd(cb){const o=document.createElement('div');o.id='dnd';o.innerHTML=`<div class=dbox><button class=fx id=dx>Cerrar ✕</button><h3>👆 Cómo arrastrar y soltar</h3><div class=dstage><div class=dslot>Lugar</div><div class=dpiece><div class=pcs>${SV[0]}</div><svg class=dc viewBox="0 0 20 28"><path d="M2 2V22L8 17L12 26L16 24L12 15H19Z" fill="#fff" stroke="#000"/></svg></div></div><ol><li>Apoyá el puntero sobre la pieza.</li><li><b>Mantené apretado</b> el botón izquierdo (o el dedo en la pantalla).</li><li><b>Mové</b> la pieza hasta el lugar correcto.</li><li><b>Soltá</b> el botón.</li></ol><p>Si te resulta difícil, también podés <b>tocar la pieza</b> y después <b>tocar el lugar</b>.</p><button class=btn id=dok>Entendido, empezar ▶</button></div>`;document.body.append(o);say('Primero mirá cómo se arrastra y se suelta una pieza. Cuando termines, cerrá el cuadro y empezamos.');
+ const cl=()=>{o.remove();T=()=>null;cb()};$('#dx').onclick=cl;$('#dok').onclick=cl;T=()=>$('#dok')}
+function st4(){const bin=[...P.keys()].sort(()=>Math.random()-.5),pl=new Set,LB=['Piensa y calcula','Mesada: lo que uso ahora','Alacena: guarda todo','La cocina: conecta todo','El corazón: da energía','Enfría las piezas'];let sel=null;
+ setF('<h2>🔨 Armá la compu</h2>Arrastrá cada pieza hasta su lugar, o tocá la pieza y después el lugar. Cada lugar dice qué función cumple.<div class=tc><b>🔧 Definición técnica</b><br>Ensamblado: cada componente se instala en su ubicación para formar un sistema funcional.</div>');
+ const pc=k=>`<div class=pcs>${SV[k]}</div><small>${P[k].n}</small>`,draw=()=>{A.innerHTML=`<div class=row>${LB.map((l,k)=>`<div class="sl ${pl.has(k)?'ok':''}" data-s=${k}>${pl.has(k)?pc(k):l}</div>`).join('')}</div><div class=row>${bin.filter(k=>!pl.has(k)).map(k=>`<div class="pcb ${sel===k?'sel':''}" data-p=${k}>${pc(k)}</div>`).join('')}</div>`;prg(pl.size+' de 6 armadas')},
+ drop=(k,l)=>{if(k===l){pl.add(k);sel=null;draw();say('¡Bien! '+P[k].n+' en su lugar.');if(pl.size==6)tm(falta,2400)}else{ERR++;say('¡Casi! '+P[k].n+' es '+P[k].a.toLowerCase()+'. Mirá el cartel de cada lugar.')}};
+ A.onclick=e=>{if(A.dragged)return;const p=e.target.closest('[data-p]'),l=e.target.closest('[data-s]');if(p){sel=+p.dataset.p;draw();return}if(l&&sel!==null)drop(sel,+l.dataset.s)};
+ A.onpointerdown=e=>{const p=e.target.closest('[data-p]');if(!p||e.button>0)return;const k=+p.dataset.p,x0=e.clientX,y0=e.clientY;let g=null;
+  const mvf=ev=>{if(!g&&Math.hypot(ev.clientX-x0,ev.clientY-y0)>6){g=p.cloneNode(true);g.style.cssText='position:fixed;pointer-events:none;z-index:500;opacity:.9';document.body.append(g);p.style.opacity=.3}if(g){g.style.left=ev.clientX-30+'px';g.style.top=ev.clientY-30+'px'}};
+  const up=ev=>{removeEventListener('pointermove',mvf);removeEventListener('pointerup',up);if(g){g.remove();p.style.opacity='';const el=document.elementFromPoint(ev.clientX,ev.clientY),l=el&&el.closest('[data-s]');A.dragged=1;setTimeout(()=>A.dragged=0,80);if(l)drop(k,+l.dataset.s)}};
+  addEventListener('pointermove',mvf);addEventListener('pointerup',up)};
+ dnd(()=>{say('¡A armar! Arrastrá una pieza hasta su lugar.');draw()})}
+function falta(){const seen=new Set,R=[['😶','La compu enciende pero no hace nada.','Sin cerebro, no hay quién piense.','#0f172a'],['🔊','Pitidos y pantalla negra.','Sin mesada, el cocinero no puede trabajar.','#000'],['⚠️','No se encuentra el sistema para arrancar.','Sin alacena, no hay dónde guardar ni de dónde arrancar.','#1e3a8a'],['🔌','Nada se conecta: las piezas quedan sueltas.','Sin la cocina completa, cada pieza queda aislada.','#000'],['⬛','Pantalla negra: no enciende nada.','Sin energía, nada funciona.','#000'],['🔥','Sobrecalentamiento: la compu se apaga sola.','Sin abanico, se recalienta.','#7f1d1d']];
+ setF('<h2>❓ ¿Qué pasa si falta?</h2>Sacá una pieza a la vez y mirá qué le pasa a la computadora.<div class=tc><b>🔧 Definición técnica</b><br>Cada componente es imprescindible: la falla de uno afecta a todo el sistema.</div>');say('¡Armada! Ahora probemos qué pasa si falta una pieza. Sacá una por una.');
+ A.innerHTML=`<div id=mn class=mon>Elegí una pieza para sacar 👇</div><div class=row>${P.map((p,k)=>`<button class=btn data-r=${k}>Sacar: ${p.n}</button>`).join('')}</div>`;prg('0 de 6 probadas');
+ A.onclick=e=>{const b=e.target.closest('[data-r]');if(!b)return;const k=+b.dataset.r,r=R[k];$('#mn').style.background=r[3];$('#mn').innerHTML=`<div style="font-size:3em">${r[0]}</div>${r[1]}`;say(r[2]);seen.add(k);prg(seen.size+' de 6 probadas');if(seen.size==6){A.onclick=null;tm(()=>end('¡Listo! Viste que cada pieza es necesaria. Ahora seguimos el camino de la información.'),3500)}}}
+function st5(){setF('<h2>🛤️ El camino de la información</h2><b>Entrada</b> → <b>Proceso</b> → <b>Salida</b>, y si querés, <b>Almacenamiento</b>.<div class=tc><b>🔧 Definición técnica</b><br>Ciclo de un sistema informático: ingreso de datos, procesamiento, presentación de resultados y almacenamiento.</div>');say('Vamos a seguir el camino de una letra. Tocá el botón <b>Apretar la tecla A</b>.');
+ A.innerHTML=`<div class=row><div class=nd id=n1><span class=ni>${IC.teclado}</span><br>Entrada</div>➜<div class=nd id=n2><span class=ni>${IC.cpu}</span><br>Proceso</div>➜<div class=nd id=n3><span class=ni>${IC.pantalla}</span><br>Salida<br><b id=ou style="font-size:1.6em">&nbsp;</b></div></div><div class=nd id=n4><span class=ni style="width:1.6em;height:1.6em">${IC.disco}</span> Almacenamiento</div><button class=btn id=ab>⌨️ Apretar la tecla A</button>`;prg('animación');T=()=>$('#ab');
+ const lit=(ids,d)=>tm(()=>['n1','n2','n3','n4'].forEach(x=>$('#'+x).classList.toggle('lit',ids.includes(x))),d);let ph=0;
+ $('#ab').onclick=()=>{const b=$('#ab');b.disabled=true;if(!ph){lit(['n1'],0);say('La tecla A <b>entra</b> a la computadora.');lit(['n2'],2200);tm(()=>say('El procesador la <b>piensa</b>.'),2200);lit(['n3'],4400);tm(()=>{$('#ou').textContent='A';say('¡Y la <b>salida</b> la muestra en la pantalla!')},4400);tm(()=>{ph=1;b.disabled=false;b.textContent='💾 Guardar la A';say('Si querés conservarla, hay que <b>guardarla</b>. Tocá el botón.')},7000)}
+  else{lit(['n2'],0);say('El procesador manda la A al disco...');lit(['n4'],2200);tm(()=>say('¡Guardada! Ahora aunque apagues la compu, la A sigue ahí.'),2200);tm(()=>{T=()=>null;say('Ahora ubicá cada pieza en su paso del camino.');cls({h:'Pensá: ¿entra, se piensa, se muestra o se guarda?',cats:[{id:'e',l:'⬇️ Entrada'},{id:'p',l:'🧠 Proceso'},{id:'s',l:'⬆️ Salida'},{id:'a',l:'💽 Almacenamiento'}],items:I([['teclado','Teclado','e','Por ahí entran tus órdenes.'],['cpu','Procesador','p','Piensa y hace las cuentas.'],['pantalla','Pantalla','s','Te muestra el resultado.'],['disco','Disco','a','Guarda tus cosas.']])},()=>end('¡Perfecto, {n}! Todo lo que hacés en una compu: darle algo, que lo piense, que te lo muestre y, si querés, que lo guarde.'))},5400)}}}
+function st6(){const Q=[['¿Cuál es la alacena de la computadora, donde se guarda todo?',['Procesador','Memoria RAM','Disco','Ventilador'],2,'El disco guarda tus archivos aunque se apague.'],['¿Cuál de estas cosas es hardware?',['Word','Teclado','Windows','WhatsApp'],1,'El teclado se toca; los otros son programas.'],['¿Qué le pasa a la memoria RAM cuando apagás la computadora?',['Se guarda para siempre','Se borra','Se transforma en ROM','Nada'],1,'La RAM es temporal, como la mesada.'],['¿Para qué sirve el ventilador?',['Para hacer ruido','Para dar energía','Para sacar el calor','Para guardar archivos'],2,'Enfría para que nada se queme.'],['¿Cuál es el orden del camino de la información?',['Salida → Entrada → Proceso','Entrada → Proceso → Salida','Proceso → Salida → Entrada','Salida → Proceso → Entrada'],1,'Entra, se piensa y sale el resultado.']];let q=0,ok=0,fl=0;
+ setF('<h2>🏆 Quiz final</h2>Cinco preguntas para repasar lo que vimos. Si te equivocás, podés intentar de nuevo.');say('¡Último paso! Respondé las cinco preguntas.');
+ const sh=()=>{A.lk=0;fl=0;A.innerHTML=`<div class=cit><b style="font-size:1.25em">${Q[q][0]}</b></div><div class=row>${Q[q][1].map((o,j)=>`<button class=btn data-q=${j}>${o}</button>`).join('')}</div>`;prg(q+' de 5 preguntas')};
+ A.onclick=e=>{const b=e.target.closest('[data-q]');if(!b||A.lk)return;if(+b.dataset.q==Q[q][2]){A.lk=1;if(!fl)ok++;say('✅ ¡Correcto! '+Q[q][3]);q++;tm(()=>{if(q<5)sh();else{A.onclick=null;prg('completada ✔');A.innerHTML=`<div class=cit><i>🏅</i><b style="font-size:1.4em">Explorador del interior</b><br>${NM}<br>Clase 1 completada<br>${ok} de 5 a la primera</div>`;say('¡Felicitaciones, {n}! Ya sabés qué es una computadora, qué tiene adentro y cómo viaja la información. En la clase 2 vemos los periféricos y las conexiones.');nxv('block')}},2600)}else{fl=1;ERR++;say('¡Casi! Probá otra vez.')}};sh()}
+addEventListener('resize',rot);lay();tick();
+/* ===================== V3.0 =====================
+   Portada con tarjetas, fotos reales, periféricos
+   y galerías de componentes. Se agrega al final del
+   script original y redefine solo lo necesario.
+   ================================================ */
+
+const V3FOTOS = {};
+const V3CRED = [
+  {"s":"cpu-1","t":"Intel i9-14900KF CPU","a":"Pstrahl","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:Intel_i9-14900KF_CPU.jpg"},
+  {"s":"cpu-2","t":"Cyrix IBM CPU 6x86MX PR200 bottom","a":"Eric Gaba (Sting - fr:Sting)","l":"CC BY-SA 3.0","u":"https://commons.wikimedia.org/wiki/File:Cyrix_IBM_CPU_6x86MX_PR200_bottom.jpg"},
+  {"s":"cpu-3","t":"Supermicro dual opteron server board cpu socket","a":"smial (talk)","l":"FAL","u":"https://commons.wikimedia.org/wiki/File:Supermicro_dual_opteron_server_board_cpu_socket_IMGP7338_wp.jpg"},
+  {"s":"cpu-4","t":"CPU cooler Thermalright Le Grand Macho RT instalado","a":"Bretwa","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:CPU_cooler_Thermalright_Le_Grand_Macho_RT_installed_into_computer_case_-_2018-05-20.jpg"},
+  {"s":"disco-1","t":"Hard disk drive platter, Samsung MP0402H","a":"Mk2010","l":"CC BY 4.0","u":"https://commons.wikimedia.org/wiki/File:Hard_disk_drive_platter,_Samsung_MP0402H.jpg"},
+  {"s":"disco-2","t":"Seagate ST33232A hard disk inner view","a":"Eric Gaba (Sting - fr:Sting)","l":"CC BY-SA 3.0","u":"https://commons.wikimedia.org/wiki/File:Seagate_ST33232A_hard_disk_inner_view.jpg"},
+  {"s":"disco-3","t":"Dual SSD SATA adapter with Samsung 860 EVO SSD","a":"Siarhei Besarab","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:Dual_SSD_SATA_adapter_with_Samsung_860_EVO_SSD_and_2.5-inch_enclosure.jpg"},
+  {"s":"disco-4","t":"ExpressCard to M.2 NVMe SSD adapter","a":"Siarhei Besarab","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:ExpressCard_to_M.2_2230_or_2242_NVMe_SSD_adapter_front_and_back_views.jpg"},
+  {"s":"fuente-1","t":"ATX Computer power supply unit","a":"Dmitry Makeev","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:ATX_Computer_power_supply_unit.jpg"},
+  {"s":"fuente-2","t":"Power Supply Unit Label PSU","a":"I G","l":"CC0","u":"https://commons.wikimedia.org/wiki/File:Power_Supply_Unit_Label_PSU_(44490595865).jpg"},
+  {"s":"fuente-3","t":"Złącze zasilania ATX","a":"Jacek Halicki","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:2023_Z%C5%82%C4%85cze_zasilania_ATX.jpg"},
+  {"s":"fuente-4","t":"PC Power Supply Unit PSU with CPU cooler air flow funnel","a":"Hans Haase","l":"CC BY-SA 3.0","u":"https://commons.wikimedia.org/wiki/File:PC_Power_Supply_Unit_PSU_wird_CPU_cooler_air_flow_funnel_IMG_8127.JPG"},
+  {"s":"gabinete","t":"ATX computer case - left","a":"Bretwa","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:ATX_computer_case_-_left_-_2018-05-18.jpg"},
+  {"s":"madre-1","t":"Płyta główna ASRock A320M-DVS","a":"Jacek Halicki","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:2023_P%C5%82yta_g%C5%82%C3%B3wna_ASRock_A320M-DVS.jpg"},
+  {"s":"madre-2","t":"HP-HP9000-C8000 Workstation CPU Socket","a":"Thomas Schanz","l":"CC BY-SA 3.0","u":"https://commons.wikimedia.org/wiki/File:HP-HP9000-C8000-Workstation-CPU-Socket_02.jpg"},
+  {"s":"madre-3","t":"Sapphire Radeon HD 5870 PCIe x16 connection","a":"D-Kuru","l":"CC BY-SA 3.0 at","u":"https://commons.wikimedia.org/wiki/File:Sapphire_Radeon_HD_5870_%E2%80%93_PCIe_x16_connection_PNr%C2%B00314.jpg"},
+  {"s":"madre-4","t":"Close view of a computer component with a fan inside a case","a":"Shixart1985","l":"CC BY 2.0","u":"https://commons.wikimedia.org/wiki/File:Close_view_of_a_computer_component_with_a_fan_inside_a_case_under_blue_light.jpg"},
+  {"s":"per-camara","t":"Fancy webcam on computer screen","a":"Peter Placzek","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:Fancy_webcam_on_computer_screen.jpg"},
+  {"s":"per-disco-externo","t":"Toshiba 1 TB External USB Hard Drive","a":"Editor182 (talk)","l":"Public domain","u":"https://commons.wikimedia.org/wiki/File:Toshiba_1_TB_External_USB_Hard_Drive.jpg"},
+  {"s":"per-escaner","t":"Drum scanner","a":"Stefan Kühn","l":"CC BY-SA 3.0","u":"https://commons.wikimedia.org/wiki/File:Drum_scanner.jpg"},
+  {"s":"per-impresora","t":"Lexmark Printer IMG 0001 (cropped)","a":"Roger DeWitt","l":"CC BY 2.0","u":"https://commons.wikimedia.org/wiki/File:Lexmark_Printer_IMG_0001_(cropped).jpg"},
+  {"s":"per-microfono","t":"AKG C214 Condenser microphone","a":"Lucasbosch","l":"CC BY-SA 3.0","u":"https://commons.wikimedia.org/wiki/File:AKG_C214_Condenser_microphone.jpg"},
+  {"s":"per-pantalla-tactil","t":"Hear Music touchscreen","a":"Thomas Duesing","l":"CC BY 2.0","u":"https://commons.wikimedia.org/wiki/File:Hear_Music_touchscreen.jpg"},
+  {"s":"per-proyector","t":"InFocus IN34","a":"Dave Pape","l":"Public domain","u":"https://commons.wikimedia.org/wiki/File:InFocus_IN34.jpg"},
+  {"s":"portada","t":"Aerial view of woman using computer laptop and a smartphone","a":"Rawpixel Ltd","l":"CC BY 2.0","u":"https://commons.wikimedia.org/wiki/File:Aerial_view_of_woman_using_computer_laptop_and_a_smartphone_on_wooden_table_(40640189245).jpg"},
+  {"s":"ram-1","t":"RAM Module (SDRAM-DDR4)","a":"ElooKoN","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:RAM_Module_(SDRAM-DDR4).jpg"},
+  {"s":"ram-2","t":"168 pin and 184 pin DIMM","a":"Veeblefetzer","l":"CC BY 4.0","u":"https://commons.wikimedia.org/wiki/File:168_pin_and_184_pin_DIMM.jpg"},
+  {"s":"ram-3","t":"Lenovo ThinkPad X220 Motherboard with empty RAM slots","a":"Siarhei Besarab","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:Lenovo_ThinkPad_X220_Motherboard_(FRU_04W3286)_with_empty_RAM_slots.jpg"},
+  {"s":"ram-4","t":"DDR SO-DIMM slot","a":"D-Kuru","l":"CC BY-SA 3.0 at","u":"https://commons.wikimedia.org/wiki/File:DDR_SO-DIMM_slot_PNr%C2%B00341.jpg"},
+  {"s":"s1-cajero","t":"Automated teller machine downtown Harrisonburg VA","a":"Artaxerxes","l":"CC BY-SA 3.0","u":"https://commons.wikimedia.org/wiki/File:Automated_teller_machine_downtown_Harrisonburg_VA_July_2012.jpg"},
+  {"s":"s1-celular","t":"Blackview A60 Smartphone","a":"Acabashi","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:Blackview_A60_Smartphone_Android_mobile_phone_front_face_logged_in_screen.jpg"},
+  {"s":"s1-heladera","t":"US Domestic Refrigerator - Frigidaire","a":"Infrogmation of New Orleans","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:US_Domestic_Refrigerator_-_Frigidaire.jpg"},
+  {"s":"s1-notebook","t":"IBM Thinkpad R51","a":"André Karwath aka Aka","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:IBM_Thinkpad_R51.jpg"},
+  {"s":"s1-pc-escritorio","t":"Scientist working with personal computer (Dell Precision T3500)","a":"Flickr user ipasadelaide / Jennie Groom","l":"CC BY 2.0","u":"https://commons.wikimedia.org/wiki/File:Scientist_working_with_personal_computer,_2013_(Dell_Precision_T3500_Workstation).jpeg"},
+  {"s":"s1-reloj-inteligente","t":"Child's phone watch (smartwatch) in China","a":"Anna Frodesiak","l":"CC0","u":"https://commons.wikimedia.org/wiki/File:Child%27s_phone_watch_(smartwatch)_in_China_(girl).jpg"},
+  {"s":"s1-tostadora","t":"Bread in Toaster","a":"Dejan Krsmanovic","l":"CC BY 2.0","u":"https://commons.wikimedia.org/wiki/File:Bread_in_Toaster_(51920214512).jpg"},
+  {"s":"s2-monitor","t":"Amiga500 system","a":"Bill Bertram","l":"CC BY-SA 2.5","u":"https://commons.wikimedia.org/wiki/File:Amiga500_system.jpg"},
+  {"s":"s2-mouse","t":"Logitech G903 Lightspeed","a":"Jacek Halicki","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:2023_Mysz_komputerowa_Logitech_G903_Lightspeed.jpg"},
+  {"s":"s2-parlantes","t":"Bose Computer MusicMonitor","a":"Ben Stassen","l":"CC BY 2.0","u":"https://commons.wikimedia.org/wiki/File:Bose_Computer_MusicMonitor.jpg"},
+  {"s":"s2-pendrive","t":"Verbatim Store n Click 16 GB","a":"Jacek Halicki","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:2023_Pendrive%27y_Verbatim_Store_%E2%80%98n%E2%80%99_Click_16_GB_(1).jpg"},
+  {"s":"s2-teclado","t":"QWERTY keyboard","a":"MichaelMaggs","l":"CC BY-SA 3.0","u":"https://commons.wikimedia.org/wiki/File:QWERTY_keyboard.jpg"},
+  {"s":"vent-1","t":"Prozessorkuehler komponenten","a":"smial (talk)","l":"FAL","u":"https://commons.wikimedia.org/wiki/File:Prozessorkuehler_komponenten_IMGP5332_wp.jpg"},
+  {"s":"vent-2","t":"ATX Computer cases, back view","a":"Dmitry Makeev","l":"CC BY-SA 4.0","u":"https://commons.wikimedia.org/wiki/File:ATX_Computer_cases,_back_view.jpg"},
+  {"s":"vent-3","t":"Cpu cooler Supermicro SNK-P0064AP4","a":"Smial (talk)","l":"FAL","u":"https://commons.wikimedia.org/wiki/File:Cpu_cooler_Supermicro_SNK-P0064AP4_IMGP3440_smial_wp.jpg"},
+  {"s":"vent-4","t":"Dusty computer cooling fan","a":"McZusatz","l":"CC BY-SA 3.0","u":"https://commons.wikimedia.org/wiki/File:Dusty_computer_cooling_fan.JPG"},
+  {"s":"s2-windows","t":"Captura del menú Inicio de Windows 10","a":"Profe Mario Jofré","l":"Uso educativo, licencia pendiente","u":""},
+  {"s":"s2-word","t":"Captura de Microsoft Word","a":"Profe Mario Jofré","l":"Uso educativo, licencia pendiente","u":""},
+  {"s":"s2-paint","t":"Captura de Paint","a":"Profe Mario Jofré","l":"Uso educativo, licencia pendiente","u":""},
+  {"s":"s2-chrome","t":"Captura de Google Chrome","a":"Profe Mario Jofré","l":"Uso educativo, licencia pendiente","u":""},
+  {"s":"s2-whatsapp","t":"Fotografía de un celular con el logo de WhatsApp","a":"Profe Mario Jofré","l":"Uso educativo, licencia pendiente","u":""}
+];
+const MJ_IMG = '../../imagenes/teoria-tic-1/'; /* ← ruta de las fotos de esta app. Ajustar si cambia la estructura */
+const FOTO = n => MJ_IMG + n + '.webp';
+
+/* Epígrafes breves: explican qué se ve, sobre todo en las fotos que pueden confundir. */
+const V3CAP = {
+  'portada': 'Una notebook y un celular sobre un escritorio de madera.',
+  'cpu-1': 'Procesador Intel Core i9 de frente.',
+  'cpu-2': 'Procesador Cyrix visto desde abajo.',
+  'cpu-3': 'Zócalo de CPU de un servidor.',
+  'cpu-4': 'Disipador de CPU instalado en el gabinete.',
+  'ram-1': 'Módulo de memoria RAM DDR4.',
+  'ram-2': 'Módulos DIMM de 168 y 184 contactos.',
+  'ram-3': 'Placa madre de una notebook con ranuras de RAM vacías.',
+  'ram-4': 'Ranura SO-DIMM para memoria de notebook.',
+  'disco-1': 'Plato de un disco rígido abierto.',
+  'disco-2': 'Interior de un disco rígido Seagate.',
+  'disco-3': 'SSD SATA y adaptador dual.',
+  'disco-4': 'Adaptador para SSD M.2 NVMe.',
+  'fuente-1': 'Fuente de alimentación ATX.',
+  'fuente-2': 'Etiqueta de una fuente de 500 W.',
+  'fuente-3': 'Conector de alimentación ATX.',
+  'fuente-4': 'Fuente de PC con conducto de aire.',
+  'gabinete': 'Gabinete ATX de una computadora.',
+  'madre-1': 'Placa madre ASRock A320M-DVS.',
+  'madre-2': 'Zócalo de CPU de una estación de trabajo HP.',
+  'madre-3': 'Conexión PCIe x16 de una placa de video.',
+  'madre-4': 'Componentes de una PC iluminados en azul.',
+  'per-camara': 'Cámara web montada sobre una pantalla.',
+  'per-disco-externo': 'Disco externo USB de 1 TB.',
+  'per-escaner': 'Escáner de tambor.',
+  'per-impresora': 'Impresora multifunción Lexmark.',
+  'per-microfono': 'Micrófono de condensador AKG.',
+  'per-pantalla-tactil': 'Pantalla táctil de un kiosco: muestra información y recibe toques.',
+  'per-proyector': 'Proyector InFocus.',
+  's1-cajero': 'Cajero automático: también es una computadora.',
+  's1-celular': 'Celular con aplicaciones en pantalla.',
+  's1-heladera': 'Heladera doméstica: no es programable.',
+  's1-notebook': 'Notebook IBM ThinkPad.',
+  's1-pc-escritorio': 'Persona trabajando en una computadora de escritorio.',
+  's1-reloj-inteligente': 'Reloj inteligente en una muñeca.',
+  's1-tostadora': 'Tostadora: hace una sola tarea fija.',
+  's2-monitor': 'Monitor y teclado de una Amiga: la pantalla es el periférico de salida.',
+  's2-mouse': 'Mouse inalámbrico con receptor USB.',
+  's2-parlantes': 'Par de parlantes para computadora.',
+  's2-pendrive': 'Tres pendrives de colores.',
+  's2-teclado': 'Teclado QWERTY.',
+  'vent-1': 'Partes de un disipador de CPU.',
+  'vent-2': 'Vista trasera de gabinetes ATX.',
+  'vent-3': 'Disipador de CPU con heatpipes.',
+  'vent-4': 'Ventilador de computadora con polvo.',
+  's2-windows': 'Menú Inicio de Windows 10.',
+  's2-word': 'Documento abierto en Microsoft Word.',
+  's2-paint': 'Dibujo realizado en Paint.',
+  's2-chrome': 'Página de inicio de Google en Chrome.',
+  's2-whatsapp': 'Celular con el logo de WhatsApp.'
+};
+
+/* Encuadre fino para las fotos que, si se muestran completas, distraen. */
+const V3POS = {
+  's1-cajero': '50% 30%',
+  's2-monitor': '50% 18%',
+  'per-pantalla-tactil': '50% 40%',
+  's1-notebook': '50% 45%',
+  's2-word': '50% 35%',
+  's2-paint': '50% 55%'
+};
+
+const V3GAL = {
+  cpu:    ['cpu-1', 'cpu-2', 'cpu-3', 'cpu-4'],
+  ram:    ['ram-1', 'ram-2', 'ram-3', 'ram-4'],
+  disco:  ['disco-1', 'disco-2', 'disco-3', 'disco-4'],
+  madre:  ['madre-1', 'madre-2', 'madre-3', 'madre-4'],
+  fuente: ['fuente-1', 'fuente-2', 'fuente-3', 'fuente-4'],
+  vent:   ['vent-1', 'vent-2', 'vent-3', 'vent-4']
+};
+const V3GK = ['cpu', 'ram', 'disco', 'madre', 'fuente', 'vent'];
+
+let V3G = [], V3GI = 0, V3GT = '';
+
+/* ---------- ventana de fotos ---------- */
+
+function verFoto(titulo, lista, idx) {
+  V3GT = titulo;
+  V3G = (lista || []).slice();
+  V3GI = Math.max(0, Math.min(V3G.length - 1, idx || 0));
+  $('#ftit').textContent = titulo;
+  $('#fmain').style.display = '';
+  $('#fmain').style.opacity = '';
+  $('#fcap').innerHTML = '';
+  $('#foto').classList.add('vis');
+  pintaFoto();
+}
+
+function creditoFoto(n) {
+  for (let i = 0; i < V3CRED.length; i++) { if (V3CRED[i].s === n) { return V3CRED[i]; } }
+  return null;
+}
+
+function pintaFoto() {
+  if (!V3G.length) { return; }
+  const n = V3G[V3GI];
+  const cap = V3CAP[n] || V3GT;
+  const cr = creditoFoto(n);
+  $('#fmain').src = FOTO(n);
+  $('#fmain').alt = cap;
+  $('#fthumbs').innerHTML = V3G.length > 1
+    ? V3G.map((x, i) => `<button class="${i === V3GI ? 'on' : ''}" onclick="setFoto(${i})" aria-label="Foto ${i + 1}"><img src="${FOTO(x)}" alt="" loading="lazy"></button>`).join('')
+    : '';
+  $('#fprev').style.display = V3G.length > 1 ? 'flex' : 'none';
+  $('#fnext').style.display = V3G.length > 1 ? 'flex' : 'none';
+  $('#fprev').disabled = V3GI === 0;
+  $('#fnext').disabled = V3GI === V3G.length - 1;
+  $('#fcap').innerHTML = `<div class=fcap-t>${cap}</div>`
+    + (V3G.length > 1 ? `<span class=fcount>${V3GI + 1} / ${V3G.length}</span>` : '')
+    + (cr ? `<div class=fcred>Foto: ${cr.a} · ${cr.l}${cr.u ? ` · <a href="${cr.u}" target="_blank" rel="noopener">Ver original</a>` : ''}</div>` : '');
+}
+
+function setFoto(i) { V3GI = i; pintaFoto(); }
+
+function fotoPaso(d) {
+  if (V3G.length < 2) { return; }
+  V3GI = (V3GI + d + V3G.length) % V3G.length;
+  pintaFoto();
+}
+
+function cerrarFoto() {
+  $('#foto').classList.remove('vis');
+  $('#fmain').style.display = '';
+  $('#fmain').style.opacity = '';
+  $('#fprev').style.display = 'none';
+  $('#fnext').style.display = 'none';
+}
+
+function verPieza(k, i) {
+  const p = P[k];
+  const g = V3GAL[V3GK[k]] || [];
+  verFoto(p.n, g, i || 0);
+}
+
+function abrirCreditos() {
+  V3G = []; V3GI = 0;
+  $('#ftit').textContent = 'Créditos de las fotos';
+  $('#fmain').style.display = 'none';
+  $('#fprev').style.display = 'none';
+  $('#fnext').style.display = 'none';
+  $('#fthumbs').innerHTML = '';
+  $('#fcap').innerHTML = V3CRED.length
+    ? '<p>Fotos de Wikimedia Commons y capturas aportadas por el profe. Cada imagen mantiene su licencia original.</p><ol id=cr>' + V3CRED.map(c =>
+        `<li><b>${c.s}</b>: ${c.t} — ${c.a} (${c.l})${c.u ? `. <a href="${c.u}" target="_blank" rel="noopener">Ver en Commons</a>` : ''}</li>`
+      ).join('') + '</ol>'
+    : 'Los créditos quedan incluidos cuando se empaqueta el archivo final.';
+  $('#foto').classList.add('vis');
+}
+
+$('#foto').onclick = e => { if (e.target.id === 'foto') { cerrarFoto(); } };
+addEventListener('keydown', e => {
+  if (e.key === 'Escape') { cerrarFoto(); return; }
+  if (!$('#foto').classList.contains('vis') || V3G.length < 2) { return; }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); fotoPaso(-1); }
+  if (e.key === 'ArrowRight') { e.preventDefault(); fotoPaso(1); }
+});
+
+/* ---------- portada ---------- */
+
+let V3Hecho = new Set();
+let ERR = 0, T0 = Date.now(), REGD = 0;
+
+const V3EST = [null,
+  { t: '¿Qué es una computadora?', d: 'Reconocer qué aparatos son computadoras y cuáles no.' },
+  { t: 'Hardware y software', d: 'Distinguir lo que se toca de lo que se usa.' },
+  { t: 'Por dentro', d: 'Procesador, RAM, disco, placa madre, fuente y ventilador, con fotos.' },
+  { t: 'Armá la compu', d: 'Ubicar cada pieza y ver qué pasa si falta.' },
+  { t: 'Periféricos', d: 'Entrada, salida y mixtos; cómo viaja la información.' },
+  { t: 'Quiz final', d: 'Cinco preguntas para repasar todo.' }
+];
+
+function pintarInicio() {
+  $('#hc').innerHTML = V3EST.slice(1).map((e, i) => {
+    const n = i + 1, ok = V3Hecho.has(n);
+    return `<button class="hcard ${ok ? 'hecho' : ''}" onclick="go(${n})"><span class=hnum>${ok ? '✔' : n}</span><span><b>${e.t}</b><small>${e.d}</small></span></button>`;
+  }).join('');
+  const hp = $('#hport');
+  hp.src = FOTO('portada');
+  hp.style.display = '';
+  hp.closest('figure').style.display = '';
+  $('#hgo').onclick = () => go(1);
+}
+
+function portadaPanel() {
+  return '<h2>Primeros pasos</h2>Clase 1: conocé el hardware, distinguí el software y aprendé a usar los periféricos.'
+    + '<div class=dc>💡 Elegí una tarjeta para empezar, o seguí el orden propuesto.</div>';
+}
+
+function go(n) {
+  G++; ERR = 0; T0 = Date.now(); REGD = 0; { const d = document.getElementById('dnd'); if (d) { d.remove(); } }
+  if (cur >= 1 && cur <= 6 && n !== cur) { V3Hecho.add(cur); }
+  cur = n;
+  const casa = n === 0;
+  const caja = $('#stg');
+  caja.style.display = (casa || n === 3) ? 'block' : 'none';
+  caja.classList.toggle('home', casa);
+  $('#home').classList.toggle('vis', casa);
+  $('#sk').style.display = (n >= 1 && n < 6) ? '' : 'none';
+  nxv('none');
+  $('#bg').style.filter = `hue-rotate(${HUE[n] || 0}deg)`;
+  A.style.display = (casa || n === 3) ? 'none' : 'flex';
+  $('#bub').style.display = casa ? 'none' : '';
+  A.onclick = null; A.onpointerdown = null;
+  A.lk = 0;
+  A.innerHTML = '';
+  T = () => null;
+  if (casa) {
+    pintarInicio();
+    setF(portadaPanel());
+    $('#pt').textContent = 'Clase 1 · Elegí una estación';
+    return;
+  }
+  [0, st1, st2, st3, st4, st5, st6][n]();
+}
+
+/* ---------- clasificación con fotos y orden al azar ---------- */
+
+function cls(c, after) {
+  const its = c.items.slice();
+  for (let i = its.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = its[i]; its[i] = its[j]; its[j] = t;
+  }
+  let k = 0;
+  const n = its.length;
+
+  const sh = () => {
+    const it = its[k];
+    const pos = V3POS[it.f] || '50% 50%';
+    const cap = V3CAP[it.f] || '';
+    const foto = it.f
+      ? `<div class=qph><img src="${FOTO(it.f)}" alt="${it.n}" loading="lazy" style="object-position:${pos}" onerror="this.parentNode.classList.add('no');this.remove()"><button class=qzoom type=button data-t="${it.n}" data-f="${it.f}" onclick="event.stopPropagation();verFoto(this.dataset.t,[this.dataset.f])" aria-label="Ver foto completa">🔍 Ver foto</button></div>`
+      : `<div class="qph no">${IC[it.e] ? `<div class=ig>${IC[it.e]}</div>` : it.e}</div>`;
+    A.innerHTML = `<div class=qwrap>`
+      + `<div class=qcard id=ci>${foto}<div class=qinfo><span class=qtag>${k + 1}/${n}</span><b>${it.n}</b></div></div>`
+      + (cap ? `<div class=qhint>📷 ${cap}</div>` : '')
+      + `<div class=row>${c.cats.map(x => `<button class=btn data-c=${x.id}>${x.l}</button>`).join('')}</div>`
+      + `<div class=qhint>💡 ${c.h}</div></div>`;
+    prg((k + 1) + ' de ' + n + ' clasificados');
+  };
+
+  A.onclick = e => {
+    const b = e.target.closest('[data-c]');
+    if (!b || A.lk) { return; }
+    const t = its[k];
+    if (b.dataset.c === t.c) {
+      A.lk = 1;
+      say('✅ ¡Correcto! ' + t.w);
+      const x = $('#ci');
+      if (x) { x.classList.add('ok'); }
+      k++;
+      tm(() => {
+        A.lk = 0;
+        if (k < n) { sh(); }
+        else { A.onclick = null; prg(n + ' de ' + n + ' clasificados'); after(); }
+      }, 2600);
+    } else {
+      ERR++; say('¡Casi! ' + c.h);
+      const x = $('#ci');
+      if (x) {
+        x.classList.add('bad');
+        tm(() => x.classList.remove('bad'), 450);
+      }
+    }
+  };
+
+  sh();
+}
+
+/* ---------- ficha de cada componente con fotos ---------- */
+
+function ficha(k) {
+  const p = P[k];
+  const g = V3GAL[V3GK[k]] || [];
+  const minis = g.map((n, i) =>
+    `<img src="${FOTO(n)}" alt="Foto de ${p.n}" loading="lazy" style="object-position:${V3POS[n] || '50% 50%'}" onclick="verPieza(${k},${i})" onerror="this.style.display='none'">`
+  ).join('');
+  $('#fi').innerHTML = `<h2><span class=hi>${SV[k]}</span> ${p.n}</h2>`
+    + `<div class=fph>${minis}</div>`
+    + `<button class=fbtn onclick="verPieza(${k})">📷 Ver las 4 fotos reales</button>`
+    + `<div class=an>Es como: ${p.a}</div>`
+    + `<p style="margin-top:.4em">${p.f}</p>`
+    + `<div class=dc>💡 Dato curioso: ${p.d}</div>`
+    + `<div class=tc><b>🔧 Definición técnica</b><br>${p.t}</div>${p.x || ''}`;
+}
+
+/* ---------- estación 1 ---------- */
+
+function st1() {
+  setF('<h2>🌐 ¿Qué es una computadora?</h2>Una computadora es una máquina que <b>recibe</b> datos, los <b>piensa</b>, los <b>muestra</b> y los <b>guarda</b>.<div class=tc><b>🔧 Definición técnica</b><br>Dispositivo electrónico programable que procesa información según instrucciones.</div>');
+  say('¡Hola {n}! Soy ManuBot. Te voy a mostrar varios aparatos: elegí si es una computadora o no.');
+  cls({
+    h: 'Pensá: ¿recibe datos, los piensa y los muestra, y le podés dar órdenes distintas?',
+    cats: [{ id: 'y', l: '✅ Es una computadora' }, { id: 'n', l: '❌ No lo es' }],
+    items: [
+      { e: 'pc', n: 'Computadora de escritorio', c: 'y', f: 's1-pc-escritorio', w: 'Recibe tus órdenes, las piensa y te muestra el resultado.' },
+      { e: 'notebook', n: 'Notebook', c: 'y', f: 's1-notebook', w: 'Es una computadora que se lleva a todos lados.' },
+      { e: 'celular', n: 'Celular', c: 'y', f: 's1-celular', w: 'Tu celular es una computadora chiquita.' },
+      { e: 'cajero', n: 'Cajero automático', c: 'y', f: 's1-cajero', w: 'Recibe tu tarjeta y tu clave, procesa y muestra.' },
+      { e: 'reloj', n: 'Reloj inteligente', c: 'y', f: 's1-reloj-inteligente', w: 'Tiene procesador y pantalla, aunque sea diminuto.' },
+      { e: 'heladera', n: 'Heladera común', c: 'n', f: 's1-heladera', w: 'Hace una sola cosa fija: no le podés dar órdenes distintas.' },
+      { e: 'tostadora', n: 'Tostadora común', c: 'n', f: 's1-tostadora', w: 'Tampoco: no recibe datos ni los procesa.' }
+    ]
+  }, () => end('¡Muy bien, {n}! Hasta tu celular es una computadora. Ahora vemos qué es hardware y qué es software.'));
+}
+
+/* ---------- estación 2 ---------- */
+
+function st2() {
+  setF('<h2>⚖️ Hardware y software</h2><div class=an>Hardware</div>Las partes <b>físicas</b>: se tocan, se ven y ocupan lugar.<div class=an style="margin-top:.4em">Software</div>Los <b>programas e instrucciones</b>: se usan, pero no se tocan.<div class=tc><b>🔧 Definición técnica</b><br>Hardware: componentes físicos del sistema informático. Software: conjunto de programas y datos que le indican al hardware qué hacer.</div>');
+  say('Antes de practicar, miremos la diferencia entre hardware y software. Leé las dos columnas y después tocá Comenzar la actividad.');
+  prg('definición');
+  const fig = (n, t) => `<figure class=pchip onclick="verFoto('${t}',['${n}'])"><img src="${FOTO(n)}" alt="${t}" loading="lazy" style="object-position:${V3POS[n] || '50% 50%'}" onerror="this.parentNode.classList.add('rota')"><figcaption>${t}</figcaption></figure>`;
+  A.innerHTML = `<div class=cmp><div class=cmpc><h3>🖐️ Hardware</h3><p><b>Es lo físico.</b> Podés tocarlo, verlo y moverlo.</p><div class=prow>${fig('s2-teclado','Teclado') + fig('s2-mouse','Mouse') + fig('s2-pendrive','Pendrive') + fig('s2-monitor','Monitor') + fig('s2-parlantes','Parlantes')}</div><ul><li>Se toca y ocupa lugar.</li><li>Se rompe, se ensucia o se repara.</li><li>Se compra y se conecta.</li></ul></div><div class=cmpc><h3>💭 Software</h3><p><b>Es lo que se usa.</b> Son los programas: no se tocan.</p><div class=prow>${fig('s2-windows','Windows') + fig('s2-word','Word') + fig('s2-paint','Paint') + fig('s2-chrome','Chrome') + fig('s2-whatsapp','WhatsApp')}</div><ul><li>No se toca: se ve en la pantalla.</li><li>Se instala, se actualiza o se borra.</li><li>Le dice al hardware qué hacer.</li></ul></div></div><div class=tc style="max-width:44em">🤝 <b>Trabajan juntos:</b> sin software el hardware no sabe qué hacer, y sin hardware el software no tiene dónde funcionar. Es como el cuerpo y la mente.</div><button class="btn go" id=cmp1>Comenzar la actividad ▶</button>`;
+  T = () => $('#cmp1');
+  $('#cmp1').onclick = () => st2act();
+}
+function st2act() {
+  setF('<h2>⚖️ Hardware y software</h2>🖐️ <b>Hardware</b>: lo que podés <b>tocar</b>.<br>💭 <b>Software</b>: lo que <b>usás</b> pero no tocás.<br>Es como el <b>cuerpo</b> y la <b>mente</b>: uno sin el otro no sirve.<div class=tc><b>🔧 Definición técnica</b><br>Hardware: componentes físicos del sistema. Software: programas e instrucciones que el hardware ejecuta.</div>');
+  say('Te voy a mostrar objetos de a uno. Decime si se pueden tocar o no.');
+  cls({
+    h: 'Pensá: ¿lo podés agarrar con la mano o es un programa?',
+    cats: [{ id: 'h', l: '🖐️ Hardware: se puede tocar' }, { id: 's', l: '💭 Software: no se toca' }],
+    items: [
+      { e: 'teclado', n: 'Teclado', c: 'h', f: 's2-teclado', w: 'Lo podés tocar.' },
+      { e: 'paint', n: 'Paint', c: 's', f: 's2-paint', w: 'Es un programa: lo usás, pero no lo tocás.' },
+      { e: 'mouse', n: 'Mouse', c: 'h', f: 's2-mouse', w: 'Lo agarrás con la mano.' },
+      { e: 'word', n: 'Word', c: 's', f: 's2-word', w: 'Es un programa para escribir.' },
+      { e: 'pendrive', n: 'Pendrive', c: 'h', f: 's2-pendrive', w: 'Lo agarrás con la mano; sus archivos, en cambio, no se tocan.' },
+      { e: 'windows', n: 'Windows', c: 's', f: 's2-windows', w: 'Es el sistema que ordena todo lo demás.' },
+      { e: 'parlantes', n: 'Parlantes', c: 'h', f: 's2-parlantes', w: 'Son objetos físicos.' },
+      { e: 'chrome', n: 'Chrome', c: 's', f: 's2-chrome', w: 'Es un programa para navegar en internet.' },
+      { e: 'pantalla', n: 'Pantalla', c: 'h', f: 's2-monitor', w: 'La ves y la tocás: es una pieza física.' },
+      { e: 'whatsapp', n: 'WhatsApp', c: 's', f: 's2-whatsapp', w: 'Es una aplicación: no se toca, se usa.' }
+    ]
+  }, () => end('¡Excelente, {n}! Hardware es el cuerpo y software es la mente. Ahora abrimos la computadora por dentro.'));
+}
+
+/* ---------- estación 5: periféricos + camino ---------- */
+
+function grupoPerif(t, d, its) {
+  return `<div class=pgrp><h3>${t}</h3><p>${d}</p><div class=prow>` + its.map(([n, txt]) =>
+    `<figure class=pchip onclick="verFoto('${txt}',['${n}'])"><img src="${FOTO(n)}" alt="${txt}" loading="lazy" style="object-position:${V3POS[n] || '50% 50%'}" onerror="this.parentNode.classList.add('rota')"><figcaption>${txt}</figcaption></figure>`
+  ).join('') + '</div></div>';
+}
+
+function st5() {
+  prg('periféricos');
+  setF('<h2>🔌 Periféricos</h2>'
+    + '<p>Un <b>periférico</b> es todo aparato que se conecta a la computadora para comunicarse con ella: meter datos, sacar resultados o guardar información.</p>'
+    + '<div class=tc><b>🔧 Los tres tipos</b><br>'
+    + '⬇️ <b>Entrada</b>: meten datos (teclado, mouse, micrófono).<br>'
+    + '⬆️ <b>Salida</b>: muestran resultados (monitor, impresora, parlantes).<br>'
+    + '🔁 <b>Entrada y salida</b>: hacen las dos cosas (pantalla táctil, pendrive, disco externo).</div>'
+    + '<div class=dc>💡 Un pendrive guarda y devuelve archivos: por eso es de entrada y salida.</div>'
+    + '<button class="btn" id=v3prac style="margin-top:.6em">Practicar: clasificá 11 dispositivos ▶</button>');
+  say('Los periféricos son las puertas de la computadora. Mirá los tres grupos con fotos y después clasificá once dispositivos.');
+  A.innerHTML =
+    grupoPerif('⬇️ Entrada', 'Meten datos a la computadora.', [['s2-teclado', 'Teclado'], ['s2-mouse', 'Mouse'], ['per-microfono', 'Micrófono'], ['per-camara', 'Cámara web'], ['per-escaner', 'Escáner']]) +
+    grupoPerif('⬆️ Salida', 'Nos muestran resultados.', [['s2-monitor', 'Monitor'], ['s2-parlantes', 'Parlantes'], ['per-impresora', 'Impresora'], ['per-proyector', 'Proyector']]) +
+    grupoPerif('🔁 Entrada y salida', 'Hacen las dos cosas.', [['per-pantalla-tactil', 'Pantalla táctil'], ['s2-pendrive', 'Pendrive'], ['per-disco-externo', 'Disco externo']]);
+  $('#v3prac').onclick = () => { $('#v3prac').style.display = 'none'; practicaPerif(); };
+}
+
+function practicaPerif() {
+  cls({
+    h: 'Pensá: ¿el dato entra, sale, o hace las dos cosas?',
+    cats: [{ id: 'e', l: '⬇️ Entrada' }, { id: 's', l: '⬆️ Salida' }, { id: 'm', l: '🔁 Entrada y salida' }],
+    items: [
+      { e: 'teclado', n: 'Teclado', c: 'e', f: 's2-teclado', w: 'Por el teclado entran las órdenes.' },
+      { e: 'mouse', n: 'Mouse', c: 'e', f: 's2-mouse', w: 'El mouse mete datos: movimientos y clics.' },
+      { e: 'microfono', n: 'Micrófono', c: 'e', f: 'per-microfono', w: 'La voz entra por el micrófono.' },
+      { e: '📷', n: 'Cámara web', c: 'e', f: 'per-camara', w: 'La imagen entra por la cámara web.' },
+      { e: '🖨️', n: 'Escáner', c: 'e', f: 'per-escaner', w: 'El escáner mete una imagen al sistema.' },
+      { e: 'pantalla', n: 'Monitor', c: 's', f: 's2-monitor', w: 'El monitor muestra el resultado.' },
+      { e: 'parlantes', n: 'Parlantes', c: 's', f: 's2-parlantes', w: 'Los parlantes sacan sonido.' },
+      { e: 'impresora', n: 'Impresora', c: 's', f: 'per-impresora', w: 'La impresora saca el resultado en papel.' },
+      { e: '📽️', n: 'Proyector', c: 's', f: 'per-proyector', w: 'El proyector saca la imagen a una pared.' },
+      { e: 'celular', n: 'Pantalla táctil', c: 'm', f: 'per-pantalla-tactil', w: 'Muestra y también recibe tus toques.' },
+      { e: 'pendrive', n: 'Pendrive', c: 'm', f: 's2-pendrive', w: 'Guarda archivos y también los devuelve.' }
+    ]
+  }, () => camino());
+}
+
+function camino() {
+  setF('<h2>🛤️ El camino de la información</h2><b>Entrada</b> → <b>Proceso</b> → <b>Salida</b>, y si querés, <b>Almacenamiento</b>.<div class=tc><b>🔧 Definición técnica</b><br>Ciclo de un sistema informático: ingreso de datos, procesamiento, presentación de resultados y almacenamiento.</div>');
+  say('Ahora seguí el camino de una letra. Tocá el botón <b>Apretar la tecla A</b>.');
+  A.innerHTML = `<div class=row><div class=nd id=n1><img class=nph src="${FOTO('s2-teclado')}" alt="Teclado" loading="lazy"><br>Entrada</div>➜<div class=nd id=n2><img class=nph src="${FOTO('cpu-1')}" alt="Procesador" loading="lazy"><br>Proceso</div>➜<div class=nd id=n3><img class=nph src="${FOTO('s2-monitor')}" alt="Monitor" loading="lazy" style="object-position:50% 18%"><br>Salida<br><b id=ou style="font-size:1.6em">&nbsp;</b></div></div><div class=nd id=n4><img class=nph src="${FOTO('disco-3')}" alt="Disco SSD" loading="lazy"> Almacenamiento</div><button class=btn id=ab>⌨️ Apretar la tecla A</button>`;
+  prg('el camino de la información');
+  T = () => $('#ab');
+  const lit = (ids, d) => tm(() => ['n1', 'n2', 'n3', 'n4'].forEach(x => $('#' + x).classList.toggle('lit', ids.includes(x))), d);
+  let ph = 0;
+  $('#ab').onclick = () => {
+    const b = $('#ab');
+    b.disabled = true;
+    if (!ph) {
+      lit(['n1'], 0);
+      say('La tecla A <b>entra</b> a la computadora.');
+      lit(['n2'], 2200);
+      tm(() => say('El procesador la <b>piensa</b>.'), 2200);
+      lit(['n3'], 4400);
+      tm(() => { $('#ou').textContent = 'A'; say('¡Y la <b>salida</b> la muestra en la pantalla!'); }, 4400);
+      tm(() => { ph = 1; b.disabled = false; b.textContent = '💾 Guardar la A'; say('Para conservarla hay que <b>guardarla</b>. Tocá el botón.'); }, 7000);
+    } else {
+      lit(['n2'], 0);
+      say('El procesador manda la A al disco...');
+      lit(['n4'], 2200);
+      tm(() => { T = () => null; end('¡Muy bien, {n}! Todo lo que hacés en una compu: darle algo, que lo piense, que te lo muestre y, si querés, que lo guarde.'); }, 3000);
+    }
+  };
+}
+
+/* ---------- entrada a la portada y modo de prueba ---------- */
+
+cur = 0;
+
+
+(function () {
+  let q;
+  try { q = new URLSearchParams(location.search); } catch (err) { return; }
+  if (!q.has('dev')) { return; }
+  NM = 'Profe';
+  
+  const d = q.get('dev');
+  if (d === 'creditos') { go(0); abrirCreditos(); return; }
+  if (d === 'foto') { go(3); verPieza(0); return; }
+  if (d === 'home' || d === '0') { go(0); return; }
+  go(Number(d) || 0);
+})();
+
+
+/* ---------- Contrato v1: registro, avisos de desplazamiento y fondo ---------- */
+const APP = 'teoria-tic';
+function reg(n) {
+  if (REGD) { return; } REGD = 1;
+  try { Progreso.registrar(APP, 'a0' + n, { estado: 'hecha', estrellas: ERR === 0 ? 3 : ERR <= 3 ? 2 : 1, errores: ERR, seg: Math.round((Date.now() - T0) / 1000) }); V3Hecho.add(n); } catch (e) {}
+}
+function nxv(v) {
+  const ult = cur >= 6;
+  $('#nx').style.display = (v === 'block' && ult) ? 'none' : v;
+  $('#nr').style.display = v; $('#nh').style.display = v;
+  if (v === 'block' && cur >= 1 && cur <= 6) { reg(cur); }
+}
+$('#nr').onclick = () => go(cur);
+$('#nh').onclick = () => Alumno.irInicio();
+function fondo() { const c = document.body.classList.toggle('calm'); $('#bgb').textContent = c ? '🌌 Fondo animado' : '🌌 Fondo estático'; }
+function flechas() {
+  [['#pn', '#sa1'], ['#alt', '#sa2']].forEach(p => {
+    const e = $(p[0]), f = $(p[1]), r = e.getBoundingClientRect();
+    const mas = e.offsetParent !== null && e.scrollHeight - e.clientHeight - e.scrollTop > 10;
+    f.style.display = mas ? 'flex' : 'none';
+    if (mas) { f.style.left = (r.right - 48) + 'px'; f.style.top = (r.bottom - 52) + 'px'; }
+  });
+  requestAnimationFrame(flechas);
+}
+$('#sa1').onclick = () => $('#pn').scrollBy({ top: 220, behavior: 'smooth' });
+$('#sa2').onclick = () => $('#alt').scrollBy({ top: 220, behavior: 'smooth' });
+flechas();
+Alumno.botonInicio($('#top'));
+{ const pf = Alumno.prefs(); if (pf.fs && pf.fs !== fs) { fz(pf.fs - fs); } if (pf.voz === false && voz) { tv(); } }
+if (!/[?&]dev=/.test(location.search)) {
+  Alumno.pedir(a => {
+    NM = (a.nombre || '').split(' ')[0] || 'Estudiante';
+    [1, 2, 3, 4, 5, 6].forEach(n => { if (Progreso.hecha(APP, 'a0' + n)) { V3Hecho.add(n); } });
+    go(0);
+  });
+}
+</script></body></html>
+<!-- Aplicación: Clase 1 · Conozco mi computadora (appId: teoria-tic)
+Versión 4.0 — 24/10/2026 — adaptada al Contrato v1 (módulos alumno y progreso, botón Inicio, Continuar ejercitando); fotos fuera del HTML (carpeta imagenes/teoria-tic); iconos en vez de fotos en las actividades; flechas verdes de desplazamiento; Armá la compu con arrastrar y soltar y cuadro de ejemplo; botón Fondo estático/animado; pantalla de definición de hardware y software
+Versión 3.0 — portada con tarjetas, fotos reales, periféricos y galerías de componentes
+Versión 1.2 — pantalla de inicio con nombre del alumno
+Versión 1.1 — botón Saltar tarea, iconos realistas, fondo de plaqueta de circuitos
+Versión 1.0 — primera versión: 6 estaciones y quiz
+-->

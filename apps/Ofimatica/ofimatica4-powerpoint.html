@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ofimática 4 · PowerPoint por dentro</title>
+<style>
+*{box-sizing:border-box;margin:0}
+body{--bg:#fff;--fg:#222;--ac:#d24726;font:13px "Segoe UI",Arial,sans-serif;height:100vh;overflow:hidden;background:linear-gradient(135deg,#0a5fc0,#06336b);color:#222}
+body.th1{--bg:#1f3864;--fg:#fff;--ac:#ffc000}body.th2{--bg:#e8f5ec;--fg:#1b4332;--ac:#2d9a5b}
+button,select{font:inherit;cursor:pointer}
+#w{position:fixed;inset:0 18em 0 0;display:flex;flex-direction:column;background:#e6e6e6}
+#ti{height:2.5em;background:#b7472a;color:#fff;display:flex;align-items:center;gap:.2em;padding-left:.6em}
+#ti svg{width:1.4em;height:1.4em}#qa{display:flex;gap:.1em}#qa button,#wc button{background:none;border:0;color:#fff;padding:.2em .3em;border-radius:2px}#qa button:hover,#wc button:hover{background:#ffffff33}
+#nm{flex:1;text-align:center}#sr{background:#fff;color:#777;border-radius:2px;padding:.2em .6em;width:12em;margin-right:.8em}#wc button{width:3.2em;height:2.5em}
+#tabs{background:#b7472a;display:flex;padding-left:.3em;overflow:hidden}#tabs span{padding:.45em .7em;color:#fff;cursor:pointer;white-space:nowrap}#tabs span:hover{background:#ffffff26}
+#tabs .on{background:#f3f3f3;color:#b7472a;font-weight:600}#tabs .ar{background:#8f3520;font-weight:600;margin-right:.3em}
+#rib{background:#f3f3f3;border-bottom:1px solid #d1d1d1;display:flex;height:8.7em;padding:.2em .3em 0;overflow:hidden}
+.gr{display:flex;flex-direction:column;border-right:1px solid #d9d9d9;padding:0 .35em}.gi{flex:1;display:flex;gap:.15em;align-items:flex-start;padding-top:.15em}.gn{text-align:center;font-size:.85em;color:#555;padding:.2em 0;white-space:nowrap}
+.col{display:flex;flex-direction:column}.rw{display:flex;gap:.05em;align-items:center;margin-bottom:.25em}
+.b{display:flex;flex-direction:column;align-items:center;gap:.1em;border:1px solid transparent;border-radius:2px;background:none;padding:.2em .35em;color:#333;font-size:.92em;max-width:6em;text-align:center}
+.b svg{width:2.7em;height:2.7em}.b:hover{background:#e1e1e1;border-color:#c5c5c5}.b.on{background:#f6cfc2;border-color:#e59a82}
+.b.s{flex-direction:row;padding:.2em .3em;max-width:none}.b.s svg{width:1.45em;height:1.45em}.b.lb{gap:.4em}
+.rw select{border:1px solid #bbb;background:#fff;padding:.15em;margin-right:.2em;height:1.9em}
+#mn{flex:1;display:flex;min-height:0}#th{width:12.5em;background:#e6e6e6;border-right:1px solid #ccc;overflow:auto;padding:.5em .4em}
+.tw{display:flex;gap:.4em;margin-bottom:.6em;padding:.2em;cursor:pointer;border:2px solid transparent}.tw span{width:1.3em;text-align:right;color:#555;font-size:.9em}.tw.on{border-color:#b7472a;background:#f6cfc2}
+.tm{width:160px;height:90px;overflow:hidden;position:relative;background:#fff;border:1px solid #bbb;pointer-events:none}.tm .slx{transform:scale(.25);transform-origin:0 0}
+#cen{flex:1;display:flex;flex-direction:column;min-width:0;position:relative}#stw{flex:1;overflow:auto;background:#d4d4d4;display:flex;padding:1.2em}
+.slx{width:640px;height:360px;background:var(--bg);color:var(--fg);position:relative;overflow:hidden;font-family:Calibri,"Segoe UI",Arial,sans-serif;flex:none}#sl{margin:auto;box-shadow:0 2px 8px #0006}
+.ph{position:absolute;outline:0;padding:6px;line-height:1.15;border:1px dashed transparent}.ph:hover,.ph:focus{border-color:#999}
+.ph[data-p=t]{left:48px;right:48px;top:28px;height:80px;font:400 38px "Calibri Light",Calibri,sans-serif;display:flex;align-items:center}.ph[data-p=c]{left:48px;right:48px;top:125px;bottom:30px;font-size:24px}
+.ph[data-p=ct]{left:48px;right:48px;top:100px;height:100px;font:400 48px "Calibri Light",Calibri,sans-serif;text-align:center;display:flex;align-items:center;justify-content:center}.ph[data-p=st]{left:100px;right:100px;top:215px;height:60px;font-size:24px;text-align:center}
+.ph:empty:before{content:attr(data-h);color:#8a8a8a;font-size:.6em}.ph ul,.ph ol{margin-left:1.2em}.bar{position:absolute;left:54px;top:110px;width:90px;height:4px;background:var(--ac)}
+.obj{position:absolute;cursor:move}
+#notes{height:4.6em;border:0;border-top:1px solid #bbb;padding:.4em .7em;font:inherit;resize:none;outline:0}
+#sb{height:1.9em;background:#b7472a;color:#fff;display:flex;align-items:center;gap:1.4em;padding:0 .8em}#sb .r{margin-left:auto;display:flex;gap:.4em;align-items:center}#sb input{width:8em}
+.mini{background:#374151;color:#fff;border:0;border-radius:.3em;padding:.1em .5em}
+#qzw{position:absolute;inset:0;background:#fffffff2;z-index:20;display:none;padding:2em 4em;overflow:auto;font-size:1.15em}#qzw h2{color:#1e3a8a;margin-bottom:.6em}
+.opt{display:block;width:100%;margin:.4em 0;padding:.6em;border:2px solid #cbd5e1;background:#fff;border-radius:.6em;text-align:left;font-size:1.05em}.opt:hover{background:#eff6ff;border-color:#2b79c2}
+#pres{position:fixed;inset:0;background:#000;z-index:500;display:none;align-items:center;justify-content:center;color:#fff;text-align:center}#pres.on{display:flex}
+@keyframes trf{from{opacity:0}}@keyframes trp{from{transform:translateX(100%)}}@keyframes trw{from{clip-path:inset(0 100% 0 0)}}
+.tr-fade{animation:trf .8s}.tr-push{animation:trp .6s}.tr-wipe{animation:trw .8s}
+#toast{position:fixed;left:50%;top:40%;transform:translateX(-50%);background:#fff;border-left:6px solid #22c55e;box-shadow:0 4px 14px #0006;padding:.8em 1.2em;z-index:150;display:none}
+#panel{position:fixed;right:.5em;bottom:.5em;width:17em;display:flex;flex-direction:column;gap:.45em;align-items:flex-end;z-index:600}
+#bub{background:#fff;border-radius:1em;padding:.7em .9em;box-shadow:0 2px 8px #0006;line-height:1.4;font-size:.95em}
+.ent{display:block;margin-top:.5em;background:#2b79c2;color:#fff;border:0;border-radius:.4em;padding:.35em .9em}
+#bot{font-size:3em;animation:fl 2s infinite}@keyframes fl{50%{transform:translateY(-.15em)}}#bn{font-size:.75em;font-weight:700;color:#fff;background:#2b79c2;border-radius:.6em;padding:0 .7em;align-self:center}
+#skip{background:none;border:0;color:#ffffffaa;font-size:.8em;text-decoration:underline}.ver{color:#fff9;font-size:.75em}
+#ring{position:fixed;display:none;border:3px solid #e11;background:#ff000022;border-radius:8px;pointer-events:none;z-index:650;animation:pl 1s infinite}@keyframes pl{50%{box-shadow:0 0 0 6px #ff000040}}
+#tip{position:fixed;display:none;background:#fff;border:1px solid #aaa;box-shadow:2px 2px 6px #0004;padding:.4em .7em;z-index:98;max-width:17em;font-size:.92em;pointer-events:none}
+.xm{position:fixed;color:#dc2626;font:900 2.4em Arial;z-index:700;pointer-events:none;animation:xf .9s forwards}@keyframes xf{to{opacity:0;transform:scale(1.4)}}
+.ov{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:1em;z-index:800;color:#fff;text-align:center;background:linear-gradient(135deg,#0a5fc0,#06336b)}
+.ov input{font-size:1.4em;padding:.4em;border-radius:.4em;border:0;text-align:center}.big2{font-size:1.3em;padding:.5em 1.4em;border:0;border-radius:.5em;background:#22c55e;color:#fff}
+#cert{background:#fff;color:#222;border:6px double #b8860b;padding:1.5em 3em;border-radius:.5em}
+@media print{body>*:not(#fin){display:none!important}#fin{position:static;background:#fff;color:#000}#fin button,#fin h1{display:none}}
+</style></head><body><script src="../../js/guard.js?v=2"></script><button onclick="location.href='../../index.html'" style="position:fixed;top:.4em;right:.4em;z-index:9999;background:#1e3a8a;color:#fff;border:1px solid #93c5fd;border-radius:.4em;padding:.25em .6em;font-size:.85em;cursor:pointer;box-shadow:0 2px 6px #0004" title="Volver al inicio">🏠 Inicio</button>
+<div id=w>
+<div id=ti><div id=qa></div><div id=nm>Presentación1 - PowerPoint</div><div id=sr>🔍 Buscar</div><div id=wc><button>—</button><button>☐</button><button>✕</button></div></div>
+<div id=tabs></div><div id=rib></div>
+<div id=mn><div id=th></div><div id=cen><div id=stw><div id=sl class=slx></div></div><textarea id=notes placeholder="Haga clic para agregar notas"></textarea><div id=qzw></div></div></div>
+<div id=sb><span id=sn>Diapositiva 1 de 1</span><span>Notas</span><span class=r><button class=mini id=zmn>−</button><input type=range id=zr min=50 max=200 value=100><button class=mini id=zpl>+</button><span id=zv>100 %</span></span></div>
+</div>
+<div id=pres></div>
+<div id=panel><div id=bub><span id=bt></span></div><div id=bot>🤖</div><div id=bn>ManuBot</div><button id=skip>Saltar tarea</button>
+<div><button class=mini id=am>A−</button> <button class=mini id=ap>A+</button> <button class=mini id=vb>🔊</button> <span class=ver id=vr></span></div></div>
+<div id=ring></div><div id=tip></div><div id=toast></div>
+<div id=wel class=ov style="display:flex"><h1>📙 PowerPoint por dentro</h1><p style="opacity:.85">Ofimática 4 · Conozco las presentaciones y armo "Mi barrio"</p><h2 style="font-weight:400">Diseñado por el Profesor: Mario Jofré</h2><p style="font-size:1.3em">Por favor, escribe tu nombre para comenzar:</p><input id=nm2 maxlength=30><small style="max-width:30em;opacity:.9">Para escribir una MAYÚSCULA mantén presionada la tecla Shift y toca la letra. Para un acento, toca primero la tecla ´ y después la vocal.</small><button class=big2 id=go>Ingresar</button></div>
+<div id=fin class=ov></div>
+<script>
+const VERSION='v1.0';const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];$('#vr').textContent=VERSION;
+let name='Estudiante',F={},si=0,wait=0,AC,cur='Inicio',rng;
+function beep(f,d=.12,t=0){try{AC=AC||new AudioContext;const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.value=.07;o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+d)}catch(e){}}
+const good=()=>beep(660),bad=()=>beep(200,.25);
+const T=(x,y,s,c,w='400')=>`<text x=${x} y=${y} font-size=${s} font-weight=${w} fill=${c} stroke=none font-family=Arial>`,TX=(t,s=12,c='#b7472a',x=3,y=16)=>T(x,y,s,c,700)+t+'</text>';
+const I={paste:'<rect x=5 y=4 width=14 height=17 rx=1 fill=#f4d9a8 /><rect x=9 y=2 width=6 height=4 rx=1 fill=#fff /><rect x=11 y=9 width=9 height=12 fill=#fff />',copy:'<rect x=8 y=8 width=12 height=13 fill=#fff /><path d="M4 16V4h12"/>',cut:'<circle cx=7 cy=18 r=2.5/><circle cx=17 cy=18 r=2.5/><path d="M8.5 16L17 3M15.5 16L7 3"/>',
+brush:'<rect x=3 y=3 width=14 height=6 rx=1 fill=#f4d9a8 /><path d="M17 6h3v5h-9v4"/><rect x=9 y=15 width=4 height=6/>',newsl:'<rect x=3 y=5 width=18 height=13 fill=#fff /><path d="M3 9h18" /><circle cx=18 cy=18 r=4.5 fill=#fff stroke=#2b8a3e /><path d="M18 15.5v5M15.5 18h5" stroke=#2b8a3e />',
+layout:'<rect x=3 y=4 width=18 height=16 fill=#fff /><path d="M6 8h12M6 12h5M6 16h5M13 12h5v4h-5z"/>',reset:'<path d="M5 12a7 7 0 1 1 2 5M5 12V6M5 12h6"/>',sect:'<path d="M3 6h18M3 12h12M3 18h18"/>',
+bold:TX('B',17,'#333',6,18),ital:T(8,18,17,'#333')+'<tspan font-style=italic>I</tspan></text>',und:TX('U',16,'#333',6,16)+'<path d="M5 21h14"/>',fcol:TX('A',16,'#333',6,16)+'<path d="M4 21h16" stroke=#e11 stroke-width=3 />',
+bul:'<circle cx=5 cy=6 r=1.3/><circle cx=5 cy=12 r=1.3/><circle cx=5 cy=18 r=1.3/><path d="M9 6h11M9 12h11M9 18h11"/>',num:T(2,9,8,'#333')+'1</text>'+T(2,15,8,'#333')+'2</text>'+T(2,21,8,'#333')+'3</text><path d="M9 6h11M9 12h11M9 18h11"/>',
+alL:'<path d="M4 6h16M4 10h10M4 14h16M4 18h10"/>',alC:'<path d="M4 6h16M7 10h10M4 14h16M7 18h10"/>',alR:'<path d="M4 6h16M10 10h10M4 14h16M10 18h10"/>',shapes:'<circle cx=8 cy=9 r=5 fill=#f4b183 /><rect x=11 y=11 width=9 height=9 fill=#9db7e5 />',
+arr:'<rect x=3 y=3 width=11 height=11 fill=#f4b183 /><rect x=10 y=10 width=11 height=11 fill=#9db7e5 />',find:'<circle cx=10 cy=10 r=6 fill=#fff /><path d="M15 15l6 6"/>',table:'<rect x=3 y=4 width=18 height=16 fill=#fff /><path d="M3 10h18M3 15h18M9 4v16M15 4v16"/><path d="M3 4h18v6H3z" fill=#f6cfc2 />',
+img:'<rect x=3 y=4 width=18 height=16 fill=#fff /><circle cx=8 cy=9 r=1.5 fill=#e6a700 /><path d="M3 18l6-6 4 4 3-3 5 5" />',icons:'<circle cx=12 cy=8 r=4 fill=#9db7e5 /><path d="M5 21c0-5 14-5 14 0z" fill=#9db7e5 />',chart:'<path d="M3 20h18"/><rect x=5 y=11 width=3 height=9 fill=#4472c4 /><rect x=10 y=6 width=3 height=14 fill=#ed7d31 /><rect x=15 y=9 width=4 height=11 fill=#a5a5a5 />',
+tbox:'<rect x=4 y=4 width=16 height=16 fill=#fff />'+TX('A',12,'#333',8,17),theme:'<rect x=4 y=4 width=7 height=7 fill=#4472c4 /><rect x=13 y=4 width=7 height=7 fill=#ed7d31 /><rect x=4 y=13 width=7 height=7 fill=#a5a5a5 /><rect x=13 y=13 width=7 height=7 fill=#ffc000 />',
+th0:'<rect x=3 y=5 width=18 height=14 fill=#fff />'+TX('Aa',9,'#d24726',6,15),th1:'<rect x=3 y=5 width=18 height=14 fill=#1f3864 />'+TX('Aa',9,'#ffc000',6,15),th2:'<rect x=3 y=5 width=18 height=14 fill=#e8f5ec />'+TX('Aa',9,'#2d9a5b',6,15),
+size:'<rect x=3 y=6 width=18 height=12 fill=#fff /><path d="M3 21h18M3 3h18"/>',bg:'<rect x=4 y=4 width=16 height=16 fill=#f4d9a8 />',tnone:'<rect x=4 y=5 width=16 height=14 fill=#fff />'+TX('✕',10,'#555',8,15),tfade:'<rect x=4 y=5 width=16 height=14 fill=#f6cfc2 />',
+tpush:'<rect x=3 y=5 width=10 height=14 fill=#fff /><rect x=11 y=5 width=10 height=14 fill=#f6cfc2 /><path d="M8 12h8M13 9l3 3-3 3"/>',twipe:'<rect x=4 y=5 width=16 height=14 fill=#fff /><rect x=4 y=5 width=8 height=14 fill=#f6cfc2 />',
+prev:'<rect x=3 y=5 width=18 height=14 fill=#fff /><path d="M10 9l5 3-5 3z" fill=#2b8a3e />',anim:'<circle cx=8 cy=12 r=3 fill=#f4b183 /><path d="M13 12h8M18 9l3 3-3 3"/>',play:'<rect x=3 y=4 width=18 height=13 fill=#fff /><path d="M10 7l5 3.5-5 3.5z" fill=#b7472a /><path d="M8 21h8"/>',
+spell:TX('ABC',9,'#2b579a',1,13)+'<path d="M5 19l4 3 10-9" stroke=#2b8a3e stroke-width=2.4 />',cmt:'<path d="M4 4h16v12H11l-5 4v-4H4z" fill=#ffe08a />',notes:'<rect x=4 y=3 width=16 height=18 fill=#fff /><path d="M7 8h10M7 12h10M7 16h6"/>',zoom:'<circle cx=10 cy=10 r=6 fill=#fff /><path d="M15 15l6 6M7 10h6M10 7v6"/>',
+z100:TX('100%',10,'#b7472a',1,16),save:'<path d="M4 4h13l3 3v13H4z"/><rect x=7 y=4 width=8 height=5 /><rect x=7 y=14 width=10 height=6 />',undo:'<path d="M8 5L3 10l5 5M3 10h11a6 6 0 0 1 0 12h-3"/>',redo:'<path d="M16 5l5 5-5 5M21 10H10a6 6 0 0 0 0 12h3"/>',st:'<rect x=4 y=4 width=16 height=16 fill=#fff />'};
+const COL={paste:'#b8742a',img:'#2b8a3e',find:'#b7472a',save:'#fff',undo:'#fff',redo:'#fff'};
+const ic=n=>`<svg viewBox="0 0 24 24" fill=none stroke="${COL[n]||'#3a3a3a'}" stroke-width=1.6 stroke-linecap=round stroke-linejoin=round>${I[n]||I.st}</svg>`;
+$('#qa').innerHTML=[['save','Guardar','Guarda la presentación (Ctrl+G)'],['undo','Deshacer','Deshace la última acción (Ctrl+Z)'],['redo','Rehacer','Repite lo que deshiciste (Ctrl+Y)']].map(([i,l,t])=>`<button data-i=${i} data-l="${l}" data-t="${t}">${ic(i)}</button>`).join('');
+const sel=(id,l,t,o,d)=>`<select id=${id} data-l="${l}" data-t="${t}">${o.map(x=>`<option ${x==d?'selected':''}>${x}</option>`).join('')}</select>`;
+const TABS={Inicio:[['Portapapeles',['paste|Pegar|Inserta lo copiado o cortado|Ctrl+V',['cut|Cortar|Quita el texto seleccionado para pegarlo en otro lado|Ctrl+X','copy|Copiar|Duplica el texto seleccionado|Ctrl+C']]],
+ ['Diapositivas',['newsl|Nueva diapositiva|Agrega una diapositiva después de la actual|Ctrl+M',['layout|Diseño|Elige cómo se acomodan título, texto e imágenes','reset|Restablecer|Vuelve la diapositiva a su aspecto original','sect|Sección|Agrupa las diapositivas']]],
+ ['Fuente',[[[sel('ff','Fuente','Tipo de letra',['Calibri','Arial','Times New Roman','Verdana','Georgia'],'Calibri'),sel('fs','Tamaño de fuente','Tamaño de la letra',[16,18,20,24,28,32,40,48],24)],['bold|Negrita|Letra más gruesa|Ctrl+N','ital|Cursiva|Letra inclinada|Ctrl+K','und|Subrayado|Subraya el texto|Ctrl+S','fcol|Color de fuente|Cambia el color de la letra (aquí, rojo)']]]],
+ ['Párrafo',[[['bul|Viñetas|Lista con puntos','num|Numeración|Lista numerada'],['alL|Alinear a la izquierda|Texto pegado a la izquierda|Ctrl+Q','alC|Centrar|Texto en el medio|Ctrl+E','alR|Alinear a la derecha|Texto pegado a la derecha|Ctrl+D']]]],
+ ['Dibujo',['shapes|Formas|Agrega un rectángulo. Después podés arrastrarlo',['arr|Organizar|Cambia qué objeto queda adelante o atrás']]]],
+Insertar:[['Diapositivas',['newsl|Nueva diapositiva|Agrega una diapositiva después de la actual|Ctrl+M']],['Tablas',['table|Tabla|Inserta una tabla de 3 por 3']],['Imágenes',['img|Imágenes|Inserta una imagen de ejemplo. Después podés arrastrarla']],['Ilustraciones',['shapes|Formas|Agrega un rectángulo','icons|Iconos|Dibujos simples listos para usar','chart|Gráfico|Inserta un gráfico']],['Texto',['tbox|Cuadro de texto|Agrega un recuadro para escribir en cualquier lugar']]],
+Diseño:[['Temas',['th0|Office|Tema blanco con acento naranja','th1|Azul oscuro|Fondo azul oscuro con letra clara','th2|Verde suave|Fondo verde claro']],['Personalizar',['size|Tamaño de diapositiva|Cambia entre 16:9 y 4:3','bg|Formato del fondo|Cambia el color o la imagen de fondo']]],
+Transiciones:[['Vista previa',['prev|Vista previa|Mira cómo se verá la transición']],['Transición a esta diapositiva',['tnone|Ninguna|Sin efecto al cambiar de diapositiva','tfade|Desvanecer|La diapositiva aparece suavemente','tpush|Empujar|La diapositiva nueva empuja a la anterior','twipe|Barrido|La diapositiva se descubre de izquierda a derecha']]],
+Animaciones:[['Vista previa',['prev|Vista previa|Mira la animación']],['Animación',['anim|Entrada|Hace que un objeto aparezca con efecto','anim|Énfasis|Llama la atención sobre un objeto','anim|Salida|Hace que un objeto desaparezca']]],
+'Presentación con diapositivas':[['Iniciar presentación',['play|Desde el principio|Presenta desde la primera diapositiva a pantalla completa|F5','play|Desde la diapositiva actual|Empieza en la diapositiva que estás viendo|Mayús+F5']]],
+Revisar:[['Revisión',['spell|Ortografía|Busca errores en el texto|F7']],['Comentarios',['cmt|Nuevo comentario|Agrega una nota para otra persona']]],
+Vista:[['Vistas',['notes|Notas|Muestra u oculta el cuadro de notas']],['Zoom',['zoom|Zoom|Acerca o aleja la diapositiva','z100|100%|Vuelve al tamaño normal']]],Ayuda:[['Ayuda',['st|Ayuda|Abre la ayuda de PowerPoint|F1']]]};
+const one=s=>{const[i,l,t,k]=s.split('|');return`<button class=b data-i=${i} data-l="${l}" data-t="${t}" data-k="${k||''}">${ic(i)}<span>${l.split(' ').slice(0,2).join(' ')}</span></button>`},
+ sm=(s,lb)=>{if(s[0]=='<')return s;const[i,l,t,k]=s.split('|');return`<button class="b s${lb?' lb':''}" data-i=${i} data-l="${l}" data-t="${t}" data-k="${k||''}">${ic(i)}${lb?'<span>'+l.split(' ')[0]+'</span>':''}</button>`};
+const item=e=>typeof e=='string'?(e[0]=='<'?e:one(e)):Array.isArray(e[0])?`<div class=col>${e.map(r=>`<div class=rw>${r.map(x=>sm(x)).join('')}</div>`).join('')}</div>`:`<div class=col>${e.map(x=>sm(x,1)).join('')}</div>`;
+function tabs(){$('#tabs').innerHTML='<span class=ar>Archivo</span>'+Object.keys(TABS).map(k=>`<span data-n="${k}" class="${k==cur?'on':''}">${k}</span>`).join('');
+ $('#rib').innerHTML=TABS[cur].map(([n,it])=>`<div class=gr><div class=gi>${it.map(item).join('')}</div><div class=gn>${n}</div></div>`).join('');
+ $('#ff')&&($('#ff').onchange=e=>ex('fontName',e.target.value));$('#fs')&&($('#fs').onchange=e=>{ex('fontSize',7);$$('#sl font[size="7"]').forEach(f=>{f.removeAttribute('size');f.style.fontSize=e.target.value+'px'});save()});upd()}
+/* ---- diapositivas ---- */
+const mkT=()=>({h:'<div class=ph data-p=ct data-h="Haga clic para agregar título" contenteditable></div><div class=ph data-p=st data-h="Haga clic para agregar subtítulo" contenteditable></div>',n:'',tr:'none'}),
+ mkC=()=>({h:'<div class=ph data-p=t data-h="Haga clic para agregar título" contenteditable></div><div class=bar></div><div class=ph data-p=c data-h="Haga clic para agregar texto" contenteditable></div>',n:'',tr:'none'});
+let SL=[mkT()],cu=0,pi=-1,W={};const sl=$('#sl');
+function thumbs(){$('#th').innerHTML=SL.map((s,i)=>`<div class="tw${i==cu?' on':''}" data-i=${i} data-l="Diapositiva ${i+1}" data-t=""><span>${i+1}</span><div class=tm><div class=slx>${s.h}</div></div></div>`).join('');$('#sn').textContent=`Diapositiva ${cu+1} de ${SL.length}`;$('#notes').value=SL[cu].n}
+function load(i){cu=i;sl.innerHTML=SL[i].h;thumbs();upd()}
+function save(){SL[cu].h=sl.innerHTML;const t=$$('#th .tm .slx')[cu];if(t)t.innerHTML=SL[cu].h}
+sl.oninput=save;$('#notes').oninput=e=>SL[cu].n=e.target.value;
+$('#th').onclick=e=>{const t=e.target.closest('.tw');if(t){save();load(+t.dataset.i)}};
+document.addEventListener('selectionchange',()=>{const s=getSelection();if(s.rangeCount&&sl.contains(s.anchorNode))rng=s.getRangeAt(0).cloneRange()});
+const ex=(c,v)=>{if(!rng)return say('Primero hacé clic dentro de un texto de la diapositiva y seleccioná lo que querés cambiar.');const s=getSelection();s.removeAllRanges();s.addRange(rng);document.execCommand(c,false,v);save()};
+const PIC='<img class=obj src="data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="120"><rect width="200" height="120" fill="#bfe3ff"/><circle cx="160" cy="28" r="16" fill="#ffd24a"/><path d="M0 120l60-60 45 45 30-22 65 37z" fill="#4c9a5b"/></svg>')+'" style="left:380px;top:210px;width:200px">';
+const add=h=>{sl.insertAdjacentHTML('beforeend',h);save()},prev=()=>{const c='tr-'+SL[cu].tr;sl.classList.remove('tr-fade','tr-push','tr-wipe');void sl.offsetWidth;if(SL[cu].tr!='none'){sl.classList.add(c);setTimeout(()=>sl.classList.remove(c),900)}};
+const th=n=>{document.body.className='th'+n},tr=v=>{SL[cu].tr=v;upd();prev()};
+const A={newsl:()=>{save();SL.splice(cu+1,0,mkC());load(cu+1)},bold:()=>ex('bold'),ital:()=>ex('italic'),und:()=>ex('underline'),fcol:()=>ex('foreColor','#e11111'),bul:()=>ex('insertUnorderedList'),num:()=>ex('insertOrderedList'),alL:()=>ex('justifyLeft'),alC:()=>ex('justifyCenter'),alR:()=>ex('justifyRight'),cut:()=>ex('cut'),copy:()=>ex('copy'),
+ paste:()=>navigator.clipboard.readText().then(t=>ex('insertText',t)).catch(()=>say('Para pegar usá el teclado: <b>Ctrl+V</b>.')),undo:()=>ex('undo'),redo:()=>ex('redo'),
+ shapes:()=>add(`<div class=obj style="left:420px;top:230px;width:120px;height:70px;background:var(--ac);border-radius:8px"></div>`),img:()=>add(PIC),tbox:()=>add('<div class=obj contenteditable style="left:60px;top:300px;border:1px solid #888;padding:4px;font-size:20px;cursor:text">Cuadro de texto</div>'),
+ table:()=>add('<table class=obj style="left:60px;top:230px;border-collapse:collapse">'+'<tr><td style="border:1px solid;width:70px;height:26px"></td><td style="border:1px solid;width:70px"></td><td style="border:1px solid;width:70px"></td></tr>'.repeat(3)+'</table>'),
+ th0:()=>th(0),th1:()=>th(1),th2:()=>th(2),tnone:()=>tr('none'),tfade:()=>tr('fade'),tpush:()=>tr('push'),twipe:()=>tr('wipe'),prev:prev,notes:()=>{const n=$('#notes');n.style.display=n.style.display=='none'?'':'none'},z100:()=>zset(100),
+ save:()=>{F.sv=1;$('#nm').textContent='Mi barrio - PowerPoint';const t=$('#toast');t.innerHTML='✅ Guardado como <b>Mi barrio.pptx</b>';t.style.display='block';setTimeout(()=>t.style.display='none',2500)}};
+function upd(){$$('#rib .b').forEach(b=>b.classList.toggle('on',b.dataset.i=='t'+SL[cu].tr))}
+let dg=null;sl.onmousedown=e=>{const o=e.target.closest('.obj:not([contenteditable])');if(o){dg={o,x:e.clientX,y:e.clientY,l:o.offsetLeft,t:o.offsetTop};e.preventDefault()}};
+addEventListener('mousemove',e=>{if(dg){dg.o.style.left=dg.l+e.clientX-dg.x+'px';dg.o.style.top=dg.t+e.clientY-dg.y+'px'}});addEventListener('mouseup',()=>{if(dg){dg=null;save()}});
+const P=$('#pres');
+function pres(i){pi=i;if(i>=SL.length){P.innerHTML='<div>Fin de la presentación de diapositivas. Haga clic para salir.</div>';P.className='on';return}
+ P.innerHTML='<div class=slx id=ps>'+SL[i].h.replace(/ contenteditable/g,'')+'</div>';const ps=$('#ps');ps.style.zoom=Math.min(innerWidth/640,innerHeight/360);P.className='on';if(SL[i].tr!='none')ps.classList.add('tr-'+SL[i].tr)}
+const end=()=>{P.className='';pi=-1};P.onclick=()=>pi>=SL.length?end():pres(pi+1);
+addEventListener('keydown',e=>{if(pi>=0){if(e.key=='Escape')end();else if(['ArrowRight','ArrowDown',' ','Enter','PageDown'].includes(e.key))P.onclick();else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)&&pi>0)pres(pi-1);e.preventDefault();return}if(e.key=='F5'){e.preventDefault();save();pres(e.shiftKey?cu:0)}});
+$('#tabs').onclick=e=>{const t=e.target;if(t.classList.contains('ar'))return say('<b>Archivo</b> abre Guardar, Abrir e Imprimir.');if(t.dataset.n){cur=t.dataset.n;tabs()}};
+$('#rib').onmousedown=e=>{if(!e.target.closest('select'))e.preventDefault()};
+document.addEventListener('click',e=>{const b=e.target.closest('#rib .b,#qa button');if(b){const k=b.dataset.i;if(k=='play'){save();return pres(b.dataset.l.includes('principio')?0:cu)}A[k]?A[k]():say(`<b>${b.dataset.l}</b>: ${b.dataset.t}.`)}});
+const tip=$('#tip');document.addEventListener('mouseover',e=>{const b=e.target.closest('[data-l]');if(!b||!b.dataset.t){tip.style.display='none';return}tip.innerHTML=`<b>${b.dataset.l}${b.dataset.k?' ('+b.dataset.k+')':''}</b><br>${b.dataset.t}`;tip.style.display='block';const r=b.getBoundingClientRect();tip.style.left=Math.min(r.left,innerWidth-tip.offsetWidth-8)+'px';tip.style.top=r.bottom+6+'px'});
+document.addEventListener('mousedown',()=>tip.style.display='none');
+function zset(v){v=Math.min(200,Math.max(50,v));$('#zr').value=v;$('#zv').textContent=v+' %';sl.style.zoom=v/100}
+$('#zr').oninput=e=>zset(+e.target.value);$('#zmn').onclick=()=>zset(+$('#zr').value-10);$('#zpl').onclick=()=>zset(+$('#zr').value+10);
+/* ---- ManuBot ---- */
+let es,voice=true;const fv=()=>{es=(speechSynthesis.getVoices()||[]).find(v=>v.lang.toLowerCase().startsWith('es'))};try{fv();speechSynthesis.onvoiceschanged=fv}catch(e){}
+function say(t,n){t=t.replace('{n}',name);$('#bt').innerHTML=t+(n?'<button class=ent onclick="F.nx=1">Entendido ▶</button>':'');if(voice&&es){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance((t+(n?' Presiona el botón Entendido para continuar.':'')).replace(/<[^>]+>/g,'').replace(/Ctrl/g,'Control').replace(/\.pptx/g,' punto pe pe te equis').replace(/\bEsc\b/g,'Escape'));u.voice=es;u.lang=es.lang;speechSynthesis.speak(u)}}
+$('#vb').onclick=()=>{voice=!voice;$('#vb').textContent=voice?'🔊':'🔇';if(!voice)speechSynthesis.cancel()};
+let fz=13;$('#am').onclick=()=>document.body.style.fontSize=(fz=Math.max(11,fz-2))+'px';$('#ap').onclick=()=>document.body.style.fontSize=(fz=Math.min(22,fz+2))+'px';
+function xm(){const d=document.createElement('div');d.className='xm';d.textContent='✖';d.style.left=(innerWidth*.35)+'px';d.style.top=(innerHeight*.4)+'px';document.body.append(d);setTimeout(()=>d.remove(),900)}
+/* ---- guion ---- */
+const G=k=>`#rib .gr:nth-child(${k})`,selT=()=>{const s=getSelection();return s.rangeCount&&sl.contains(s.anchorNode)?s.toString():''},tx=p=>{const e=$(`#sl .ph[data-p=${p}]`);return e?e.innerText.trim().length:0};
+const E=(t,z,o)=>({t,n:1,z,o}),C=(t,r,ok,o)=>({t,r,ok,o}),TB=n=>C('Hacé clic en la pestaña <b>'+n+'</b>.',`#tabs [data-n="${n}"]`,()=>cur==n),Z=a=>a.map(([z,t])=>E(t,z));
+const QZ=[['¿Cómo se llama cada pantalla de una presentación?',['Diapositiva','Hoja de cálculo','Celda'],0],['¿Dónde ves todas las diapositivas en orden?',['En la regla','En el panel de miniaturas','En la barra de fórmulas'],1],['¿Para qué sirven las Transiciones?',['Corregir la ortografía','Sumar números','Cambiar cómo se pasa de una diapositiva a otra'],2],['¿Qué tecla inicia la presentación desde el principio?',['F5','F1','Esc'],0],['¿Con qué terminación se guarda un archivo de PowerPoint?',['.xlsx','.pptx','.docx'],1]];
+const ST=[E('Hola {n}. Hoy conocemos <b>PowerPoint por dentro</b>. Sirve para armar <b>presentaciones</b>: un conjunto de pantallas llamadas <b>diapositivas</b> que se muestran una después de otra. Al final vamos a armar una presentación llamada "Mi barrio".'),
+ ...Z([['#ti','La <b>barra de título</b> muestra el nombre del archivo: <b>Presentación1</b>, porque todavía no lo guardaste.'],['#tabs','Las <b>pestañas</b> agrupan las herramientas por tema. Algunas son solo de PowerPoint: <b>Transiciones</b>, <b>Animaciones</b> y <b>Presentación con diapositivas</b>.'],['#rib','La <b>cinta de opciones</b> muestra los botones de la pestaña elegida, agrupados. El nombre del grupo está abajo.'],['#th','Este es el <b>panel de miniaturas</b>: muestra todas las diapositivas en orden. Hacé clic en una para verla.'],['#sl','Esta es la <b>diapositiva</b>, donde armás cada pantalla. Es como una hoja que después se proyecta.'],['#sl .ph','Los recuadros punteados son <b>marcadores de posición</b>: hacés clic y escribís. Uno es para el título y otro para el subtítulo.'],['#notes','Abajo está el cuadro de <b>notas</b>: son apuntes para vos que el público no ve.'],['#sb','La <b>barra de estado</b> dice en qué diapositiva estás y cuántas hay. A la derecha está el zoom.']]),
+ E('Ahora recorremos las pestañas. Empezamos por <b>Inicio</b>.'),
+ ...Z([[G(1),'<b>Portapapeles</b>: copiar, cortar y pegar.'],[G(2),'<b>Diapositivas</b>: con <b>Nueva diapositiva</b> agregás otra pantalla a la presentación.'],[G(3),'<b>Fuente</b>: tipo, tamaño, negrita, cursiva, subrayado y color de la letra.'],[G(4),'<b>Párrafo</b>: viñetas, numeración y alineación del texto.'],[G(5),'<b>Dibujo</b>: formas para decorar la diapositiva.']]),
+ TB('Insertar'),...Z([[G(2),'<b>Tablas</b>: ordenan datos en filas y columnas.'],[G(3),'<b>Imágenes</b>: agrega fotos y dibujos.'],[G(4),'<b>Ilustraciones</b>: formas, iconos y gráficos.'],[G(5),'<b>Texto</b>: agrega un cuadro de texto en cualquier lugar.']]),
+ TB('Diseño'),E('<b>Temas</b>: cambian de una vez los colores y el fondo de toda la presentación.',G(1)),
+ TB('Transiciones'),E('<b>Transición</b>: es el efecto con que una diapositiva aparece al reemplazar a la anterior: desvanecer, empujar, barrido…',G(2)),
+ TB('Animaciones'),E('<b>Animación</b>: es el movimiento de un objeto dentro de la diapositiva, por ejemplo que un título aparezca de a poco.',G(2)),
+ TB('Presentación con diapositivas'),E('<b>Iniciar presentación</b>: proyecta las diapositivas a pantalla completa, desde el principio o desde la actual.',G(1)),
+ E('Hay más pestañas: <b>Revisar</b> (ortografía y comentarios), <b>Vista</b> (zoom y notas) y <b>Ayuda</b>.','#tabs'),
+ E('¡A practicar! Vamos a armar una presentación llamada <b>Mi barrio</b>. Si te equivocás, probá con Ctrl+Z.',null,()=>{SL=[mkT()];load(0)}),
+ TB('Inicio'),
+ C('Hacé clic en el recuadro del <b>título</b> y escribí <b>Mi barrio</b>.','#sl .ph[data-p=ct]',()=>tx('ct')>=3),
+ C('Ahora hacé clic en el <b>subtítulo</b> y escribí tu nombre.','#sl .ph[data-p=st]',()=>tx('st')>=2),
+ C('Presioná <b>Nueva diapositiva</b> para agregar la segunda.','[data-i=newsl]',()=>SL.length==2&&cu==1),
+ C('Hacé clic en el <b>título</b> y escribí, por ejemplo, <b>Lugares para visitar</b>.','#sl .ph[data-p=t]',()=>tx('t')>=3),
+ C('Hacé clic en el recuadro de texto de abajo y escribí el nombre de un lugar de tu barrio.','#sl .ph[data-p=c]',()=>tx('c')>=3),
+ C('Con el cursor en ese texto, presioná <b>Viñetas</b>.','[data-i=bul]',()=>sl.querySelector('ul')),
+ C('Seleccioná el título con <b>triple clic</b> (tres clics rápidos).','#sl .ph[data-p=t]',()=>selT().trim().length>=3),
+ C('Presioná <b>Negrita</b>.','[data-i=bold]',()=>sl.querySelector('.ph[data-p=t] b')),
+ TB('Insertar'),C('Presioná <b>Imágenes</b> para agregar una foto de ejemplo.','[data-i=img]',()=>sl.querySelector('img')),
+ C('Arrastrá la imagen a otro lugar: mantené el clic sobre ella y movela.','#sl img',()=>{const i=sl.querySelector('img');return i&&parseInt(i.style.left)!=380}),
+ TB('Diseño'),C('Presioná el tema <b>Azul oscuro</b>: cambia el fondo de toda la presentación.','[data-i=th1]',()=>document.body.className=='th1'),
+ TB('Transiciones'),C('Elegí la transición <b>Desvanecer</b>.','[data-i=tfade]',()=>SL[cu].tr=='fade'),
+ TB('Presentación con diapositivas'),
+ E('Vas a presentar tu trabajo. Cuando empiece: avanzá con un <b>clic</b> o con las flechas, y salí con la tecla <b>Esc</b>.'),
+ C('Presioná <b>Desde el principio</b>.','[data-l="Desde el principio"]',()=>pi>=0),
+ {t:'¡Estás presentando! Avanzá con clic o con las flechas del teclado. Cuando quieras salir, presioná la tecla <b>Esc</b>.',ok:()=>pi==-1},
+ C('Para terminar, presioná <b>Guardar</b>. PowerPoint guarda el archivo con la terminación <b>.pptx</b>.','[data-i=save]',()=>F.sv),
+ {t:'Última prueba: 5 preguntas sobre lo que aprendiste.',ok:()=>F.k>=5,o:()=>{F.k=0;const q=()=>{const z=$('#qzw');z.style.display='block';if(F.k>=5){z.style.display='none';return}const Q=QZ[F.k];z.innerHTML=`<h2>Pregunta ${F.k+1} de 5</h2><p style="margin-bottom:.6em">${Q[0]}</p>`+Q[1].map((o,i)=>`<button class=opt data-i=${i}>${o}</button>`).join('');$$('#qzw .opt').forEach(b=>b.onclick=()=>{if(+b.dataset.i==Q[2]){good();F.k++;q()}else{bad();xm();say('Casi. Pensá de nuevo y probá otra opción.')}})};q()}},
+ {t:'¡Excelente, {n}! Ya conocés los tres programas de la ofimática. Con esto completaste el bloque de Ofimática.',n:1,end:1}];
+/* ---- motor ---- */
+function show(){const s=ST[si];F={};wait=0;s.o&&s.o();say(s.t,s.n)}
+function next(){if(ST[si].end)return finish();si++;show()}
+setInterval(()=>{const s=ST[si],r=$('#ring');if(!s||wait){r.style.display='none';return}
+ let dn=0;try{dn=F.nx||(s.ok&&s.ok())}catch(x){}if(dn){good();wait=1;r.style.display='none';setTimeout(next,F.nx?400:1500);return}
+ let e=null;try{e=$(s.z||s.r||(s.n?'.ent':'#none'))}catch(x){}const b=e&&e.getBoundingClientRect();if(!b||!b.width||(s.ok&&!s.r)){r.style.display='none';return}
+ Object.assign(r.style,{display:'block',left:b.left-5+'px',top:b.top-5+'px',width:b.width+10+'px',height:b.height+10+'px'})},200);
+$('#skip').onclick=()=>{if(wait)return;if(pi>=0)end();if(ST[si].ok&&!ST[si].r&&F.k!=null)F.k=5;else F.nx=1};
+function finish(){$('#ring').style.display='none';$('#fin').innerHTML=`<h1>🎉 ¡Felicitaciones ${name}!</h1><div id=cert><small>CERTIFICADO DE FINALIZACIÓN</small><h2>${name}</h2><p>completó la clase «Ofimática 4 · PowerPoint por dentro»</p><p>${new Date().toLocaleDateString('es-AR')}</p></div><button class=big2 onclick=print()>🖨️ Imprimir certificado</button><button class=big2 style="background:#2b79c2" onclick=location.reload()>🔄 Volver a empezar</button>`;$('#fin').style.display='flex';[523,659,784,1046].forEach((f,i)=>beep(f,.2,i*.15))}
+function start(){name=$('#nm2').value.replace(/[<>&"]/g,'').trim()||'Estudiante';$('#wel').style.display='none';si=0;show()}
+(function(){var a=JSON.parse(localStorage.getItem('mj:alumno')||'null');if(!a||!a.nombre){try{var m=location.search.match(/[?&]alumno=([^&]+)/);if(m){a={nombre:decodeURIComponent(m[1].replace(/\+/g,' ')),curso:'',id:m[1].toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''),creado:new Date().toISOString()};localStorage.setItem('mj:alumno',JSON.stringify(a))}}catch(e){}}if(a&&a.nombre){const nm=document.getElementById('nm2');if(nm){nm.value=a.nombre;setTimeout(()=>{const go=document.getElementById('go');if(go)go.click()},50)}}})();$('#go').onclick=start;$('#nm2').onkeydown=e=>{if(e.key=='Enter')start()};$('#nm2').focus();tabs();load(0);
+</script>
+</body></html>
+<!-- Versión: v1.0 · Ofimática 4 · PowerPoint por dentro -->
