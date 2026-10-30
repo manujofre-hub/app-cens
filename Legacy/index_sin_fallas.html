@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<!-- ═══════════════════════════════════════════════════════════════════════
+ 🔒 COMPATIBILIDAD GITHUB PAGES — NO MODIFICAR ESTA LÓGICA:
+   - Este index.html es el PORTAL único del sitio. No renombrar ni mover.
+   - El guardado local usa localStorage con prefijo "mj:" (ej: mj:alumno).
+   - Todas las apps vuelven aquí con rutas relativas ../../index.html.
+   - Si se cambia el diseño, NO tocar: campo nombre/apellido, claves de
+     guardado, ni el flujo de redirección desde las apps.
+════════════════════════════════════════════════════════════════════════ -->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TIC · Portal de clases</title>
+  <style>
+    *{box-sizing:border-box;margin:0}
+    body{font:16px "Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,#0b1028 0%,#0a1a3a 50%,#050b1a 100%);color:#e8f1ff;min-height:100vh;display:flex;flex-direction:column}
+    header{padding:1.5em 1em 1em;text-align:center}
+    header h1{font-size:2.4em;letter-spacing:.02em;background:linear-gradient(90deg,#60a5fa,#4ade80);-webkit-background-clip:text;background-clip:text;color:transparent}
+    header p{opacity:.75;margin-top:.3em;font-size:1.05em}
+    main{flex:1;display:flex;align-items:center;justify-content:center;padding:1em}
+    .card{background:linear-gradient(180deg,rgba(96,165,250,.12),rgba(15,23,42,.85));border:1px solid rgba(148,163,184,.3);border-radius:20px;box-shadow:0 50px 100px -40px rgba(56,189,248,.35);max-width:920px;width:100%;overflow:hidden;backdrop-filter:blur(8px)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0}
+    .panel{padding:2em;display:flex;flex-direction:column;gap:1em}
+    .panel+.panel{border-left:1px solid rgba(148,163,184,.2)}
+    h2{font-size:1.5em;margin-bottom:.2em}
+    .sub{opacity:.7;font-size:.95em;margin-bottom:.5em}
+    label{display:flex;flex-direction:column;gap:.35em;font-size:.95em}
+    input{font:inherit;padding:.7em .9em;border-radius:10px;border:1px solid rgba(148,163,184,.4);background:rgba(15,23,42,.7);color:#e8f1ff;transition:border-color .2s}
+    input:focus{outline:none;border-color:rgba(96,165,250,.9);box-shadow:0 0 0 4px rgba(59,130,246,.18)}
+    .row{display:flex;flex-wrap:wrap;gap:.6em;align-items:center}
+    button{font:inherit;padding:.7em 1.2em;border-radius:999px;border:1px solid rgba(148,163,184,.5);background:linear-gradient(180deg,rgba(96,165,250,.95),rgba(37,99,235,.95));color:#fff;cursor:pointer;transition:transform .1s,box-shadow .2s}
+    button:hover{transform:translateY(-1px);box-shadow:0 6px 16px -4px rgba(59,130,246,.5)}
+    button.ghost{background:transparent;border-color:rgba(148,163,184,.5)}
+    button.ghost:hover{background:rgba(96,165,250,.15)}
+    .mod{margin-bottom:1.2em}
+    .mod h3{font-size:1.1em;margin-bottom:.5em;display:flex;align-items:center;gap:.5em}
+    .mod h3 .badge{font-size:.7em;padding:.2em .6em;border-radius:999px;background:rgba(96,165,250,.2);color:#93c5fd}
+    .links{display:flex;flex-direction:column;gap:.5em}
+    .link{display:flex;align-items:center;justify-content:space-between;padding:.7em 1em;border-radius:12px;border:1px solid rgba(148,163,184,.3);background:rgba(15,23,42,.5);color:inherit;text-decoration:none;transition:border-color .2s,background .2s}
+    .link:hover{border-color:rgba(96,165,250,.8);background:rgba(96,165,250,.12)}
+    .link .title{font-weight:600;font-size:.95em}
+    .link .desc{opacity:.65;font-size:.85em;margin-top:.15em}
+    .link .status{font-size:.75em;padding:.2em .6em;border-radius:999px;background:rgba(148,163,184,.2);white-space:nowrap}
+    .link .status.done{background:rgba(74,222,128,.2);color:#4ade80}
+    .link .status.progress{background:rgba(250,204,21,.2);color:#facc15}
+    .welcome{display:none;flex-direction:column;gap:.8em}
+    .welcome.show{display:flex}
+    .login.show{display:flex;flex-direction:column;gap:1em}
+    .login{display:none}
+    .saludo{font-size:1.15em;font-weight:600;margin-bottom:.3em}
+    .hint{opacity:.6;font-size:.85em}
+    .continue{background:linear-gradient(180deg,rgba(74,222,128,.95),rgba(22,163,74,.95));border-color:rgba(74,222,128,.6)}
+    .continue:hover{box-shadow:0 6px 16px -4px rgba(34,197,94,.5)}
+    footer{padding:1em;text-align:center;opacity:.5;font-size:.85em}
+    @media(max-width:720px){.panel+.panel{border-left:none;border-top:1px solid rgba(148,163,184,.2)}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>TIC · Portal de clases</h1>
+    <p>Aprendé paso a paso · Tu progreso se guarda en este equipo</p>
+  </header>
+  <main>
+    <div class="card">
+      <div class="grid">
+        <!-- Login panel -->
+        <section class="panel" id="login-panel">
+          <div class="login show" id="login-form">
+            <div>
+              <h2>Identificarse</h2>
+              <p class="sub">Escribí tu nombre y apellido para que el asistente te hable de forma personalizada.</p>
+            </div>
+            <label>Nombre y apellido
+              <input id="nombre" autocomplete="name" required minlength="2" placeholder="Ej.: Ana Pérez" autofocus>
+            </label>
+            <div class="row">
+              <button type="button" id="btn-login">Comenzar</button>
+            </div>
+            <p class="hint">El progreso se guarda solo en este navegador. Si cambiás de equipo, no se recupera.</p>
+          </div>
+        </section>
+        <!-- Dashboard panel -->
+        <section class="panel">
+          <div class="welcome" id="welcome">
+            <div>
+              <h2 id="saludo">Hola</h2>
+              <p class="sub" id="saludo-sub">Elegí una clase para continuar.</p>
+            </div>
+            <div class="row" id="continue-row" style="display:none">
+              <button class="continue" id="btn-continue">▶ Continuar donde lo dejé</button>
+            </div>
+            <div class="row">
+              <button class="ghost" id="btn-cambiar">Cambiar alumno</button>
+            </div>
+          </div>
+          <div id="modules">
+            <div class="mod">
+              <h3>📘 Módulo 1 · La Computadora <span class="badge">Teoría</span></h3>
+              <div class="links">
+                <a class="link" href="apps/Teoria/teoria-tic-clase1v3gemini.html" data-app="teoria-tic">
+                  <div><div class="title">Clase 1 · Conozco mi computadora</div><div class="desc">Hardware, software, camino de la información</div></div>
+                  <span class="status" id="st-teoria-tic">Sin iniciar</span>
+                </a>
+                <a class="link" href="apps/Teoria/teoria-tic-clase2v3gemini.html" data-app="teoria-tic-2">
+                  <div><div class="title">Clase 2 · Periféricos y conexiones</div><div class="desc">Entrada/salida/mixtos, mouse, touchpad</div></div>
+                  <span class="status" id="st-teoria-tic-2">Sin iniciar</span>
+                </a>
+                <a class="link" href="apps/Teoria/teoria-tic-clase3v2gemini.html" data-app="teoria-tic-3">
+                  <div><div class="title">Clase 3 · Sistema operativo y archivos</div><div class="desc">Explorador, carpetas, archivos</div></div>
+                  <span class="status" id="st-teoria-tic-3">Sin iniciar</span>
+                </a>
+              </div>
+            </div>
+            <div class="mod">
+              <h3>📎 Módulo 2 · Ofimática <span class="badge">Oficina</span></h3>
+              <div class="links">
+                <a class="link" href="apps/Ofimatica/ofimatica1-conozco-la-ofimatica.html">
+                  <div><div class="title">Ofimática 1 · Conozco la ofimática</div><div class="desc">Word, Excel, PowerPoint y alternativas</div></div>
+                  <span class="status">Libre</span>
+                </a>
+                <a class="link" href="apps/Ofimatica/ofimatica2-word.html">
+                  <div><div class="title">Ofimática 2 · Word por dentro</div><div class="desc">Redacción, edición y formato</div></div>
+                  <span class="status">Libre</span>
+                </a>
+                <a class="link" href="apps/Ofimatica/ofimatica3-excel.html">
+                  <div><div class="title">Ofimática 3 · Excel por dentro</div><div class="desc">Celdas, fórmulas y gráficos</div></div>
+                  <span class="status">Libre</span>
+                </a>
+                <a class="link" href="apps/Ofimatica/ofimatica4-powerpoint.html">
+                  <div><div class="title">Ofimática 4 · PowerPoint por dentro</div><div class="desc">Diapositivas y presentaciones</div></div>
+                  <span class="status">Libre</span>
+                </a>
+              </div>
+            </div>
+            <div class="mod">
+              <h3>🖥️ Primeros Pasos <span class="badge">Computadora</span></h3>
+              <div class="links">
+                <a class="link" href="apps/PrimerosPasos/Ppasos_1.html">
+                  <div><div class="title">Primeros Pasos 1</div><div class="desc">Introducción al uso de la PC</div></div>
+                  <span class="status">Libre</span>
+                </a>
+                <a class="link" href="apps/PrimerosPasos/Ppasos_2_v3sa.html">
+                  <div><div class="title">Primeros Pasos 2</div><div class="desc">Explorador y archivos</div></div>
+                  <span class="status">Libre</span>
+                </a>
+                <a class="link" href="apps/PrimerosPasos/Ppasos_3_v3saclaudev3.5.html">
+                  <div><div class="title">Primeros Pasos 3</div><div class="desc">Simulador de escritorio</div></div>
+                  <span class="status">Libre</span>
+                </a>
+              </div>
+            </div>
+            <div class="mod">
+              <h3>⌨️ Práctica <span class="badge">Teclado</span></h3>
+              <div class="links">
+                <a class="link" href="apps/Practicas/PracticaTecleado.html">
+                  <div><div class="title">Práctica de Tecleado</div><div class="desc">Ejercicios de escritura</div></div>
+                  <span class="status">Libre</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer>TIC Interactivo · Guardado local en este equipo</footer>
+
+  <script>
+    const $ = s=>document.querySelector(s);
+    const KEY='mj:alumno', LAST='mj:last';
+    function get(){ try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;} }
+    function set(v){ localStorage.setItem(KEY,JSON.stringify(v)); }
+    function slug(s){ return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+
+    function updateLinks(nombre){
+      try{
+        const enc = encodeURIComponent(nombre);
+        document.querySelectorAll('#modules a.link').forEach(a=>{
+          // Remove existing alumno param first
+          let h = a.getAttribute('href').split('?')[0];
+          a.setAttribute('href', h + '?alumno=' + enc);
+        });
+      }catch(e){}
+    }
+
+    function render(){
+      const a=get();
+      if(a && a.nombre){
+        $('#login-panel').style.display='none';
+        $('#welcome').classList.add('show');
+        $('#saludo').textContent = `Hola, ${a.nombre}`;
+        $('#saludo-sub').textContent = a.curso ? `${a.curso} · Elegí una clase para continuar.` : 'Elegí una clase para continuar.';
+        // Update links with alumno param (for file://)
+        updateLinks(a.nombre);
+        // Show continue button if last page exists
+        try{
+          const last=JSON.parse(localStorage.getItem(LAST)||'null');
+          if(last && last.url){ $('#continue-row').style.display='flex'; $('#btn-continue').onclick=()=>{location.href=last.url}; }
+          else { $('#continue-row').style.display='none'; }
+        }catch(e){ $('#continue-row').style.display='none'; }
+        // Update progress for theory classes
+        updateProgress(a);
+      } else {
+        $('#login-panel').style.display='';
+        $('#welcome').classList.remove('show');
+        $('#continue-row').style.display='none';
+      }
+    }
+
+    function updateProgress(a){
+      const sid = a.id || slug(a.nombre)+(a.curso?'_'+slug(a.curso):'');
+      try{
+        const prog = JSON.parse(localStorage.getItem('mj:progreso:'+sid)||'null');
+        if(!prog || !prog.act) return;
+        const apps = ['teoria-tic','teoria-tic-2','teoria-tic-3'];
+        apps.forEach(app=>{
+          const el = $('#st-'+app);
+          if(!el) return;
+          const keys = Object.keys(prog.act).filter(k=>k.indexOf(app+'/')===0);
+          if(keys.length===0){ el.textContent='Sin iniciar'; el.className='status'; }
+          else {
+            const done = keys.some(k=>prog.act[k]&&prog.act[k].estado==='hecha');
+            el.textContent = done ? 'Completado' : 'En curso';
+            el.className = 'status '+(done?'done':'progress');
+          }
+        });
+      }catch(e){}
+    }
+
+    $('#btn-login').addEventListener('click',()=>{
+      const nombre=$('#nombre').value.trim();
+      if(nombre.length<2){ $('#nombre').focus(); return; }
+      set({nombre,curso:'',id:slug(nombre),creado:new Date().toISOString()});
+      window.name = 'mj:' + JSON.stringify({nombre,curso:'',id:slug(nombre),creado:new Date().toISOString()});
+      render();
+      updateLinks(nombre);
+    });
+    $('#nombre').addEventListener('keydown',e=>{ if(e.key==='Enter') $('#btn-login').click(); });
+
+    $('#btn-cambiar').addEventListener('click',()=>{
+      localStorage.removeItem(KEY);
+      localStorage.removeItem(LAST);
+      window.name = '';
+      render();
+      $('#nombre').value='';
+      $('#nombre').focus();
+    });
+
+    render();
+  </script>
+</body>
+</html>
